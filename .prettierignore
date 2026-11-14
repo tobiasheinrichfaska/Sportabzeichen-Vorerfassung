@@ -1,0 +1,14 @@
+dist/
+dist-hosted/
+coverage/
+deploy/.local/
+.tmp/
+import/
+archiv/
+node_modules/
+package-lock.json
+docs/*.html
+LICENSE
+# Verbatim copies of the workspace templates
+LICENSE_COMMERCIAL.md
+CONTRIBUTING.md

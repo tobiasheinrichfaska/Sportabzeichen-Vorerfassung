@@ -1,0 +1,562 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #5f6368;
+  --line: #d9dce1;
+  --accent: #c8102e;
+  --error-bg: #fdecee;
+  --error-fg: #8a0f1f;
+  --info-bg: #eaf3ea;
+  --info-fg: #1f5c2a;
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  line-height: 1.45;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --fg: #ececec;
+    --muted: #a3a7ad;
+    --line: #34373c;
+    --accent: #ff5a6e;
+    --error-bg: #3a1a1f;
+    --error-fg: #ffb3bd;
+    --info-bg: #1b3020;
+    --info-fg: #b9e6c1;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 1.6rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  font: inherit;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  /* No double-tap zoom: fast repeated taps must each register */
+  touch-action: manipulation;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92rem;
+}
+
+input {
+  font: inherit;
+  /* below 16 px the iPhone zooms into every field it focuses */
+  font-size: max(16px, 1rem);
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.tabs button {
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+}
+
+.tabs button[aria-current='page'] {
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+/* Tools are used outdoors with fingers: no tap delay, no text selection, no double-tap zoom */
+.big-button,
+.counter-pad {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.big-button {
+  min-width: 140px;
+  min-height: 64px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.big-button:active,
+.counter-pad:active {
+  background: var(--line);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.stopwatch-display {
+  font-size: clamp(3rem, 14vw, 6rem);
+  font-variant-numeric: tabular-nums;
+  margin: 8px 0;
+}
+
+select {
+  font: inherit;
+  padding: 6px 8px;
+  max-width: 100%;
+}
+
+details summary {
+  cursor: pointer;
+}
+
+.class-branch {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.readings {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The digit after the card value: visible for borderline cases, clearly not part of the value */
+.finer {
+  color: var(--muted);
+  opacity: 0.55;
+}
+
+.beat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30vh;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: clamp(2.5rem, 12vw, 5rem);
+  font-weight: 700;
+  transition: background-color 80ms;
+}
+
+.beat.on {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* at a station of „Erfassen“: the light smaller, the children's rows stay in reach */
+.metronome.compact .beat {
+  min-height: 14vh;
+}
+
+.bpm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bpm input {
+  width: 5em;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.counter-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 45vh;
+  margin-bottom: 12px;
+}
+
+.counter-value {
+  font-size: clamp(4rem, 22vw, 9rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.message p {
+  margin: 4px 0;
+}
+
+.error {
+  background: var(--error-bg);
+  color: var(--error-fg);
+}
+
+.info {
+  background: var(--info-bg);
+  color: var(--info-fg);
+}
+
+/* Choices are tapped, never picked from a drop-down */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.chip {
+  min-height: 40px;
+  border-radius: 20px;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.entry-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 12px;
+  margin: 8px 0;
+}
+
+.entry-row label {
+  flex: 1 1 160px;
+}
+
+.entry-row label.narrow {
+  flex: 0 1 6em;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.row.chosen,
+.row.editing {
+  background: var(--info-bg);
+}
+
+.row-main {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: none;
+  text-align: left;
+  min-height: 48px;
+}
+
+.row form {
+  flex: 1;
+  padding: 4px 8px;
+}
+
+label.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.mmb {
+  margin: 4px 0 8px;
+}
+
+.chip-label {
+  align-self: center;
+  margin-right: 2px;
+}
+
+.card {
+  margin: 10px 0;
+  padding: 4px 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.card h3,
+h3 {
+  font-size: 1.02rem;
+  margin: 12px 0 6px;
+}
+
+ul.plain {
+  list-style: none;
+  margin: 4px 0;
+  padding: 0;
+}
+
+ul.plain li {
+  padding: 2px 0;
+}
+
+.offer {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.decisive {
+  color: var(--accent);
+}
+
+/* Levels in the colours of the badge, readable in light and dark */
+.level {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.level-gold {
+  background: #f2c94c;
+  color: #3b2a00;
+}
+
+.level-silver {
+  background: #c9ced6;
+  color: #1d232a;
+}
+
+.level-bronze {
+  background: #d8955a;
+  color: #2b1600;
+}
+
+.level-none {
+  background: var(--line);
+  color: var(--fg);
+}
+
+td.level-cell {
+  text-align: center;
+  font-weight: 600;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.row.capture {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px 0;
+}
+
+.row.capture form {
+  padding: 0;
+}
+
+.attempts {
+  font-variant-numeric: tabular-nums;
+}
+
+.planned {
+  color: var(--info-fg);
+  font-weight: 600;
+}
+
+.chip.plan[aria-pressed='true'] {
+  background: var(--info-fg);
+  border-color: var(--info-fg);
+}
+
+.expected {
+  margin: 2px 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.offer-child {
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.child-group .offer {
+  padding-left: 8px;
+}
+
+.link-button {
+  border: none;
+  padding: 0 4px;
+  text-decoration: underline;
+  background: none;
+}
+
+/* „Ausführung: …“ — the DOSB pictures are drawn on white, also in dark mode */
+details.detail > summary {
+  padding: 4px 0;
+}
+
+.detail-picture {
+  margin: 8px 0;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.detail-picture img {
+  display: block;
+}
+
+/* a strip of pictures: full width, on a phone wide enough to see the figures, swiped sideways */
+.detail-picture.wide img {
+  width: 100%;
+  min-width: 600px;
+  height: auto;
+}
+
+/* the ladder: by height, so the numbered steps stay readable */
+.detail-picture.tall {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.detail-picture.tall img {
+  max-height: 45vh;
+  max-width: 100%;
+  width: auto;
+}
+
+.detail-steps li {
+  margin: 4px 0;
+}
+
+.detail-levels div {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.detail-levels dt {
+  margin: 0;
+}
+
+.detail-levels dd {
+  margin: 0;
+}
+
+/* Zielvideo: live picture small, the pictures of a finish as wide as the page */
+.camera {
+  margin-top: 0.5rem;
+}
+
+.camera-preview {
+  display: block;
+  width: min(100%, 16rem);
+  margin-top: 0.4rem;
+  border-radius: 6px;
+  background: #000;
+}
+
+.finish-pictures {
+  margin: 0.4rem 0 0.8rem;
+}
+
+.finish-pictures img {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  border: 3px solid transparent;
+  border-radius: 6px;
+}
+
+.finish-pictures img.press {
+  border-color: #d32f2f;
+}
+
+.press-mark {
+  color: #d32f2f;
+}
+
+.finish-pictures input[type='range'] {
+  flex: 1;
+  min-width: 8rem;
+}

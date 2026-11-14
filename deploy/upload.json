@@ -1,0 +1,22 @@
+{
+  "zugang": "fragebogen",
+  "targets": {
+    "app": {
+      "description": "Sportabzeichen-Vorerfassung – App zum Installieren (Büro-IPs oder Tester-Anmeldung; danach startet sie überall aus dem Gerätespeicher)",
+      "build": "build:hosted",
+      "folder": "NebenprojektSportabzeichen",
+      "access": "ipOrLogin",
+      "authName": "Sportabzeichen - Test",
+      "devices": ["camera"],
+      "files": [
+        { "from": "dist-hosted/index.html", "to": "index.html", "verify": true },
+        { "from": "dist-hosted/sw.js", "to": "sw.js", "verify": true },
+        { "from": "dist-hosted/manifest.json", "to": "manifest.json" },
+        { "from": "dist-hosted/icon-192.png", "to": "icon-192.png" },
+        { "from": "dist-hosted/icon-512.png", "to": "icon-512.png" },
+        { "from": "dist-hosted/apple-touch-icon.png", "to": "apple-touch-icon.png" }
+      ]
+    }
+  },
+  "forbidden": ["import/", "archiv/", "catalog/local/", ".tmp/"]
+}

@@ -1,0 +1,494 @@
+{
+  "source": "SpAz (BLSV) Laufzettel „Behindertensport“ und „Normal“, alle Altersklassen und Geschlechter, Export vom 02.11.2026 – Bezeichnungen wie gedruckt. Nicht übernommen: Abzeichen anderer Sportverbände (nicht Teil der App).",
+  "complete": true,
+  "labels": [
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Ausgleichsbedingung",
+      "exerciseIds": [],
+      "manual": true
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Dauerleistung",
+      "exerciseIds": ["run-continuous"]
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Kegeln",
+      "exerciseIds": ["bowling"]
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Lauf / Rollstuhl - Langstrecke",
+      "exerciseIds": ["run-endurance"]
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Radfahren / Dreirad / Tandem / Handbike - Langstrecke",
+      "exerciseIds": ["cycle-endurance"]
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Schwimmen",
+      "exerciseIds": ["swim-endurance"]
+    },
+    {
+      "track": "mmb",
+      "group": "endurance",
+      "label": "Walking / Nordic Walking",
+      "exerciseIds": ["walking"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Ausgleichsbedingung",
+      "exerciseIds": [],
+      "manual": true
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Fußballweitstoß",
+      "exerciseIds": ["football-kick"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Keulenweitwurf",
+      "exerciseIds": ["club-throw"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Kugelstoßen",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Medizinball",
+      "exerciseIds": ["medicine-ball"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Schlagball/Wurfball",
+      "exerciseIds": ["throw-ball"]
+    },
+    {
+      "track": "mmb",
+      "group": "strength",
+      "label": "Standweitsprung",
+      "exerciseIds": ["standing-long-jump"]
+    },
+    {
+      "track": "mmb",
+      "group": "speed",
+      "label": "Ausgleichsbedingung",
+      "exerciseIds": [],
+      "manual": true
+    },
+    {
+      "track": "mmb",
+      "group": "speed",
+      "label": "Gehen",
+      "exerciseIds": ["race-walking"]
+    },
+    {
+      "track": "mmb",
+      "group": "speed",
+      "label": "Lauf / Rollstuhl - Kurzstrecke",
+      "exerciseIds": ["sprint"]
+    },
+    {
+      "track": "mmb",
+      "group": "speed",
+      "label": "Radfahren / Dreirad / Tandem / Handbike - Langstrecke",
+      "exerciseIds": ["cycle-sprint", "handbike-sprint"],
+      "note": "In allen 44 Laufzetteln „Behindertensport“ unter Schnelligkeit so gedruckt; gemeint ist vermutlich die Kurzstrecke – in SpAz prüfen."
+    },
+    {
+      "track": "mmb",
+      "group": "speed",
+      "label": "Schwimmen",
+      "exerciseIds": ["swim-sprint", "swim-sprint-minutes"]
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Ausgleichsbedingung",
+      "exerciseIds": [],
+      "manual": true
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Drehwurf",
+      "exerciseIds": ["rotation-throw"],
+      "note": "SpAz führt Drehwurf und Schleuderball getrennt wie die Plattform; die Einzelprüfkarte MmB fasst sie in einer Zeile zusammen."
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Geschicklichkeitsgehen",
+      "exerciseIds": ["skill-walk"]
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Hochsprung",
+      "exerciseIds": ["high-jump"]
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Rollstuhl-Parcour",
+      "exerciseIds": ["skill-walk"]
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Schleuderball",
+      "exerciseIds": ["sling-ball"],
+      "note": "SpAz führt Drehwurf und Schleuderball getrennt wie die Plattform; die Einzelprüfkarte MmB fasst sie in einer Zeile zusammen."
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Weitsprung",
+      "exerciseIds": ["long-jump"]
+    },
+    {
+      "track": "mmb",
+      "group": "coordination",
+      "label": "Zielwerfen",
+      "exerciseIds": ["target-throw"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "7,5 km Walking / Nordic Walking",
+      "exerciseIds": ["walking"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Dauer- / Geländelauf",
+      "exerciseIds": ["run-continuous"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Laufen (10km)",
+      "exerciseIds": ["run-10k"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Laufen (3000m)",
+      "exerciseIds": ["run-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Laufen (800m)",
+      "exerciseIds": ["run-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Radfahren (10km)",
+      "exerciseIds": ["cycle-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Radfahren (20km)",
+      "exerciseIds": ["cycle-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Radfahren (5km)",
+      "exerciseIds": ["cycle-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Schwimmen (200m)",
+      "exerciseIds": ["swim-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Schwimmen (400m)",
+      "exerciseIds": ["swim-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "endurance",
+      "label": "Schwimmen (800m)",
+      "exerciseIds": ["swim-endurance"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Crunches/Curl-Up-Test/Bauchpresse",
+      "exerciseIds": ["curl-ups"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Gerätturnen",
+      "exerciseIds": ["gymnastics-strength"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (2kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (3kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (4kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (5kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (6kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Kugelstoßen (7,26kg)",
+      "exerciseIds": ["shot-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Medizinballwurf",
+      "exerciseIds": ["medicine-ball"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Pull-Ups/Klimmzüge",
+      "exerciseIds": ["pull-ups"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Pull-Ups/Klimmzüge ab 85",
+      "exerciseIds": ["pull-ups"],
+      "note": "Ab 85 Jahren nennt der Laufzettel keine Zahlen; die Stufe wird in diesem Eintrag direkt gewählt (DOSB: Bronze –, Silber 1, Gold 2 bzw. 3)."
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Push-Ups/Liegestützen",
+      "exerciseIds": ["push-ups"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Schlagballwurf (80g)",
+      "exerciseIds": ["throw-ball"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Standweitsprung",
+      "exerciseIds": ["standing-long-jump"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Steinstoßen (10kg)",
+      "exerciseIds": ["stone-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Steinstoßen (15kg)",
+      "exerciseIds": ["stone-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Steinstoßen (3kg)",
+      "exerciseIds": ["stone-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Steinstoßen (5kg)",
+      "exerciseIds": ["stone-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Steinstoßen (7,5kg)",
+      "exerciseIds": ["stone-put"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Triceps-Dips/Beugestütz",
+      "exerciseIds": ["triceps-dips"]
+    },
+    {
+      "track": "regular",
+      "group": "strength",
+      "label": "Wurfballwurf (200g)",
+      "exerciseIds": ["throw-ball"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Gerätturnen",
+      "exerciseIds": ["gymnastics-speed"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Laufen (100m)",
+      "exerciseIds": ["sprint"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Laufen (30m)",
+      "exerciseIds": ["sprint"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Laufen (50m)",
+      "exerciseIds": ["sprint"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Radfahren (200m)",
+      "exerciseIds": ["cycle-sprint"]
+    },
+    {
+      "track": "regular",
+      "group": "speed",
+      "label": "Schwimmen (25m)",
+      "exerciseIds": ["swim-sprint"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Ball umgreifen",
+      "exerciseIds": ["ball-grip"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Kick-Fangen",
+      "exerciseIds": ["kick-catch"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Koordinations-T-Lauf",
+      "exerciseIds": ["t-run"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Koordinationsleiter",
+      "exerciseIds": ["coordination-ladder"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Drehwurf",
+      "exerciseIds": ["rotation-throw"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Gerätturnen",
+      "exerciseIds": ["gymnastics-coordination"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Hochsprung",
+      "exerciseIds": ["high-jump"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Schleuderballwurf",
+      "exerciseIds": ["sling-ball"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Seilspringen (Doppel)",
+      "exerciseIds": ["rope-skipping"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Seilspringen (Kreuz)",
+      "exerciseIds": ["rope-skipping"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Seilspringen (Laufschritt)",
+      "exerciseIds": ["rope-skipping"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Seilspringen (Rückwärts)",
+      "exerciseIds": ["rope-skipping"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Seilspringen (Vorwärts)",
+      "exerciseIds": ["rope-skipping"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Weitsprung",
+      "exerciseIds": ["long-jump"]
+    },
+    {
+      "track": "regular",
+      "group": "coordination",
+      "label": "Zonenweitsprung",
+      "exerciseIds": ["zone-long-jump"]
+    }
+  ]
+}

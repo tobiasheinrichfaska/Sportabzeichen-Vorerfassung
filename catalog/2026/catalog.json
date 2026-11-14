@@ -1,0 +1,537 @@
+{
+  "validFrom": 2026,
+  "sources": [
+    "DOSB: Prüfungswegweiser Deutsches Sportabzeichen, gültig ab 2026",
+    "DOSB: Gruppenprüfkarte Allgemein, gültig ab 2026",
+    "DOSB: Einzelprüfkarte Menschen mit Behinderung, gültig ab 2026",
+    "DOSB: Erweiterter Leistungskatalog Gruppe Kraft – Ergänzung zum Prüfungswegweiser, gültig ab 2024",
+    "DOSB: Erweiterter Leistungskatalog Kraft & Koordination – Ergänzung zum Prüfungswegweiser, gültig ab 2026"
+  ],
+  "classes": [
+    {
+      "id": "A",
+      "label": "Allgemeine Behinderung"
+    },
+    {
+      "id": "B",
+      "label": "Einseitige Behinderung der unteren Gliedmaßen (Beinbehinderung)"
+    },
+    {
+      "id": "C",
+      "label": "Beidseitige Behinderung der unteren Gliedmaßen (Beinbehinderung)"
+    },
+    {
+      "id": "D",
+      "label": "Einseitige Behinderung der oberen Gliedmaßen (Armbehinderung)"
+    },
+    {
+      "id": "E",
+      "label": "Beidseitige Behinderung der oberen Gliedmaßen (Armbehinderung)"
+    },
+    {
+      "id": "F",
+      "label": "Behinderung durch Einschränkung oder Ausfall von Sinnesorganen"
+    },
+    {
+      "id": "G",
+      "label": "Schädigung des Nervensystems, Gehen oder Stehen eingeschränkt"
+    },
+    {
+      "id": "H",
+      "label": "Schädigung des Nervensystems, im Rollstuhl"
+    },
+    {
+      "id": "I",
+      "label": "Geistige Behinderung"
+    },
+    {
+      "id": "J",
+      "label": "Kleinwuchs"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "run-endurance",
+      "name": "Laufen",
+      "trackNames": {
+        "mmb": "Laufen / Rollstuhlfahren"
+      },
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Am besten auf einer Rundbahn; nur ausnahmsweise auf einer vermessenen Strecke im Gelände oder auf der Straße, GPS-Vermessung ist zulässig. Start und Ziel müssen auf gleicher Höhe liegen. Streckenlänge nach Alter laut Leistungstabelle: Kinder und Jugendliche 800 m, Erwachsene 3.000 m.\n\nAblauf: Start aus dem ruhigen Stand. Am Prüfungstag gibt es nur einen Versuch; Gehen zwischendurch ist erlaubt, ein Laufband zählt nicht. Jede Strecke braucht einen eigenen Start, eine Zwischenzeit aus einem längeren Lauf wird nicht gewertet. Die Zeit wird auf Sekunden abgelesen.\n\nMmB: Klasse F II läuft mit Begleitperson (Pflicht), Klasse F I darf mit Begleitperson laufen. Klasse H fährt Rollstuhl: beim Start stehen alle Räder hinter der Startlinie, Sportrollstühle sind erlaubt, elektrische Antriebshilfen nicht. Die Streckenlängen stehen auf der Prüfkarte der jeweiligen Klasse.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.4, 6.1 und 6.1.1; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.6 und 4.12"
+      }
+    },
+    {
+      "id": "run-continuous",
+      "name": "Dauer-/Geländelauf",
+      "trackNames": {
+        "mmb": "Dauer-/Geländelauf, Dauerrollstuhlfahren, Dauer-Wandern/-Walking"
+      },
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Verkehrsfreie, gut überschaubare Rund- oder Pendelstrecke im Gelände, möglichst mit festem Untergrund; für Kinder keine zu kurze, eintönige Runde. Start und Ziel auf gleicher Höhe. Gefordert ist eine Laufdauer, nicht eine bestimmte Strecke oder Geschwindigkeit.\n\nAblauf: Start aus dem ruhigen Stand wie beim 800-m-Lauf, nur ein Versuch. Es muss durchgehend gelaufen werden, also mit kurzer Flugphase beider Füße; Gehen ist nicht erlaubt, ein Laufband zählt nicht. Erfasst wird die durchgehend gelaufene Zeit, abgelesen auf Sekunden.\n\nMmB: Klasse H: Dauerrollstuhlfahren mit Arm- oder Beinantrieb, beim Start alle Räder hinter der Startlinie, ohne elektrische Antriebshilfe. Kinder und Jugendliche der Klasse I dürfen den Dauerlauf als Wandern bzw. Walking absolvieren. F II läuft mit, F I wahlweise mit Begleitperson.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 6.1, 6.1.1 und 6.1.2; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.6 und 4.12"
+      }
+    },
+    {
+      "id": "run-10k",
+      "name": "10 km Lauf",
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Vermessene, möglichst verkehrsfreie Strecke im Wald oder Gelände, am besten als Rund- oder Pendelstrecke auf Asphalt oder anderem festem Untergrund; GPS-Vermessung ist zulässig. Start und Ziel auf gleicher Höhe. Am vom Start am weitesten entfernten Punkt sollte eine Kontrolle stehen, damit niemand abkürzt.\n\nAblauf: Bestimmungen wie beim 800-m/3.000-m-Lauf: Start aus dem ruhigen Stand, nur ein Versuch, kein Laufband, eigener Start ohne Zwischenzeit aus einem längeren Lauf. Die Zeit wird auf Sekunden abgelesen. Ein im Prüfungsjahr gelaufener Volkslauf über 10 km wird gegen Urkunde mit Zeitangabe oder Online-Ergebnisliste anerkannt.\n\nMmB: Volkslauf-Ergebnisse über 10 km werden auch für MmB nach den DOSB-Bestimmungen anerkannt. F II läuft mit, F I wahlweise mit Begleitperson.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.3, 4.4.4, 6.1, 6.1.1, 6.1.3 und 6.1.4 (Anerkennung); DBS-Handbuch MmB (gültig ab 2026), Kap. 4.3 und 4.12"
+      }
+    },
+    {
+      "id": "walking",
+      "name": "7,5 km Walking/Nordic Walking",
+      "trackNames": {
+        "mmb": "Walking / Nordic Walking"
+      },
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Strecke wie beim 10-km-Lauf: vermessen, möglichst verkehrsfrei, Rund- oder Pendelstrecke auf festem Untergrund, Start und Ziel auf gleicher Höhe, Kontrolle am entferntesten Punkt. Beim Nordic Walking werden Stöcke benötigt.\n\nAblauf: Walking ist schnelles Gehen, bei dem immer ein Fuß Bodenkontakt hat und die Arme gegengleich schwingen; Laufen ist verboten. Beim Nordic Walking müssen die Stöcke aktiv eingesetzt werden. Ein Versuch, kein Laufband, die Zeit wird auf Sekunden abgelesen. Eine im Prüfungsjahr bei einer Veranstaltung gegangene 7,5-km-Strecke wird gegen Urkunde mit Zeitangabe oder Online-Ergebnisliste anerkannt.\n\nMmB: Erwachsene der Klassen B, C, G I, G II, I und J haben eigene Walking-Distanzen (Länge laut Prüfkarte der Klasse). Veranstaltungsergebnisse werden nach den DOSB-Bestimmungen anerkannt.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 6.1, 6.1.3 und 6.1.4; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.3 und 4.12"
+      }
+    },
+    {
+      "id": "swim-endurance",
+      "name": "Schwimmen",
+      "trackNames": {
+        "mmb": "Schwimmen / Dauerschwimmen"
+      },
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Becken von mindestens 12,5 m Länge oder offenes Gewässer; im Startbereich mindestens 1,80 m Wassertiefe wegen des Startsprungs. Eine im Rettungswesen ausgebildete Person muss anwesend sein, die Sicherheitsregeln der DLRG gelten. Strecke nach Alter laut Leistungstabelle: 200, 400 oder 800 m.\n\nAblauf: Start per Sprung vom Startblock oder im Wasser vom Beckenrand. Die Schwimmart ist frei und darf unterwegs gewechselt werden, Schwimmhilfen sind verboten. Bei Wende und Zielanschlag die Wand mit einem beliebigen Körperteil berühren; beim Brustschwimmen nach Start und Wende nur ein Tauchzug, sonst nach der Gleitphase sofort auftauchen. Nur ein Versuch, die Zeit wird auf Sekunden abgelesen.\n\nMmB: Für die Klassen G III, H III, H IV, I und J ist zusätzlich Dauerschwimmen möglich. Erwachsene der Klassen G III, H III und H IV schwimmen kürzere Strecken (laut Prüfkarte).",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.4, 4.4.9, 6 (Sicherheitshinweise Schwimmen), 6.1 und 6.1.5; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.13"
+      }
+    },
+    {
+      "id": "cycle-endurance",
+      "name": "Radfahren",
+      "trackNames": {
+        "mmb": "Rad-/Tandem-/Handbike-/Dreiradfahren"
+      },
+      "group": "endurance",
+      "measure": "minSec",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Bahn oder Strecke frei wählbar, möglichst eben ohne Steigung und Gefälle und ohne Verkehr; Start und Ziel auf gleicher Höhe, GPS-Vermessung zulässig. Jedes Fahrradmodell ist erlaubt, Elektrofahrräder (E-Bike, Pedelec) auch ausgeschaltet oder ohne Akku nicht. Ein Helm wird dringend empfohlen. Strecke nach Alter laut Leistungstabelle: 5, 10 oder 20 km.\n\nAblauf: Nur ein Versuch, eigener Start für jede Strecke, kein Fahrradergometer. Die Zeit wird auf Sekunden abgelesen. Ein Ergebnis einer öffentlichen Radsportveranstaltung wird gegen Urkunde mit Zeitangabe oder Online-Ergebnisliste anerkannt.\n\nMmB: Auch mit Dreirad, Handbike oder Tandem möglich; die Klassen B, C, G, H, I und J haben eigene Streckenlängen. Kein Rad mit Motorunterstützung, Handbike nur ohne elektrische Antriebshilfe.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.4, 4.4.8, 6.1 und 6.1.6; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.3, 4.6, 4.7 und 4.14"
+      }
+    },
+    {
+      "id": "bowling",
+      "name": "Kegeln (Asphalt, Bohle, Schere) oder Bowling",
+      "group": "endurance",
+      "measure": "points",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Kegelbahn der regional üblichen Art: Classic (Asphalt), Bohle oder Schere; Bowling ist als Variante zugelassen. Kinder und Jugendliche bis 15 Jahre spielen mit einer Jugendkugel.\n\nAblauf: Es werden 100 Kugeln in die Vollen gespielt: bis 64 Jahre innerhalb von 45 Minuten, ab 65 Jahren innerhalb von 55 Minuten, Kinder und Jugendliche bis 15 Jahre ohne Zeitlimit. Eingetragen wird die erreichte Punktzahl.\n\nMmB: Je nach Einschränkung von Rumpf und Armen darf eine Kegelschiene als zusätzliche Hilfe eingesetzt werden.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.15"
+      }
+    },
+    {
+      "id": "throw-ball",
+      "name": "Schlagball/Wurfball",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Abwurflinie am Boden markieren, dahinter Platz für den Anlauf, davor ein freies Wurffeld. Schlagball 80 g, Wurfball 200 g, beide aus Leder oder Gummi; welcher Ball geworfen wird, hängt laut Leistungstabelle vom Alter ab (jüngere Kinder Schlagball, ältere Wurfball). Ohne Behinderung nur für Kinder und Jugendliche.\n\nAblauf: Wurf aus dem Anlauf oder aus dem Stand. Vor der Linie abwerfen, die Linie danach nicht übertreten und den Abwurfplatz seitlich oder nach hinten verlassen. Gemessen wird senkrecht vom nächstgelegenen Aufschlag bis zur Innenkante der Abwurflinie bzw. ihrer seitlichen Verlängerung. Drei Versuche. Erst werfen, wenn niemand mehr im Gefahrenbereich steht.\n\nMmB: Bei MmB für Kinder und Jugendliche, bei Erwachsenen der Wurfball nur in Klasse H. Rollstuhlfahrende bleiben beim Wurf mit allen Rädern hinter der Abwurflinie; gemessen wird wie beim DOSB.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 6 (Sicherheitshinweise Würfe) und 6.2.1; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.19"
+      }
+    },
+    {
+      "id": "medicine-ball",
+      "name": "Medizinball",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Erwachsene: Medizinball 2 kg aus Leder, Kunststoff oder Gummi (Durchmesser beliebig), Abwurfraum mit Linie oder Abwurfbalken und ein Wurfsektor, Maßband. Kinder von 6 bis 11 Jahren: Medizinball 1 kg und eine Abwurflinie am Boden.\n\nAblauf: Erwachsene werfen aus dem Stand ohne Anlauf und ohne Drehung beidhändig über Kopf oder seitlich, nicht rückwärts; den Abwurfraum erst nach der Landung und nach hinten verlassen. Gemessen wird wie beim Schleuderball: Nullpunkt des Maßbands im Abwurfraum über dem Schnittpunkt der Sektorlinien, abgelesen an der Innenkante der Linie bis zum vorderen Rand des Aufschlags. Kinder 6 bis 11 stoßen den 1-kg-Ball, empfohlen beidarmig frontal nach vorn oder beidhändig aus seitlicher Auslage; gemessen wird senkrecht vom nächsten Aufschlag zur Innenkante der Linie oder ihrer Verlängerung. Drei Versuche.\n\nMmB: Kinder, Jugendliche und Klasse J nehmen den 1-kg-Ball. Anders als bei Kindern ohne Behinderung ist es ein Wurf, kein Medizinballstoß.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 6.2.2 und 6.4.5 (Messung); DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.17"
+      }
+    },
+    {
+      "id": "shot-put",
+      "name": "Kugelstoßen",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Stoßkreis mit Stoßbalken auf niveaugleicher Anlage, freies Stoßfeld. Kugelgewicht nach Alter und Geschlecht laut Leistungstabelle (zwischen 3 kg und 7,26 kg); in den Altersklassen 18–19 und 50–59 bevorzugt die 6-kg-Kugel, ersatzweise 6,25 kg. Kinder bis 11 Jahre stoßen statt der Kugel den 1-kg-Medizinball.\n\nAblauf: Ungültig ist der Stoß, wenn nach Beginn die Oberseite des Balkens, der obere Kreisrand oder der Boden außerhalb des Kreises berührt wird. Den Kreis erst nach der Landung der Kugel und nach hinten verlassen. Gemessen wird vom nächsten Eindruck der Kugel bis zum inneren Kreisrand, das Maßband läuft über die Kreismitte. Drei Versuche; mit Endoprothese kein Angleiten und keine Drehstoßtechnik.\n\nMmB: Die Kugelgewichte sind nach Alter und Behinderung angepasst (laut Prüfkarte). Rollstuhlfahrende bleiben mit allen Rädern hinter dem Balken, Räder oder Fußraste dürfen seine Innenkante berühren.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11, 6 (Sicherheitshinweise Stöße), 6.2.2 und 6.2.3; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.8 und 4.16"
+      }
+    },
+    {
+      "id": "shot-put-both-arms",
+      "name": "Kugelstoßen rechts und links (Gesamt)",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Aufbau wie beim Kugelstoßen: Stoßkreis mit Balken, freies Stoßfeld. Kugelgewicht nach Alter und Behinderung laut Prüfkarte.\n\nAblauf: Gestoßen wird mit dem rechten und mit dem linken Arm; beide Leistungen werden zusammengezählt und als Gesamtweite eingetragen. Gültigkeit und Messung wie beim Kugelstoßen; mit Endoprothese kein Angleiten.\n\nMmB: Rollstuhlfahrende bleiben mit allen Rädern hinter dem Balken, Räder oder Fußraste dürfen seine Innenkante berühren.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1, 4.8 und 4.16; DOSB-Prüfungswegweiser 2026, Kap. 6.2.3"
+      }
+    },
+    {
+      "id": "stone-put",
+      "name": "Steinstoßen",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Abstoßlinie als Balken (Querschnitt 10 × 10 cm) oder als Linie am Boden; Stoßfeld höchstens 4 m breit und möglichst markiert. Stein in Ziegelform, achteckig, aus Metall: bei Männern je nach Altersgruppe 3, 5, 7,5, 10 oder 15 kg, bei Frauen 3 oder 5 kg. Nur für Erwachsene.\n\nAblauf: Drei Versuche mit jedem Arm, welcher Arm zuerst stößt, ist frei. Anlauf beliebig; gestoßen wird mit einer Hand, ein Wurf zählt nicht. Gültig nur, wenn Balken oder Linie nicht nach vorn übertreten werden; den Abstoßraum nach hinten verlassen. Gemessen wird senkrecht vom nächsten Eindruck zur Innenkante der Abstoßlinie; der beste Stoß links und der beste rechts werden addiert.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 6 (Sicherheitshinweise Stöße) und 6.2.4"
+      }
+    },
+    {
+      "id": "standing-long-jump",
+      "name": "Standweitsprung",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Sprunggrube mit Absprung vom Grubenrand oder von einem Absprungbalken; Absprungstelle und Landung auf gleicher Höhe.\n\nAblauf: Beidbeiniger Absprung ohne Anlauf, die Füße parallel und auf gleicher Höhe, die Zehen dürfen nicht über die Kante greifen. Zum Schwungholen dürfen Fersen und Fußspitzen abwechselnd angehoben werden, kein Fuß darf aber ganz abheben oder hin und her rutschen. Gemessen wird senkrecht vom hintersten Landeeindruck bis zur Höhe des vordersten Absprungeindrucks bzw. der Vorderkante des Balkens. Drei Versuche; nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11 und 6.2.5; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.8"
+      }
+    },
+    {
+      "id": "football-kick",
+      "name": "Fußballweitschuss",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Ebene Fläche mit markiertem Abstoßpunkt, ein Fußball, Maßband.\n\nAblauf: Der Ball wird aus dem Stand ohne Anlauf mit dem Fuß über die ebene Fläche geschossen. Gemessen wird vom Abstoßpunkt bis zu der Stelle, an der der Ball liegen bleibt. Drei Versuche nach der allgemeinen DOSB-Regel.\n\nMmB: Nur für Behinderungsklasse E (beidseitige Armbehinderung).",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.20; DOSB-Prüfungswegweiser 2026, Kap. 4.4.1"
+      }
+    },
+    {
+      "id": "club-throw",
+      "name": "Keulenweitwurf",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Wie beim Schlagball/Wurfball: Abwurflinie am Boden und freies Wurffeld. Wurfgerät ist eine Keule von mindestens 160 g.\n\nAblauf: Ablauf und Messung wie beim Schlagball/Wurfball: vor der Linie abwerfen, nicht übertreten, gemessen wird senkrecht vom nächsten Aufschlag zur Innenkante der Abwurflinie oder ihrer Verlängerung. Drei Versuche.\n\nMmB: Nur für Klasse G (Erwachsene) und Klasse H. Rollstuhlfahrende bleiben mit allen Rädern hinter der Abwurflinie (Regel wie beim Wurfball).",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1, 4.18 und 4.19; DOSB-Prüfungswegweiser 2026, Kap. 4.4.1 und 6.2.1"
+      }
+    },
+    {
+      "id": "volleyball-hit",
+      "name": "Volleyballweitschlag",
+      "group": "strength",
+      "measure": "meterCm",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Ebene Fläche mit Abwurflinie, ein Volleyball. Eine Hilfsperson darf den Ball zum Schlagen halten oder prellen.\n\nAblauf: Der Ball wird aus dem Stand mit der Hand geschlagen oder geworfen, entweder direkt oder nach Aufprellen. Gewertet wird wie beim Wurfball: senkrechte Entfernung vom nächsten Bodenkontakt zur Innenkante der Abwurflinie oder ihrer Verlängerung. Drei Versuche nach der allgemeinen DOSB-Regel.\n\nMmB: Nur für die Klassen H III und H IV (Rollstuhlfahrende mit Behinderung der Arme).",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1, 4.19 und 4.21; DOSB-Prüfungswegweiser 2026, Kap. 4.4.1"
+      }
+    },
+    {
+      "id": "push-ups",
+      "name": "Push-Ups/Liegestützen (6.2.6.1)",
+      "group": "strength",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Kein Gerät beschrieben. Nur für Erwachsene ab 18 Jahren.\n\nAblauf: Bauchlage, Hände etwa auf Brusthöhe neben dem Körper, Ellenbogen zeigen nach außen, Füße auf den Zehenspitzen. Arme gleichzeitig strecken, Beine, Rumpf und Kopf bleiben in einer Linie; absenken, bis die Nase fast den Boden berührt. Eine Wiederholung dauert etwa zwei Sekunden, je eine pro Richtung; gezählt wird nur die ganze Bewegung. Hände mit den Fingern nach vorn (Daumen innen) oder auf den Fäusten bei gleichem Abstand. Drei Versuche am Prüfungstag.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.2.6.1"
+      }
+    },
+    {
+      "id": "curl-ups",
+      "name": "Crunches/Curl-Up-Test/Bauchpresse (6.2.6.2)",
+      "group": "strength",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Gymnastikmatte; nahe einem Mattenende einen 12 cm breiten Streifen mit Kreppband aufkleben, ersatzweise die 12 cm mit einem tastbaren Gegenstand zeigen. Metronom mit 40 Schlägen pro Minute (z. B. das Metronom der App). Nur für Erwachsene ab 18 Jahren.\n\nAblauf: Rückenlage, Knie etwa 90° gebeugt, Fußsohlen flach am Boden, Beine höchstens hüftbreit; Arme gestreckt neben dem Körper, Handflächen unten, Fingerspitzen an der Markierung. Auf einen Schlag die Brust Richtung Knie heben, bis die Finger 12 cm am Boden nach vorn gleiten, auf den nächsten zurück; Kopf locker in Verlängerung der Wirbelsäule, kein Schwung. Die Füße bleiben am Boden und werden nicht festgehalten, der Takt wird genau eingehalten. Der Test endet, sobald keine saubere Ausführung mehr gelingt; gezählt werden ganze Wiederholungen. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.2.6.2"
+      }
+    },
+    {
+      "id": "triceps-dips",
+      "name": "Triceps-Dips/Beugestütz (6.2.6.3)",
+      "group": "strength",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Eine Bank oder ein Step zum Abstützen. Nur für Erwachsene ab 18 Jahren.\n\nAblauf: Auf der Kante sitzen und sie neben dem Gesäß mit beiden Händen greifen; mit fast gestreckten Armen das Gesäß vor die Kante bringen, Beine gestreckt, Fersen am Boden, Oberkörper aufrecht und Rücken gerade. Das Gesäß dicht an der Kante absenken, bis die nach hinten zeigenden Ellenbogen etwa 90° gebeugt sind, dann wieder hochdrücken. Gezählt wird jede ganze Bewegung. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.2.6.3"
+      }
+    },
+    {
+      "id": "pull-ups",
+      "name": "Pull-Ups/Klimmzüge (6.2.6.4)",
+      "group": "strength",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Eine Klimmzugstange, an der im gestreckten Hang gehangen werden kann. Nur für Erwachsene ab 18 Jahren.\n\nAblauf: Etwa schulterbreit im Kammgriff fassen, Handflächen zum Gesicht, Daumen außen. Aus dem gestreckten Hang kontrolliert hochziehen, bis das Kinn über der Stange ist, und kontrolliert wieder ablassen. Auch der Ristgriff mit dem Handrücken zum Körper ist zulässig. Gezählt wird jede ganze Bewegung. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.2.6.4"
+      }
+    },
+    {
+      "id": "gymnastics-strength",
+      "name": "Gerätturnen",
+      "group": "strength",
+      "measure": "level",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Je nach Altersgruppe ein anderes Kraftelement mit eigenem Gerät, z. B. kleine Kästen und Turnmatte (Kopfstand, Nackenstand), Parallelbarren (Stützschwingen), Reck (Klimmzüge, Hüft-Aufschwung), Wand oder Sprossenwand mit Matten (Handstand). Matten zum Absichern laut Materialliste, eine Sicherheitsstellung wird empfohlen. Prüfer*innen für Leichtathletik, Radfahren und Schwimmen dürfen nur abnehmen, wenn ausgebildete Turntrainer*innen dabei sind oder sie eine Fortbildung zu den Turnübungen haben.\n\nAblauf: Bewertet wird nur geschafft oder nicht geschafft: die Grobform reicht für Bronze, Feinform bzw. variable Ausführung entsprechen Silber und Gold, jede Stufe hat eine eigene Aufgabe. Das Element muss in allen Teilen erkennbar und ohne Hilfe gelingen, sofern die Beschreibung keine Hilfe erlaubt. Greift die Sicherheitsstellung ein, zählt der Versuch nicht. Drei Versuche nach der allgemeinen Regel; nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11, 6 (Sicherheitshinweise Gerätturnen) und 6.2.7 bis 6.2.7.6"
+      }
+    },
+    {
+      "id": "sprint",
+      "name": "Laufen",
+      "trackNames": {
+        "mmb": "Laufen / Rollstuhlfahren"
+      },
+      "group": "speed",
+      "measure": "secTenth",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Laufstrecke nach Alter laut Leistungstabelle: 30, 50 oder 100 m. Startblöcke sind nicht nötig.\n\nAblauf: Start mit oder ohne Startblock, auch aus dem ruhigen Stand; für alle gilt das dreiteilige Startkommando (Auf die Plätze, Fertig, dann Los oder Signal). Wer zwei Fehlstarts im selben Lauf verursacht, wird disqualifiziert. Die Zeit wird auf Zehntelsekunden abgelesen. Drei Versuche nach der allgemeinen Regel.\n\nMmB: F II läuft mit, F I wahlweise mit Begleitung. Klasse H fährt Rollstuhl mit Arm- und/oder Beinantrieb, beim Start alle Räder hinter der Startlinie, Sportrollstuhl erlaubt, keine elektrische Antriebshilfe. Streckenlängen laut Prüfkarte der Klasse.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 6.3 und 6.3.1; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.6 und 4.22"
+      }
+    },
+    {
+      "id": "swim-sprint",
+      "name": "Schwimmen",
+      "group": "speed",
+      "measure": "secTenth",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Becken von mindestens 12,5 m Länge oder offenes Gewässer, im Startbereich mindestens 1,80 m tief. Eine im Rettungswesen ausgebildete Person ist anwesend, die Sicherheitsregeln der DLRG gelten.\n\nAblauf: Start per Sprung vom Startblock oder im Wasser vom Beckenrand. Schwimmart frei, Wechsel erlaubt, keine Schwimmhilfen. Wende und Zielanschlag mit beliebigem Körperteil an der Wand; beim Brustschwimmen nach Start und Wende nur ein Tauchzug, sonst nach der Gleitphase sofort auftauchen. Die Zeit wird auf Zehntelsekunden abgelesen. Drei Versuche nach der allgemeinen Regel.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 6 (Sicherheitshinweise Schwimmen), 6.3 und 6.3.2; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1"
+      }
+    },
+    {
+      "id": "swim-sprint-minutes",
+      "name": "25 m Schwimmen in Minuten",
+      "group": "speed",
+      "measure": "minSec",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Wie beim 25-m-Schwimmen: Becken von mindestens 12,5 m Länge, im Startbereich mindestens 1,80 m tief, eine im Rettungswesen ausgebildete Person anwesend.\n\nAblauf: Es gelten die DOSB-Bestimmungen des 25-m-Schwimmens: freie Schwimmart, keine Schwimmhilfen, Wandberührung bei Wende und Zielanschlag. Die Zeit wird in Minuten und Sekunden eingetragen.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 6 (Sicherheitshinweise Schwimmen) und 6.3.2; DBS-Handbuch MmB (gültig ab 2026): nur Prüfkarten der Klasse H, kein Beschreibungstext"
+      }
+    },
+    {
+      "id": "cycle-sprint",
+      "name": "Radfahren",
+      "trackNames": {
+        "mmb": "Rad-/Tandem-/Handbike-/Dreiradfahren"
+      },
+      "group": "speed",
+      "measure": "secTenth",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Gerade, ebene Strecke ohne Verkehr, wegen der hohen Geschwindigkeit und der Kurven möglichst nicht im Stadion. Vor der 200-m-Messstrecke Platz zum Beschleunigen; Start- und Ziellinie so besetzen bzw. ausstatten, dass das Überfahren beider Linien genau erfasst wird. Jedes Fahrrad außer Elektrofahrrädern, ein Helm wird dringend empfohlen.\n\nAblauf: Fliegender Start: die Beschleunigung davor ist beliebig lang und wird nicht gewertet, gemessen wird vom Überfahren der Startlinie bis zum Überfahren der Ziellinie. Kein Fahrradergometer. Die Zeit wird auf Zehntelsekunden abgelesen. Drei Versuche nach der allgemeinen Regel.\n\nMmB: Neben dem Zweirad auch mit Dreirad, Handbike oder Tandem. Kein Rad mit Motorunterstützung, Handbike nur ohne elektrische Antriebshilfe.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.8, 6.1.6 (Material, Helm), 6.3 und 6.3.3; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.6, 4.7 und 4.24"
+      }
+    },
+    {
+      "id": "handbike-sprint",
+      "name": "200 m Handbike (fliegender Start)",
+      "group": "speed",
+      "measure": "minSec",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Wie beim 200-m-Radfahren mit fliegendem Start: gerade, ebene Strecke ohne Verkehr, Platz zum Beschleunigen vor der Startlinie, Zeiterfassung an Start- und Ziellinie.\n\nAblauf: Fliegender Start, die Beschleunigung wird nicht gewertet; gemessen wird die Zeit für die 200 m zwischen Start- und Ziellinie und in Minuten und Sekunden eingetragen.\n\nMmB: Handbike nur ohne elektrische Antriebshilfe.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.6 und 4.24 (die Prüfkarten nennen 200 m Handbike); DOSB-Prüfungswegweiser 2026, Kap. 6.3.3"
+      }
+    },
+    {
+      "id": "race-walking",
+      "name": "Gehen",
+      "group": "speed",
+      "measure": "secTenth",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Abgemessene Strecke; die Länge nach Alter steht auf der Prüfkarte.\n\nAblauf: Die Strecke wird gehend zurückgelegt und die Zeit gestoppt; wie alle Schnelligkeitsleistungen auf Zehntelsekunden abgelesen.\n\nMmB: Nur für die Klassen B I und B II (einseitige Beinbehinderung) sowie C I und C II (beidseitige Beinbehinderung).",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.23; DOSB-Prüfungswegweiser 2026, Kap. 6.3"
+      }
+    },
+    {
+      "id": "gymnastics-speed",
+      "name": "Gerätturnen",
+      "group": "speed",
+      "measure": "level",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Je nach Altersgruppe ein anderes Sprungelement, z. B. Stützsprung mit Aufhocken auf Kästen, Schrittsprung, Sprungrolle auf einen Weichbodenberg, Grätsch(winkel)sprung oder Handstütz-Sprungüberschlag. Benötigt werden je nach Element Sprungbrett, Kästen, Sprungtisch, Turn- und Weichbodenmatten; Weichböden dürfen mit Bänken oder Kästen unterbaut werden. Prüfer*innen für Leichtathletik, Radfahren und Schwimmen dürfen nur mit ausgebildeten Turntrainer*innen oder nach eigener Fortbildung abnehmen.\n\nAblauf: Bewertung wie beim Gerätturnen Kraft: geschafft oder nicht geschafft, Grobform für Bronze, Feinform bzw. variable Ausführung für Silber und Gold, jede Stufe mit eigener Aufgabe. Das Element muss vollständig erkennbar und ohne Hilfe gelingen; greift die Sicherheitsstellung ein, zählt es nicht. Drei Versuche nach der allgemeinen Regel; nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11, 6 (Sicherheitshinweise Gerätturnen), 6.2.7 (Bewertung) und 6.3.4 bis 6.3.4.6"
+      }
+    },
+    {
+      "id": "high-jump",
+      "name": "Hochsprung",
+      "group": "coordination",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Hochsprunganlage mit einer Latte, niveaugleich angelegt.\n\nAblauf: Absprung mit einem Fuß, gesprungen wird über eine Latte. Für jede Höhe gibt es drei Versuche; nach drei Fehlsprüngen in Folge, gleich bei welcher Höhe, scheidet die Person aus. Nicht für Menschen mit Endoprothese.\n\nMmB: Klasse F II springt aus dem Stand ab.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.11, 6 (sportfachliche Regelungen) und 6.4.1; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.8 und 4.26"
+      }
+    },
+    {
+      "id": "long-jump",
+      "name": "Weitsprung",
+      "group": "coordination",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Weitsprunganlage mit Sprunggrube, Anlauf beliebig lang. Absprung von einem in den Boden eingelassenen Balken oder aus einer 80 cm breiten Absprungfläche.\n\nAblauf: Beim Absprung vom Balken wird senkrecht vom hintersten Landeeindruck bis zur Vorderkante des Balkens gemessen, bei der Absprungfläche bis zur Höhe des vordersten Absprungeindrucks. Drei Versuche nach der allgemeinen Regel; nicht für Menschen mit Endoprothese.\n\nMmB: Für F I und F II ist die Absprungfläche 100 cm breit (40 cm, 20 cm Balken, 40 cm) und sollte vollständig hell hervorgehoben sein; für alle anderen Klassen 80 cm (30 cm, 20 cm Balken, 30 cm).",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11 und 6.4.2; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.8 und 4.25"
+      }
+    },
+    {
+      "id": "zone-long-jump",
+      "name": "Zonenweitsprung",
+      "group": "coordination",
+      "measure": "points",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Sprunggrube mit Absprunglinie nahe am Grubenrand, direkt dahinter ein kleines, niedriges Hindernis (höchstens 10 cm, z. B. Schaumstoffrolle) zur Orientierung. Zonen von je 25 cm mit Klebeband oder Dachlatten am Grubenrand markieren. Empfohlener Anlauf für Kinder etwa 10 m. Kinderdisziplin, laut Leistungstabelle für die Jüngsten statt Weitsprung.\n\nAblauf: Vier Sprünge, die besten drei zählen. Abgesprungen wird vor der Linie, Übertreten macht den Sprung ungültig. Jeder Sprung bekommt die Punkte der Zone, in der der hinterste Landeeindruck liegt: die erste Zone reicht bis 25 cm hinter die Linie, jede weitere Zone bringt einen Punkt mehr; die drei Werte werden addiert. Nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.11 und 6.4.3"
+      }
+    },
+    {
+      "id": "rotation-throw",
+      "name": "Drehwurf",
+      "group": "coordination",
+      "measure": "points",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Abwurflinie am Boden, davor Wurfzonen von je 1 m Breite markieren (bis 1 m ein Punkt, bis 2 m zwei Punkte und so weiter). Tennisring 160 bis 220 g, Außendurchmesser 15 bis 18 cm, aus Moosgummi (fliegt besser) oder luftgefüllt. Kinderdisziplin, laut Leistungstabelle bis zum Wechsel zum Schleuderball.\n\nAblauf: Der Ring wird aus der seitlichen Schrittstellung mit einer Drehbewegung oder nach einer vorgeschalteten ganzen Drehung so weit wie möglich geworfen. Vier Würfe, die besten drei zählen: jeder Wurf bekommt die Punkte der Zone, in der der Ring zuerst aufkommt, die drei Werte werden addiert. Erst werfen, wenn niemand mehr im Gefahrenbereich steht.\n\nMmB: Das DBS-Handbuch führt den Drehwurf nur für Kinder und nennt keine eigenen Regeln; es gelten die DOSB-Bestimmungen.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 6 (Sicherheitshinweise Würfe) und 6.4.4; DBS-Handbuch MmB (gültig ab 2026), Vorbemerkung und Kap. 4.1"
+      }
+    },
+    {
+      "id": "sling-ball",
+      "name": "Schleuderball",
+      "group": "coordination",
+      "measure": "meterCm",
+      "tracks": ["regular", "mmb"],
+      "help": {
+        "text": "Aufbau: Abwurfraum mit Linie oder Abwurfbalken, ein Wurfsektor und ein Maßband. Schleuderball 1 kg für alle Alters- und Geschlechtsgruppen: Leder- oder Kunststoffhülle mit formfester Füllung und Lederschlaufe (28 cm ± 1 cm lang, 2,0 cm ± 0,3 cm breit). Ausreichend Sicherheitsabstand von 10 m zur werfenden Person.\n\nAblauf: Wurf aus dem Stand, mit Anlauf oder aus der Drehung; Anlauflänge und Zahl der Drehungen sind frei. Der Versuch endet mit der Landung des Balls; erst dann den Abwurfraum verlassen, aber nicht über den Balken oder seine seitlichen Verlängerungen. Gemessen wird vom vorderen Rand des nächsten Aufschlags bis zur Innenkante der Linie: Nullpunkt des Maßbands im Abwurfraum über dem Schnittpunkt der Sektorlinien, abgelesen an der Innenkante auf der Seite des kleineren Winkels. Drei Versuche; mit Endoprothese keine Drehtechnik.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11, 6 (Sicherheitshinweise Würfe) und 6.4.5; DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.8"
+      }
+    },
+    {
+      "id": "rope-skipping",
+      "name": "Seilspringen (Rope Skipping)",
+      "group": "coordination",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Handelsübliches Springseil ohne Motor; bei Seilen mit Griffen muss das Seil im Griff drehbar sein, sonst verdreht es sich. Je nach Altersgruppe ist ein anderes Sprungelement gefordert (Grundsprung vorwärts oder rückwärts, Galoppsprung, Laufschritt, Kreuzdurchschlag, Doppeldurchschlag).\n\nAblauf: Gezählt wird die Zahl der Sprünge ohne Unterbrechung bei durchgehend schwingendem Seil; je nach Element jeder Durchschlag, jede Fußüberquerung (beim Galoppsprung nur die des rechten Fußes), jedes Kreuzen der Arme oder jede Landung nach einem Doppeldurchschlag. Zwischensprünge zählen nie mit; erlaubt sind sie nur beim Grundsprung vorwärts für Kinder bis 9 und ab 70 Jahren sowie beim Doppeldurchschlag (höchstens zwei zwischen zwei Doppeldurchschlägen). Drei Versuche nach der allgemeinen Regel; nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11 und 6.4.6 bis 6.4.6.6"
+      }
+    },
+    {
+      "id": "ball-grip",
+      "name": "Ball umgreifen (6.4.7.1)",
+      "group": "coordination",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Ein Ball etwa in Volleyball- oder Basketballgröße (nach Vorliebe auch Fußball oder Gymnastikball), ein Timer, der 30 Sekunden rückwärts zählt, am besten dazu ein Klickzähler. Freie Fläche von etwa 2 × 2 m mit rutschfestem Boden.\n\nAblauf: Beine weit auseinander, Knie gebeugt; den Ball zwischen den Beinen halten – eine Hand vorn am Ball, die andere hinten. Ball loslassen und mit vertauschten Händen wieder fassen, bevor er den Boden berührt; so oft wie möglich in 30 Sekunden. Jeder gelungene Umgriff zählt; berührt der Ball den Boden, endet der Versuch mit der bis dahin erreichten Zahl, eine Berührung der Beine ist kein Fehler. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.4.7.1"
+      }
+    },
+    {
+      "id": "kick-catch",
+      "name": "Kick-Fangen (6.4.7.2)",
+      "group": "coordination",
+      "measure": "count",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Ein Fußball oder ein Ball ähnlicher Größe, ein Timer für 30 Sekunden, am besten dazu ein Klickzähler. Ein Feld von 2 × 2 m mit Hütchen oder Klebeband markieren, der Boden muss rutschfest und stabil sein.\n\nAblauf: Im Feld stehend den Ball senkrecht aufprellen oder fallen lassen, nach dem ersten Aufprall mit Fuß oder Knie über Kopfhöhe spielen und mit beiden Händen fangen, in beliebiger Höhe, sobald der Ball seinen höchsten Punkt über dem Kopf erreicht hat. So oft wie möglich in 30 Sekunden, jede korrekte Abfolge zählt. Abbruch bei erneutem Bodenkontakt vor dem Hochspielen, Ball nicht über Kopfhöhe, Ball fällt beim Fangen, Fuß über der Feldmarkierung oder Fangen mit nur einer Hand; dann zählt das bis dahin Erreichte. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.4.7.2"
+      }
+    },
+    {
+      "id": "t-run",
+      "name": "Koordinations-T-Lauf (6.4.7.3)",
+      "group": "coordination",
+      "measure": "secTenth",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Vier flache Hütchen oder Markierungsteller als T: A ist Start und Ziel, B steht 9 m geradeaus von A, C und D je 4,5 m links und rechts von B. Ersatzweise die Punkte mit Klebeband oder Straßenkreide markieren; die Linien eines Volleyballfelds passen gut. Klassische Stoppuhr; ggf. ein nasses Handtuch, um die Schuhsohlen gegen Wegrutschen anzufeuchten.\n\nAblauf: Auf das Startkommando (Auf die Plätze, fertig, los) beginnen Lauf und Zeitmessung. A mit der Hand berühren, vorwärts zu B sprinten und berühren, mit Seitschritten nach links zu C, dann nach rechts an B vorbei (ohne Berührung) zu D, seitwärts zurück zu B (berühren), rückwärts zu A und A berühren; die umgekehrte Reihenfolge A, B, D, C, B, A ist erlaubt. Gemessen wird bis zum erneuten Erreichen von A, in Sekunden und Zehnteln. Ungültig bei gekreuzten Füßen im Seitschritt, fehlender Hütchenberührung oder verdrehter Hüfte beim Rückwärtslaufen (Kopf und Schultern dürfen sich drehen). Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.4.7.3"
+      }
+    },
+    {
+      "id": "coordination-ladder",
+      "name": "Koordinationsleiter (6.4.7.4)",
+      "group": "coordination",
+      "measure": "secTenth",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Koordinationsleiter mit 12 Sprossen (etwa 3 bis 5 cm dick) im Abstand von 40 cm, also 11 Felder; ersatzweise mit Kreide oder Klebeband aufzeichnen. Sprossen mit Kreppband fixieren, lose Schnüre und Enden aus dem Weg legen. Klassische Stoppuhr; bis die Schrittfolgen sitzen, am besten zu zweit prüfen.\n\nAblauf: Je nach Altersklasse ist eine von sieben Schrittfolgen gefordert, vorwärts, rückwärts oder seitwärts (z. B. Doppelschritt oder Ickey Shuffle). Ein Versuch besteht aus Hinweg und direkt anschließendem Rückweg: nach dem Hinweg ein beliebiger Wendeschritt außerhalb der Leiter, bei Vorwärtsfolgen mit halber Drehung (führt immer derselbe Fuß, dann mit Fußwechsel), bei Seitwärtsfolgen ohne Drehung. Die Zeit läuft vom Startkommando bis zum ersten Schritt außerhalb der Leiter nach dem letzten Feld und wird in Sekunden und Zehnteln gemessen. Abbruch bei deutlichem Treten auf die Leiter (die Ferse darf über einer Sprosse schweben), bei Schrittfehlern oder vergessenem Seiten- bzw. Fußwechsel. Drei Versuche.",
+        "source": "DOSB Erweiterter Leistungskatalog Kraft & Koordination 2026, Einleitung und 6.4.7.4 mit den sieben Schrittfolgen"
+      }
+    },
+    {
+      "id": "target-throw",
+      "name": "Zielwurf",
+      "group": "coordination",
+      "measure": "points",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Zielbereich am Boden mit 3 m Durchmesser und drei Ringen im Abstand von 60 cm (laut Abbildung Radien 30, 90 und 150 cm): innen 6, Mitte 3, außen 1 Punkt. Abstand von der Abwurfstelle zur Kreismitte: 3 m für 6 bis 11 Jahre und ab 70, 5 m für 12 bis 17 und 40 bis 69, 7 m für 18 bis 39. Wurfgerät: Keule (ab 160 g, ab 36 cm), Schlagball (80 g), Speer (Frauen ab 400 g, Männer ab 500 g) oder Sandsäckchen (ab 10 × 15 cm, 120 g).\n\nAblauf: Sechs Würfe, die besten fünf werden gewertet und ihre Ringpunkte addiert. Es zählt die Stelle, an der Keule, Ball oder Säckchen zuerst den Boden berührt bzw. an der der Speer stecken bleibt oder eine deutliche Einschlagspur hinterlässt; bei Berührung einer Ringlinie zählt der höhere Ringwert.\n\nMmB: Übung nur für MmB. In einzelnen Behinderungsklassen kann die Entfernung abweichen (laut Prüfkarte). Ein Zielnetz kann beim DBS-Bundesverband angefragt werden.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1 und 4.29 mit Abb. 3"
+      }
+    },
+    {
+      "id": "football-target",
+      "name": "Fußballzielstoß",
+      "group": "coordination",
+      "measure": "points",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Das Handbuch beschreibt diese Übung im Text nicht. Die Prüfkarten der Klasse E nennen sie als Alternative zum Zielwurf und geben den Abstand zur Kreismitte nach Alter an (3, 5 oder 7 m).\n\nAblauf: Ablauf, Ball und Wertung regelt der Handbuch-Text nicht.\n\nMmB: Nur Klasse E (beidseitige Armbehinderung), als Alternative zum Zielwurf.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Prüfkarten Klasse E (Zeile Zielwurf, alternativ als Fußballzielstoß); zum Vergleich Kap. 4.29"
+      }
+    },
+    {
+      "id": "skill-walk",
+      "name": "Geschicklichkeitsgehen / Rollstuhlparcours",
+      "group": "coordination",
+      "measure": "count",
+      "tracks": ["mmb"],
+      "help": {
+        "text": "Aufbau: Geschicklichkeitsgehen auf 15 m laut Abbildung: nach 2 m ein Kasten, bei 4 m der erste Sprungständer mit Latte, von 6 bis 10 m zwei Matten (je 1 × 2 m), bei 12 m der zweite Sprungständer mit Latte, bei 15 m die Wendemarke. Kasten für Mädchen und Frauen 0,90 m, für Jungen und Männer 1,10 m hoch; vordere Latte 0,70 m, hintere Latte 0,40 m bzw. 0,50 m. Rollstuhlparcours auf 12 m laut Abbildung: hin sechs Hütchen als Slalom, zurück sechs Hütchenpaare mit 2,5 m Abstand.\n\nAblauf: Geschicklichkeitsgehen: den Kasten mit dem ganzen Körper überwinden, unter der ersten Latte durchkriechen, über die Matten gehen, die zweite Latte übersteigen, um die Wendemarke herum und in umgekehrter Folge zurück; zwischen Kriechhindernis und Wendemarke nicht hüpfen. Rollstuhlparcours: hin im Slalom, ohne Pause zurück und dabei die Hütchenpaare abwechselnd vorwärts und rückwärts durchfahren, mit fließendem Wechsel, ohne ein Hütchen zu berühren. Eine Runde ist hin und zurück; gewertet wird, wie viele Durchläufe ohne Pause gelingen.\n\nMmB: Übung nur für MmB; die Wertung nach der Zahl der Durchläufe gilt für alle Behinderungsklassen gleich.",
+        "source": "DBS-Handbuch MmB (gültig ab 2026), Kap. 4.1, 4.27 mit Abb. 1 und 4.28 mit Abb. 2"
+      }
+    },
+    {
+      "id": "gymnastics-coordination",
+      "name": "Gerätturnen",
+      "group": "coordination",
+      "measure": "level",
+      "tracks": ["regular"],
+      "help": {
+        "text": "Aufbau: Je nach Altersgruppe ein anderes Element, z. B. Gehen auf dem Schwebebalken (Höhe 1,25 m, Übungsschwebebalken erlaubt, umgedrehte Bänke nicht, Aufstiegshilfe erlaubt), Hüftumschwung am Reck mit kleinem Kasten und Sprungseil als Hilfe, Schwingen an den Ringen, Rad, Rolle über kleine Kästen oder Strecksprung mit Drehung. Matten zum Absichern laut Materialliste. Prüfer*innen für Leichtathletik, Radfahren und Schwimmen dürfen nur mit ausgebildeten Turntrainer*innen oder nach eigener Fortbildung abnehmen.\n\nAblauf: Bewertung wie beim Gerätturnen Kraft: geschafft oder nicht geschafft, Grobform für Bronze, Feinform bzw. variable Ausführung für Silber und Gold, jede Stufe mit eigener Aufgabe. Das Element muss vollständig erkennbar und ohne Hilfe gelingen; greift die Sicherheitsstellung ein, zählt es nicht. Drei Versuche nach der allgemeinen Regel; nicht für Menschen mit Endoprothese.",
+        "source": "DOSB-Prüfungswegweiser 2026, Kap. 4.4.1, 4.4.11, 6 (Sicherheitshinweise Gerätturnen), 6.2.7 (Bewertung) und 6.4.8 bis 6.4.8.6"
+      }
+    }
+  ]
+}

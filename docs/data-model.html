@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Datenmodell – Sportabzeichen-Vorerfassung</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1d1d1f;
+        --muted: #5f6368;
+        --line: #d9dce1;
+        --head: #f3f4f6;
+        --user: #2563eb;
+        --ref: #d97706;
+        --cat: #059669;
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        line-height: 1.45;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #17181a;
+          --fg: #ececec;
+          --muted: #a3a7ad;
+          --line: #34373c;
+          --head: #222428;
+        }
+      }
+      body { margin: 0; background: var(--bg); color: var(--fg); }
+      main { max-width: 1040px; margin: 0 auto; padding: 16px; }
+      h1 { margin-bottom: 0; }
+      h2 { border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-top: 2em; }
+      h3 { margin-bottom: 4px; }
+      .muted { color: var(--muted); }
+      table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 0.93rem; }
+      th, td { text-align: left; vertical-align: top; padding: 5px 8px; border-bottom: 1px solid var(--line); }
+      th { background: var(--head); }
+      code { font-size: 0.9em; }
+      .tag { display: inline-block; padding: 0 6px; border-radius: 4px; font-size: 0.8rem; color: #fff; }
+      .tag.user { background: var(--user); }
+      .tag.ref { background: var(--ref); }
+      .tag.cat { background: var(--cat); }
+      svg { width: 100%; height: auto; max-width: 960px; }
+      svg .box { fill: var(--head); stroke: var(--fg); stroke-width: 1.2; }
+      svg .title { font-weight: 700; font-size: 14px; fill: var(--fg); }
+      svg .sub { font-size: 11px; fill: var(--muted); }
+      svg .label { font-size: 11px; }
+      nav a { margin-right: 12px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Datenmodell</h1>
+      <p class="muted">
+        Sportabzeichen-Vorerfassung · erzeugt aus <code>src/logic/</code> am 2026-11-10 ·
+        <strong>bei jeder Modelländerung neu erzeugen</strong> (Typen in
+        <code>types.ts</code>, Referenzdaten in <code>reference.ts</code> und <code>catalog/&lt;Jahr&gt;/</code>,
+        Aktionen in <code>workbook.ts</code>).
+      </p>
+      <nav>
+        <a href="#karte">Beziehungen</a><a href="#katalog">Katalog</a><a href="#arbeitsmappe">Arbeitsmappe</a
+        ><a href="#fluechtig">Abgeleitet/flüchtig</a><a href="#methoden">Methoden</a
+        ><a href="#werk">Werkseinstellungen</a>
+      </nav>
+
+      <h2>Überblick</h2>
+      <p>
+        Zwei streng getrennte Bereiche: der <strong>Leistungskatalog</strong> (Referenzdaten, ein
+        <strong>Datenpaket je Jahrgang</strong> „gültig ab“ in <code>catalog/&lt;Jahr&gt;/</code>, beim
+        Bauen geprüft und in die Datei übernommen, nicht vom Nutzer änderbar) und die
+        <strong>Arbeitsmappe</strong> (Nutzerdaten, gespeichert als Datei
+        <code>*.sportabzeichen.json</code> und als Entwurf im Browser). Grenzwerte und
+        Klassendetails kommen nur aus <code>catalog/local/</code>, das nicht veröffentlicht wird
+        (Rechte bei DOSB/DBS). Verbandsabzeichen (Kap. 8.4) werden nicht erfasst (seit 2026-11-01).
+        Messwerte werden in der kleinsten Einheit gespeichert (Sekunden, Zehntelsekunden,
+        Zentimeter, ganze Punkte), damit Vergleiche mit Grenzwerten exakt sind.
+      </p>
+
+      <h2 id="karte">Beziehungskarte</h2>
+      <p>
+        <span class="tag user">Nutzerdaten → Nutzerdaten</span>
+        <span class="tag ref">Nutzerdaten → Katalog</span>
+        <span class="tag cat">innerhalb des Katalogs</span>
+      </p>
+      <svg viewBox="0 0 960 500" role="img" aria-label="Entitäten und ihre Verweise">
+        <defs>
+          <marker id="a-user" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb" /></marker>
+          <marker id="a-ref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706" /></marker>
+          <marker id="a-cat" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669" /></marker>
+        </defs>
+
+        <!-- Nutzerdaten (Arbeitsmappe) -->
+        <rect class="box" x="30" y="40" width="170" height="56" rx="6" />
+        <text class="title" x="115" y="64" text-anchor="middle">AthleteGroup</text>
+        <text class="sub" x="115" y="82" text-anchor="middle">Personengruppe</text>
+
+        <rect class="box" x="270" y="40" width="170" height="56" rx="6" />
+        <text class="title" x="355" y="64" text-anchor="middle">Athlete</text>
+        <text class="sub" x="355" y="82" text-anchor="middle">Teilnehmer*in</text>
+
+        <rect class="box" x="270" y="250" width="170" height="56" rx="6" />
+        <text class="title" x="355" y="274" text-anchor="middle">Measurement</text>
+        <text class="sub" x="355" y="292" text-anchor="middle">Messwert</text>
+
+        <rect class="box" x="30" y="150" width="170" height="56" rx="6" />
+        <text class="title" x="115" y="174" text-anchor="middle">ProfileChoice</text>
+        <text class="sub" x="115" y="192" text-anchor="middle">Wahl im Prüfungsprofil</text>
+
+        <rect class="box" x="30" y="260" width="170" height="56" rx="6" />
+        <text class="title" x="115" y="284" text-anchor="middle">ManualAssessment</text>
+        <text class="sub" x="115" y="302" text-anchor="middle">Ausgleich / Kombination</text>
+
+        <!-- Katalog -->
+        <rect class="box" x="560" y="40" width="170" height="56" rx="6" />
+        <text class="title" x="645" y="64" text-anchor="middle">DisabilityClass</text>
+        <text class="sub" x="645" y="82" text-anchor="middle">Behinderungsklasse A–J</text>
+
+        <rect class="box" x="560" y="250" width="170" height="56" rx="6" />
+        <text class="title" x="645" y="274" text-anchor="middle">Exercise</text>
+        <text class="sub" x="645" y="292" text-anchor="middle">Übung (Prüfkartenzeile)</text>
+
+        <rect class="box" x="760" y="160" width="170" height="56" rx="6" />
+        <text class="title" x="845" y="184" text-anchor="middle">Requirement</text>
+        <text class="sub" x="845" y="202" text-anchor="middle">Leistungsanforderung</text>
+
+        <rect class="box" x="760" y="420" width="170" height="56" rx="6" />
+        <text class="title" x="845" y="444" text-anchor="middle">GroupId</text>
+        <text class="sub" x="845" y="462" text-anchor="middle">Disziplingruppe (4)</text>
+
+        <rect class="box" x="560" y="400" width="170" height="56" rx="6" />
+        <text class="title" x="645" y="424" text-anchor="middle">ExerciseDetail</text>
+        <text class="sub" x="645" y="442" text-anchor="middle">Ausführung (lokal)</text>
+        <line x1="645" y1="400" x2="645" y2="308" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="652" y="372" fill="#059669">exerciseId</text>
+        <text class="label" x="552" y="484" fill="#059669">label = eine Variante (Requirement.label)</text>
+
+        <rect class="box" x="760" y="300" width="170" height="56" rx="6" />
+        <text class="title" x="845" y="324" text-anchor="middle">SpazLabel</text>
+        <text class="sub" x="845" y="342" text-anchor="middle">Bezeichnung in SpAz</text>
+
+        <line x1="760" y1="320" x2="732" y2="296" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="770" y="292" fill="#059669">exerciseIds</text>
+        <line x1="845" y1="356" x2="845" y2="418" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="852" y="392" fill="#059669">group</text>
+
+        <!-- user → user -->
+        <line x1="200" y1="68" x2="268" y2="68" stroke="#2563eb" stroke-width="1.6" marker-end="url(#a-user)" />
+        <text class="label" x="234" y="60" text-anchor="middle" fill="#2563eb">athleteIds</text>
+        <line x1="355" y1="250" x2="355" y2="98" stroke="#2563eb" stroke-width="1.6" marker-end="url(#a-user)" />
+        <text class="label" x="362" y="180" fill="#2563eb">athleteId</text>
+
+        <line x1="200" y1="168" x2="296" y2="99" stroke="#2563eb" stroke-width="1.6" marker-end="url(#a-user)" />
+        <text class="label" x="206" y="140" fill="#2563eb">athleteId</text>
+        <line x1="200" y1="196" x2="268" y2="262" stroke="#2563eb" stroke-width="1.6" marker-end="url(#a-user)" />
+        <text class="label" x="206" y="240" fill="#2563eb">measurementId</text>
+        <line x1="200" y1="270" x2="300" y2="99" stroke="#2563eb" stroke-width="1.6" marker-end="url(#a-user)" />
+        <text class="label" x="236" y="212" fill="#2563eb">athleteId</text>
+
+        <!-- user → catalog -->
+        <line x1="440" y1="60" x2="558" y2="60" stroke="#d97706" stroke-width="1.6" marker-end="url(#a-ref)" />
+        <text class="label" x="499" y="52" text-anchor="middle" fill="#d97706">classIds</text>
+        <line x1="440" y1="278" x2="558" y2="278" stroke="#d97706" stroke-width="1.6" marker-end="url(#a-ref)" />
+        <text class="label" x="499" y="270" text-anchor="middle" fill="#d97706">exerciseId</text>
+        <line x1="420" y1="250" x2="590" y2="98" stroke="#d97706" stroke-width="1.6" marker-end="url(#a-ref)" />
+        <text class="label" x="470" y="170" fill="#d97706">classId</text>
+
+        <!-- catalog internal -->
+        <line x1="760" y1="200" x2="732" y2="258" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="740" y="236" text-anchor="end" fill="#059669">exerciseId</text>
+        <line x1="800" y1="160" x2="712" y2="98" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="780" y="128" fill="#059669">classId</text>
+        <line x1="690" y1="306" x2="810" y2="418" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="760" y="352" fill="#059669">group</text>
+        <path d="M730,52 C770,30 770,90 732,84" fill="none" stroke="#059669" stroke-width="1.6" marker-end="url(#a-cat)" />
+        <text class="label" x="772" y="64" fill="#059669">parentId</text>
+      </svg>
+
+      <h3>Beziehungstabelle (maßgeblich)</h3>
+      <table>
+        <thead><tr><th>Von</th><th>Feld</th><th>Nach</th><th>Kardinalität</th><th>Art</th></tr></thead>
+        <tbody>
+          <tr><td>AthleteGroup</td><td><code>athleteIds[]</code></td><td>Athlete</td><td>n : m</td><td><span class="tag user">Nutzer</span></td></tr>
+          <tr><td>Measurement</td><td><code>athleteId</code></td><td>Athlete</td><td>n : 1</td><td><span class="tag user">Nutzer</span></td></tr>
+          <tr><td>ManualAssessment</td><td><code>athleteId</code></td><td>Athlete</td><td>n : 1 (höchstens eine je Gruppe sinnvoll)</td><td><span class="tag user">Nutzer</span></td></tr>
+          <tr><td>ProfileChoice</td><td><code>athleteId</code></td><td>Athlete</td><td>n : 1 (höchstens eine je Person und Gruppe)</td><td><span class="tag user">Nutzer</span></td></tr>
+          <tr><td>ProfileChoice</td><td><code>measurementId</code></td><td>Measurement</td><td>n : 1 (Messwert derselben Person, Übung derselben Gruppe)</td><td><span class="tag user">Nutzer</span></td></tr>
+          <tr><td>Athlete</td><td><code>classIds[]</code></td><td>DisabilityClass</td><td>n : m (nur MmB; leer = offen)</td><td><span class="tag ref">→ Katalog</span></td></tr>
+          <tr><td>Athlete</td><td><code>inactiveClassIds[]</code></td><td>DisabilityClass</td><td>n : m (Teilmenge von <code>classIds</code>)</td><td><span class="tag ref">→ Katalog</span></td></tr>
+          <tr><td>Measurement</td><td><code>exerciseId</code></td><td>Exercise</td><td>n : 1</td><td><span class="tag ref">→ Katalog</span></td></tr>
+          <tr><td>Measurement</td><td><code>classId?</code></td><td>DisabilityClass</td><td>n : 0..1 (muss in <code>Athlete.classIds</code> liegen)</td><td><span class="tag ref">→ Katalog</span></td></tr>
+          <tr><td>Requirement</td><td><code>exerciseId</code></td><td>Exercise</td><td>n : 1</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>Requirement</td><td><code>classId?</code></td><td>DisabilityClass</td><td>n : 0..1 (Pflicht bei <code>track = 'mmb'</code>, verboten bei regulär)</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>Exercise</td><td><code>group</code></td><td>GroupId</td><td>n : 1</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>DisabilityClass</td><td><code>parentId?</code></td><td>DisabilityClass (Hauptklasse)</td><td>n : 0..1 (Untergruppe, z. B. „H II“ unter „H“)</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>SpazLabel</td><td><code>exerciseIds[]</code></td><td>Exercise</td><td>n : m (gleiche Gruppe, Übung gilt für <code>track</code>; leer nur bei „Ausgleichsbedingung“)</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>SpazLabel</td><td><code>group</code></td><td>GroupId</td><td>n : 1</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>ExerciseDetail</td><td><code>exerciseId</code></td><td>Exercise</td><td>n : 1</td><td><span class="tag cat">Katalog</span></td></tr>
+          <tr><td>ExerciseDetail</td><td><code>label</code></td><td>Requirement (Variante: <code>label</code> derselben Übung)</td><td>0..1 je Übung und Variante (doppelt = Fehler)</td><td><span class="tag cat">Katalog</span></td></tr>
+        </tbody>
+      </table>
+      <p class="muted">
+        Geprüft werden alle Verweise beim Öffnen einer Datei (<code>parseWorkbook</code>) bzw. beim
+        Laden eines Katalogs (<code>validateCatalog</code>).
+      </p>
+
+      <h2 id="katalog">Leistungskatalog (Referenzdaten)</h2>
+
+      <h3>Catalog</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>validFrom</code></td><td>number</td><td>ja</td><td>Jahr „gültig ab“ der Unterlagen (2026)</td></tr>
+          <tr><td><code>sources</code></td><td>string[]</td><td>ja</td><td>Offizielle Quellen</td></tr>
+          <tr><td><code>classes</code></td><td>DisabilityClass[]</td><td>ja</td><td>Behinderungsklassen</td></tr>
+          <tr><td><code>exercises</code></td><td>Exercise[]</td><td>ja</td><td>Übungen</td></tr>
+          <tr><td><code>requirements</code></td><td>Requirement[]</td><td>ja</td><td>Leistungsanforderungen (nur aus dem lokalen Paket; sonst leer)</td></tr>
+          <tr><td><code>spaz</code></td><td>SpazMapping | null</td><td>ja</td><td>Bezeichnungen der Disziplinen in SpAz; <code>null</code> ohne <code>spaz.json</code></td></tr>
+          <tr><td><code>details</code></td><td>ExerciseDetail[]</td><td>nein</td><td>Ausführung je Variante (Schrittfolgen der Koordinationsleiter, Elemente des Gerätturnens); fehlt ohne lokales Paket</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">
+        Dateien eines Jahrgangs: <code>catalog.json</code> (validFrom, sources, classes, exercises)
+        und <code>spaz.json</code> – öffentlich;
+        <code>local/&lt;Jahr&gt;.requirements.json</code> (Zeilen in Kartenschreibweise) und
+        <code>local/&lt;Jahr&gt;.classes.json</code> (Untergruppen, Kriterien),
+        <code>local/&lt;Jahr&gt;.details.json</code> mit den Bildern in <code>local/&lt;Jahr&gt;.images/</code>
+        (beim Bauen als <code>data:</code>-Adressen eingebettet) – nicht veröffentlicht.
+        Aufbau und Beispiele: <code>catalog/README.md</code>.
+      </p>
+
+      <h3>ExerciseDetail – Ausführung einer Variante (lokal)</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>exerciseId</code></td><td>string</td><td>ja</td><td>Übung, z. B. <code>coordination-ladder</code>, <code>gymnastics-strength</code></td></tr>
+          <tr><td><code>label</code></td><td>string</td><td>ja</td><td>Variante, die beschrieben wird – ein <code>Requirement.label</code> dieser Übung (Schrittfolge bzw. Turnelement)</td></tr>
+          <tr><td><code>title</code></td><td>string</td><td>ja</td><td>Name in der Quelle (kann vom Namen der Plattform abweichen, z. B. „Kopfstand“ / „Schulterstand“); die App zeigt ihn als Namen der Variante (<code>variantName</code>)</td></tr>
+          <tr><td><code>subtitle</code></td><td>string</td><td>nein</td><td>Kurzbeschreibung (Schrittfolge)</td></tr>
+          <tr><td><code>ages</code></td><td>string</td><td>nein</td><td>Alter laut Quelle</td></tr>
+          <tr><td><code>material</code></td><td>string</td><td>nein</td><td>Material (Gerätturnen)</td></tr>
+          <tr><td><code>steps</code></td><td>string[]</td><td>nein</td><td>Schritte der Folge in Reihenfolge (nicht leer)</td></tr>
+          <tr><td><code>levels</code></td><td>{ bronze, silver, gold }</td><td>nein</td><td>Aufgabe je Stufe (alle drei, nicht leer)</td></tr>
+          <tr><td><code>image</code></td><td>string</td><td>nein</td><td>Bild als <code>data:image/…</code> (in der Datei: Dateiname in <code>&lt;Jahr&gt;.images/</code>)</td></tr>
+          <tr><td><code>imageAlt</code></td><td>string</td><td>nein</td><td>Bildbeschreibung</td></tr>
+          <tr><td><code>imageShape</code></td><td><code>tall</code> | <code>wide</code></td><td>nein</td><td>Leiter nach Höhe; Bildstreifen in voller Breite, auf dem Handy seitlich wischbar</td></tr>
+          <tr><td><code>video</code></td><td>string</td><td>nein</td><td>Amtliche Videoanleitung (https, öffnet außerhalb der App)</td></tr>
+          <tr><td><code>source</code></td><td>string</td><td>ja</td><td>Kapitel bzw. Seite der Quelle</td></tr>
+        </tbody>
+      </table>
+
+      <h3>SpazMapping / SpazLabel – Bezeichnungen in SpAz</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>source</code></td><td>string</td><td>ja</td><td>Herkunft (SpAz-Laufzettel)</td></tr>
+          <tr><td><code>complete</code></td><td>boolean</td><td>ja</td><td>false, solange nur ein Teil der SpAz-Liste bekannt ist</td></tr>
+          <tr><td><code>labels[].track</code></td><td>Track</td><td>ja</td><td>Laufzettel: <code>regular</code> = „Normal“, <code>mmb</code> = „Behindertensport“; Name + Gruppe sind je Laufzettel eindeutig</td></tr>
+          <tr><td><code>labels[].group</code></td><td>GroupId</td><td>ja</td><td>Gruppe in SpAz</td></tr>
+          <tr><td><code>labels[].label</code></td><td>string</td><td>ja</td><td>Bezeichnung wie in SpAz, z. B. „Fußballweitstoß“</td></tr>
+          <tr><td><code>labels[].exerciseIds</code></td><td>string[]</td><td>ja</td><td>Übungen dieser App, für die der Eintrag steht</td></tr>
+          <tr><td><code>labels[].manual</code></td><td>boolean</td><td>nein</td><td>Eintrag „Ausgleichsbedingung“ – von Hand entschieden, ohne Übung</td></tr>
+          <tr><td><code>labels[].note</code></td><td>string</td><td>nein</td><td>Hinweis, z. B. auf eine auffällige Bezeichnung</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Exercise – Übung</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td>Stabile Kennung, z. B. <code>run-endurance</code></td></tr>
+          <tr><td><code>name</code></td><td>string</td><td>ja</td><td>Bezeichnung laut Prüfkarte</td></tr>
+          <tr><td><code>trackNames</code></td><td>{ regular?, mmb? }</td><td>nein</td><td>Abweichende Bezeichnung auf der Karte der anderen Bedingungen (z. B. „Laufen / Rollstuhlfahren“)</td></tr>
+          <tr><td><code>group</code></td><td>GroupId</td><td>ja</td><td><code>endurance</code> | <code>strength</code> | <code>speed</code> | <code>coordination</code></td></tr>
+          <tr><td><code>measure</code></td><td>MeasureKindId</td><td>ja</td><td>Messart (siehe Werkseinstellungen)</td></tr>
+          <tr><td><code>tracks</code></td><td>Track[]</td><td>ja</td><td><code>regular</code> und/oder <code>mmb</code></td></tr>
+          <tr><td><code>help</code></td><td>{ text, source }</td><td>ja</td><td>Erklärung (noch leer) und Fundstelle der offiziellen Regeln</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Requirement – Leistungsanforderung</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>exerciseId</code></td><td>string</td><td>ja</td><td>Übung</td></tr>
+          <tr><td><code>track</code></td><td>Track</td><td>ja</td><td>Bedingungen</td></tr>
+          <tr><td><code>sex</code></td><td><code>'w'</code> | <code>'m'</code></td><td>ja</td><td>Wertungskategorie</td></tr>
+          <tr><td><code>ageFrom</code></td><td>number</td><td>ja</td><td>Untere Altersgrenze (≥ 6)</td></tr>
+          <tr><td><code>ageTo</code></td><td>number | null</td><td>ja</td><td>Obere Grenze; <code>null</code> = nach oben offen (z. B. 90+)</td></tr>
+          <tr><td><code>classId</code></td><td>string</td><td>nur MmB</td><td>Behinderungsklasse</td></tr>
+          <tr><td><code>label</code></td><td>string</td><td>ja</td><td>Konkrete Variante für dieses Alter, z. B. „800 m Lauf“, „Schlagball (80 g)“. Mehrere Anforderungen für denselben Fall sind <strong>Varianten zur Wahl</strong>, wenn ihr <code>label</code> sich unterscheidet (Kegeln Asphalt/Bohle/Bowling/Schere, Strecke oder Dauerschwimmen); gleiche Variante doppelt = Katalogfehler</td></tr>
+          <tr><td><code>thresholds</code></td><td>{ bronze, silver, gold }</td><td>außer Messart <code>level</code></td><td>Grenzwerte in der kleinsten Einheit. <strong>Richtung</strong> ergibt sich aus der Reihenfolge: Bronze &lt; Gold ⇒ mehr ist besser (Weiten, Dauer), sonst weniger ist besser (Zeiten)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>DisabilityClass – Behinderungsklasse</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td><code>A</code> … <code>J</code>, Untergruppen z. B. <code>H II</code> (mit dem DBS-Katalog)</td></tr>
+          <tr><td><code>label</code></td><td>string</td><td>ja</td><td>Bezeichnung laut Prüfungswegweiser Kap. 5.1 bzw. DBS-Handbuch</td></tr>
+          <tr><td><code>parentId</code></td><td>string</td><td>nur Untergruppe</td><td>Hauptklasse der Untergruppe</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td>nein</td><td>Kriterien für die Einstufung (DBS-Handbuch)</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="arbeitsmappe">Arbeitsmappe (Nutzerdaten, gespeichert)</h2>
+
+      <h3>Workbook – Wurzel der Datei</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>format</code></td><td><code>'sportabzeichen-vorerfassung'</code></td><td>ja</td><td>Erkennung der Datei</td></tr>
+          <tr><td><code>version</code></td><td><code>2</code></td><td>ja</td><td>Dateiversion (seit 10.11.2026); Version 1 wird gelesen und hochgestuft (Geburtsdatum → Jahrgang, leerer Nachname entfällt), andere werden abgelehnt</td></tr>
+          <tr><td><code>year</code></td><td>number</td><td>ja</td><td>Prüfungsjahr (Sportabzeichenjahr)</td></tr>
+          <tr><td><code>organisation</code></td><td>{ name, postalCode, city }</td><td>ja</td><td>Verein/Schule; Ersatzadresse, wenn Personen keine haben (Pflicht im offiziellen Import)</td></tr>
+          <tr><td><code>athletes</code></td><td>Athlete[]</td><td>ja</td><td>Teilnehmende</td></tr>
+          <tr><td><code>groups</code></td><td>AthleteGroup[]</td><td>ja</td><td>Personengruppen</td></tr>
+          <tr><td><code>measurements</code></td><td>Measurement[]</td><td>ja</td><td>Messwerte</td></tr>
+          <tr><td><code>manualAssessments</code></td><td>ManualAssessment[]</td><td>ja</td><td>Gruppen, die der Prüfer von Hand entscheidet (Ausgleichsbedingung, Klassenkombination)</td></tr>
+          <tr><td><code>profileChoices</code></td><td>ProfileChoice[]</td><td>ja</td><td>Endgültiges Prüfungsprofil: übernommener Messwert je Gruppe</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">
+        Ältere Entwürfe ohne <code>manualAssessments</code>, <code>profileChoices</code> oder
+        <code>inactiveClassIds</code> werden beim Öffnen ergänzt (<code>upgradeWorkbook</code>),
+        nicht abgelehnt. Die frühere Liste <code>badgeRecords</code> (Verbandsabzeichen) fällt weg,
+        wenn sie leer ist; eine Datei mit Einträgen darin wird mit Begründung abgelehnt – nichts geht
+        unbemerkt verloren.
+      </p>
+
+      <h3>Athlete – Teilnehmer*in</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td>Eindeutig in der Datei</td></tr>
+          <tr><td><code>firstName</code></td><td>string</td><td>ja</td><td>Vorname, nicht leer (≤ 40 Zeichen beim Eintragen)</td></tr>
+          <tr><td><code>lastName</code></td><td>string</td><td>nein</td><td>Nur aus Dateien der Version 1; die App fragt nicht mehr danach</td></tr>
+          <tr><td><code>birthYear</code></td><td>number</td><td>ja</td><td>Jahrgang (Tobias 10.11.2026: „mit Vornamen und Geburtsjahr“); Alter = Prüfungsjahr − Jahrgang (Jahrgangsprinzip), beim Eintragen mindestens 6</td></tr>
+          <tr><td><code>sex</code></td><td><code>'w'</code> | <code>'m'</code></td><td>ja</td><td>Wertungskategorie (nicht-binäre Personen wählen eine)</td></tr>
+          <tr><td><code>track</code></td><td><code>'regular'</code> | <code>'mmb'</code></td><td>ja</td><td>Bedingungen – werden nie gemischt</td></tr>
+          <tr><td><code>classIds</code></td><td>string[]</td><td>ja</td><td><em>Mögliche</em> Behinderungsklassen – alle, die zutreffen (nur MmB; leer = noch offen)</td></tr>
+          <tr><td><code>inactiveClassIds</code></td><td>string[]</td><td>ja</td><td>Zutreffende Klassen, die der Prüfer bewusst nicht verwendet (Teilmenge von <code>classIds</code>); bleiben sichtbar, zählen aber nicht</td></tr>
+          <tr><td><code>consentOnFile</code></td><td>boolean</td><td>ja</td><td>MmB: gesonderte Einwilligung (Gesundheitsdaten) liegt vor</td></tr>
+          <tr><td><code>dsaId</code></td><td>string</td><td>nein</td><td>DSA-ID aus Sportabzeichen-Digital</td></tr>
+          <tr><td><code>postalCode</code>, <code>city</code></td><td>string</td><td>nein</td><td>Wohnort; sonst gilt die Organisation</td></tr>
+          <tr><td><code>swimProofYear</code></td><td>number</td><td>nein</td><td>Jahr des letzten Schwimmnachweises</td></tr>
+          <tr><td><code>firstTime</code></td><td>boolean</td><td>ja</td><td>Erstmaliger Erwerb (dann muss im Prüfungsjahr geschwommen werden)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>AthleteGroup – Personengruppe</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td>Eindeutig</td></tr>
+          <tr><td><code>name</code></td><td>string</td><td>ja</td><td>z. B. „Klasse 3b“</td></tr>
+          <tr><td><code>athleteIds</code></td><td>string[]</td><td>ja</td><td>Mitglieder; eine Person kann in mehreren Gruppen sein</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Measurement – Messwert</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td>Eindeutig</td></tr>
+          <tr><td><code>athleteId</code></td><td>string</td><td>ja</td><td>Person</td></tr>
+          <tr><td><code>exerciseId</code></td><td>string</td><td>ja</td><td>Übung</td></tr>
+          <tr><td><code>value</code></td><td>number | Level</td><td>ja</td><td>Zahl in der kleinsten Einheit; bei Messart <code>level</code> die Stufe</td></tr>
+          <tr><td><code>classId</code></td><td>string</td><td>nein</td><td>Klasse, unter der bewertet wird, wenn die Klasse ausschlaggebend ist</td></tr>
+          <tr><td><code>variant</code></td><td>string</td><td>nein</td><td>Gemachte Variante (<code>Requirement.label</code>), nötig, wenn es für den Fall mehrere gibt</td></tr>
+          <tr><td><code>date</code></td><td>string (JJJJ-MM-TT)</td><td>nein</td><td>Prüfungstag</td></tr>
+        </tbody>
+      </table>
+
+      <h3>ManualAssessment – Ausgleichsbedingung / Klassenkombination</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>ja</td><td>Eindeutig</td></tr>
+          <tr><td><code>athleteId</code></td><td>string</td><td>ja</td><td>Person</td></tr>
+          <tr><td><code>group</code></td><td>GroupId</td><td>ja</td><td>Gruppe, die von Hand entschieden wird</td></tr>
+          <tr><td><code>basis</code></td><td><code>'compensation'</code> | <code>'combinedClasses'</code></td><td>ja</td><td>Ausgleichsbedingung (DBS-Handbuch 4.8) oder Kombination von Behinderungsklassen</td></tr>
+          <tr><td><code>condition</code></td><td>string (Freitext)</td><td>ja</td><td>Festgesetzte Bedingung, z. B. „Ausdauerschwimmen 400 m statt 800 m“</td></tr>
+          <tr><td><code>performance</code></td><td>string (Freitext)</td><td>ja</td><td>Erbrachte Leistung, z. B. „400 m in 11:20“</td></tr>
+          <tr><td><code>setBy</code></td><td>string</td><td>ja</td><td>Prüfer*in bzw. Arzt*Ärztin, die die Bedingung festgesetzt haben</td></tr>
+          <tr><td><code>level</code></td><td>Level | null</td><td>ja</td><td>Entscheidung des Prüfers; <code>null</code> = noch offen</td></tr>
+          <tr><td><code>date</code></td><td>string (JJJJ-MM-TT)</td><td>nein</td><td>Prüfungstag</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Plan – geplante Übung</h3>
+      <p class="muted">Tobias 10.11.2026: „auswählen, dass die Übung von dem Kind gemacht werden wird“. Plant die Stationen; die Bewertung hängt nicht davon ab. Liste <code>Workbook.plans</code>, ältere Dateien bekommen sie leer.</p>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>athleteId</code></td><td>string</td><td>ja</td><td>Kind (muss existieren)</td></tr>
+          <tr><td><code>exerciseId</code></td><td>string</td><td>ja</td><td>Übung des Katalogs; je Kind und Übung höchstens einmal</td></tr>
+        </tbody>
+      </table>
+
+      <h3>ProfileChoice – Wahl im endgültigen Prüfungsprofil</h3>
+      <table>
+        <thead><tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><code>athleteId</code></td><td>string</td><td>ja</td><td>Person</td></tr>
+          <tr><td><code>group</code></td><td>GroupId</td><td>ja</td><td>Gruppe</td></tr>
+          <tr><td><code>measurementId</code></td><td>string</td><td>ja</td><td>Messwert, der für diese Gruppe übernommen wird – auch wenn ein anderer besser wäre</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="fluechtig">Abgeleitet und flüchtig (nicht gespeichert)</h2>
+      <table>
+        <thead><tr><th>Struktur</th><th>Felder</th><th>Herkunft</th></tr></thead>
+        <tbody>
+          <tr><td>Combination</td><td><code>athleteId, exerciseId, age, status, variants[{ classId, options[] }], classDecisive</code></td><td><code>combine</code>; je Klasse die wählbaren Anforderungen (<code>options</code>, meist eine); <code>status</code>: possible · notInTrack · tooYoung · classOpen · noRequirement · ambiguous (dieselbe Variante doppelt). <code>classDecisive</code> = mehrere mögliche Klassen führen zu unterschiedlichen Anforderungen (gleiche Anforderungen zählen als eine)</td></tr>
+          <tr><td>AthleteEvaluation</td><td><code>athleteId, groups[{ group, level, source, sourceId, chosen }], points, award, swim, paperCardOnly, complete, notes[]</code></td><td><code>evaluateAthlete</code>. Je Gruppe entscheidet in dieser Rangfolge: Prüferentscheidung (<code>source: 'manual'</code>) &gt; Wahl im Prüfungsprofil (<code>chosen: true</code>) &gt; bestes Ergebnis aus den Messwerten. Hinweiscodes: tooYoung · classOpen · classUndecided · classInactive · notInTrack · noRequirement · ambiguous · variantUndecided · variantUnknown · unknownExercise · choiceInvalid · manualOpen · consentMissing · paperCardOnly</td></tr>
+          <tr><td>SwimStatus</td><td>valid · missing · future · firstTimeMustSwim · childProof · expired</td><td><code>swimStatus</code></td></tr>
+          <tr><td>StopwatchState</td><td><code>startedAt, accumulated, finishes[]</code> (Millisekunden)</td><td>Stoppuhr; geht beim Schließen verloren</td></tr>
+          <tr><td>Zähler</td><td>number</td><td><code>counterReducer</code>; geht beim Schließen verloren</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="methoden">Methoden der Datenbearbeitung</h2>
+
+      <h3>Zustandsübergänge – <code>workbookReducer(state, action)</code></h3>
+      <table>
+        <thead><tr><th>Aktion</th><th>Wirkung</th><th>Kaskade</th></tr></thead>
+        <tbody>
+          <tr><td><code>setYear</code></td><td>Prüfungsjahr setzen</td><td>–</td></tr>
+          <tr><td><code>setOrganisation</code></td><td>Organisation ersetzen</td><td>–</td></tr>
+          <tr><td><code>addAthlete</code> / <code>updateAthlete</code></td><td>Person anlegen / ersetzen</td><td>deaktivierte Klassen werden auf mögliche Klassen beschränkt (regulär: keine Klassen); update: Messwerte verlieren eine <code>classId</code>, die die Person nicht mehr hat (Wert bleibt) – nur deaktiviert bleibt sie erhalten</td></tr>
+          <tr><td><code>removeAthlete</code></td><td>Person entfernen</td><td>entfernt ihre Messwerte, Prüferentscheidungen und Profilwahlen, nimmt sie aus allen Gruppen</td></tr>
+          <tr><td><code>addChildToGroup</code></td><td>Kind anlegen und in die gezeigte Gruppe aufnehmen (Seite „Kinder“)</td><td>unbekannte Gruppe: nichts</td></tr>
+          <tr><td><code>addGroup</code> / <code>updateGroup</code> / <code>removeGroup</code></td><td>Gruppen pflegen</td><td>Personen bleiben erhalten</td></tr>
+          <tr><td><code>removeGroupWithChildren</code></td><td>Gruppe löschen (Seite „Gruppen“)</td><td>Kinder, die in keiner anderen Gruppe sind, gehen mit allen Werten (wie <code>removeAthlete</code>); Kinder anderer Gruppen bleiben</td></tr>
+          <tr><td><code>addMeasurement</code> / <code>removeMeasurement</code></td><td>Messwert erfassen / löschen</td><td>remove: eine Profilwahl auf diesen Messwert entfällt</td></tr>
+          <tr><td><code>addManualAssessment</code> / <code>updateManualAssessment</code> / <code>removeManualAssessment</code></td><td>Ausgleichsbedingung bzw. Klassenkombination erfassen, Stufe festlegen, löschen</td><td>–</td></tr>
+          <tr><td><code>togglePlan</code></td><td>Kind macht die Übung – oder nicht mehr (zweimal = zurück)</td><td>unbekanntes Kind: nichts; <code>removeAthlete</code> entfernt seine Pläne</td></tr>
+          <tr><td><code>setProfileChoice</code></td><td>Übernommenen Messwert einer Gruppe festlegen; <code>null</code> hebt die Wahl auf (bestes Ergebnis zählt)</td><td>ersetzt eine frühere Wahl derselben Gruppe</td></tr>
+          <tr><td><code>replace</code></td><td>Ganze Arbeitsmappe ersetzen (Datei öffnen, neu beginnen)</td><td>–</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Reine Funktionen (<code>src/logic/</code>)</h3>
+      <table>
+        <thead><tr><th>Modul</th><th>Signatur</th><th>Zweck</th></tr></thead>
+        <tbody>
+          <tr><td>age</td><td><code>ageInYear(birthYear, year): number</code> · <code>isIsoDate(text): boolean</code></td><td>Alter, das im Kalenderjahr erreicht wird; echtes Kalenderdatum prüfen</td></tr>
+          <tr><td>children</td><td><code>checkChild(input, examYear)</code> · <code>newChild(values, id)</code> · <code>inputOf(athlete)</code></td><td>Kind aus Vorname, Jahrgang, w/m, MmB prüfen (alle Gründe auf einmal, ab 6 Jahren) und anlegen</td></tr>
+          <tr><td>children</td><td><code>groupMembers(workbook, groupId)</code> · <code>childLabel(athlete, among)</code> · <code>twinHint(members, values)</code> · <code>childrenWithoutGroup(workbook)</code></td><td>Kinder einer Gruppe nach Vornamen; Jahrgang bei gleichen Namen; Hinweis bei gleichem Namen + Jahrgang</td></tr>
+          <tr><td>children</td><td><code>currentGroup(workbook, rememberedId)</code> · <code>onlyInGroup(workbook, groupId)</code> · <code>checkGroupName(workbook, name)</code></td><td>Gezeigte Gruppe; Kinder, die mit der Gruppe gehen; Gruppenname prüfen</td></tr>
+          <tr><td>overview</td><td><code>offersByExercise(workbook, catalog, groupId)</code> · <code>offersByChild(…)</code> · <code>offerLabels(combination)</code> · <code>offerText(exercise, labels)</code></td><td>Seite „Möglich“: je Disziplingruppe die Übungen, die ein Kind ablegen kann, mit Varianten und Gründen</td></tr>
+          <tr><td>overview</td><td><code>expectedValues(combination, exercise)</code> · <code>isPlanned(workbook, athleteId, exerciseId)</code></td><td>Erwartete Werte je Variante (und Klasse, wo sie entscheidet) in Kartennotation, „–“ wo die Tabelle kein Bronze hat, <code>null</code> bei Ausführungsstufen; geplant oder nicht</td></tr>
+          <tr><td>capture</td><td><code>captureRows(workbook, catalog, members, exercise)</code> · <code>variantsFor(row, classId)</code> · <code>checkAttempt(row, exercise, input)</code> · <code>previewLevel(row, catalog, year, input)</code> · <code>stationTools(exercise): StationTool[]</code></td><td>Seite „Erfassen“: wer die Übung ablegen kann, was zu wählen ist (Klasse, Variante je Klasse), Stufe beim Tippen; welche Werkzeuge bei der Übung offen stehen (Tabelle <code>TOOL_OF_MEASURE</code>: Zeit → Stoppuhr, Anzahl → Zähler, dazu das Metronom, wo ein Takt vorgegeben ist)</td></tr>
+          <tr><td>measure</td><td><code>parseMeasure(kind, input): ParseResult</code></td><td>Eingabe in Kartennotation lesen (05:40 · 8,4 · 2,35 · 24 · B/S/G), Fehlertext auf Deutsch</td></tr>
+          <tr><td>measure</td><td><code>formatMeasure(kind, value): string</code> · <code>fitsMeasure(kind, value): boolean</code></td><td>Anzeige in der Schreibweise der Prüfkarten (lange Zeiten in Minuten, z. B. „75:00“; eingegeben werden darf auch „1:15:00“); gespeicherte Form prüfen</td></tr>
+          <tr><td>catalog</td><td><code>directionOf(thresholds): 'higher' | 'lower'</code></td><td>Richtung aus der Reihenfolge der Grenzwerte</td></tr>
+          <tr><td>catalog</td><td><code>exerciseById(catalog, id)</code> · <code>exerciseName(exercise, track)</code></td><td>Übung finden; Kartenbezeichnung je Bedingungen</td></tr>
+          <tr><td>catalog</td><td><code>findRequirements(catalog, { exerciseId, track, sex, age, classId }): Requirement[]</code></td><td>Passende Anforderungen (mehrere = Varianten zur Wahl)</td></tr>
+          <tr><td>catalog</td><td><code>helpParagraphs(text)</code></td><td>Aufbau-Text in seine Absätze „Aufbau“, „Ablauf“, „MmB“</td></tr>
+          <tr><td>catalog</td><td><code>exerciseDetails(catalog, exerciseId): ExerciseDetail[]</code></td><td>Alle Ausführungen einer Übung in Katalogreihenfolge (ohne lokales Paket keine)</td></tr>
+          <tr><td>catalog</td><td><code>variantName(catalog, exerciseId, label): string</code></td><td>Anzeigename einer Variante: der amtliche Titel ihrer Ausführung, außer der Schlüssel ist dieser Titel plus Zusatz; ohne Ausführung der Schlüssel selbst</td></tr>
+          <tr><td>overview</td><td><code>detailsInUse(catalog, exerciseId, possible): DetailInUse[]</code></td><td>Die Ausführungen, die für diese Kinder gelten – jede Variante einmal, mit den Kindern, für die sie gilt</td></tr>
+          <tr><td>catalog</td><td><code>requirementFromRow(catalog, row): RowResult</code></td><td>Abgeschriebene Tabellenzeile (Kartennotation) in eine Anforderung wandeln</td></tr>
+          <tr><td>catalog</td><td><code>validateCatalog(catalog): CatalogIssue[]</code></td><td>Doppelte Kennungen, fehlende Quellen, falsche Verweise, Altersspannen, Grenzwert-Reihenfolge, Überschneidungen, Untergruppen ohne Hauptklasse, SpAz-Zuordnungen (Gruppe, Laufzettel, doppelte Einträge)</td></tr>
+          <tr><td>catalogPackage</td><td><code>assembleCatalog(files): AssembleResult</code></td><td>JSON-Dateien eines Jahrgangs prüfen und zu einem Katalog zusammenfügen (lokale Grenzwerte über <code>requirementFromRow</code>, lokale Klassen mischen, lokale Ausführungen: bekannte Übung und Variante, einmal je Variante, Bild eingebettet, Video https); alle Fehler auf einmal</td></tr>
+          <tr><td>catalogPackage</td><td><code>catalogForYear(catalogs, year)</code></td><td>Katalog mit dem jüngsten „gültig ab“, das nicht nach dem Prüfungsjahr liegt</td></tr>
+          <tr><td>build/catalogFiles</td><td><code>loadCatalogs(dir)</code> · <code>catalogYears(dir)</code></td><td>Beim Bauen: alle Jahrgangsordner lesen; ein fehlerhaftes Paket bricht den Build ab</td></tr>
+          <tr><td>build/catalogFiles</td><td><code>inlineDetailImages(raw, imageDir)</code></td><td>Bilddateien der Ausführungen als <code>data:</code>-Adressen einbetten; fehlende oder unbekannte Bilder brechen den Build mit ihrem Namen ab</td></tr>
+          <tr><td>combinations</td><td><code>resolveAthletes(workbook, selection)</code> · <code>resolveExercises(catalog, selection)</code></td><td>Auswahl auflösen: alle / eine / Gruppe bzw. Disziplingruppe</td></tr>
+          <tr><td>combinations</td><td><code>combine(athlete, exercise, catalog, year): Combination</code></td><td>Eine Kombination mit Varianten je möglicher Klasse</td></tr>
+          <tr><td>combinations</td><td><code>combinations(workbook, catalog, athletes, exercises): Combination[]</code> · <code>groupCombinations(list, 'athlete' | 'exercise')</code></td><td>Kreuzprodukt der Auswahl; Darstellung nach Person oder nach Übung</td></tr>
+          <tr><td>evaluation</td><td><code>levelFor(requirement, value): Level | null</code></td><td>Stufe eines Werts</td></tr>
+          <tr><td>evaluation</td><td><code>pointsFor(level)</code> · <code>awardFor(points)</code></td><td>1/2/3 Punkte; Verleihung 4–7 / 8–10 / 11–12</td></tr>
+          <tr><td>evaluation</td><td><code>measurementLevel(measurement, athlete, catalog, year)</code> · <code>chooseOption(options, variant)</code></td><td>Stufe eines Messwerts oder Hinweiscode; Variante nach ihrem Namen, nie geraten</td></tr>
+          <tr><td>evaluation</td><td><code>evaluateAthlete(athlete, workbook, catalog): AthleteEvaluation</code></td><td>Entscheidende Stufe je Gruppe, Punkte, Verleihung, Schwimmnachweis, Hinweise</td></tr>
+          <tr><td>swim</td><td><code>swimStatus(athlete, year): SwimStatus</code></td><td>Schwimmnachweis nach Kap. 4.2</td></tr>
+          <tr><td>classes</td><td><code>activeClassIds(athlete): ClassId[]</code></td><td>Mögliche Klassen ohne die deaktivierten – nur diese bilden Varianten</td></tr>
+          <tr><td>classes</td><td><code>classTree(catalog): { main, subgroups }[]</code></td><td>Hauptklassen mit Untergruppen für die Einstufung</td></tr>
+          <tr><td>fileFormat</td><td><code>upgradeWorkbook(data)</code></td><td>Ergänzt fehlende, später hinzugekommene Listen/Felder eines älteren Entwurfs; entfernt eine leere <code>badgeRecords</code>-Liste</td></tr>
+          <tr><td>metronome</td><td><code>beatsInWindow(start, bpm, from, to)</code> · <code>clampBpm</code> · <code>beatInterval</code> · <code>beatLabel(pattern, i)</code> · <code>completedRepetitions(pattern, beats)</code></td><td>Taktzeiten für die vorausplanende Tonausgabe, Beschriftung hoch/runter, Wiederholungen</td></tr>
+          <tr><td>metronome</td><td><code>metronomePresetFor(exerciseId)</code></td><td>Der Takt, den der amtliche Text einer Übung vorgibt – an der Station in „Erfassen“</td></tr>
+          <tr><td>workbook</td><td><code>emptyWorkbook(year): Workbook</code></td><td>Leere Arbeitsmappe</td></tr>
+          <tr><td>fileFormat</td><td><code>serializeWorkbook(workbook): string</code> · <code>parseWorkbook(text, catalogs): ParsedWorkbook</code></td><td>Datei schreiben; lesen mit vollständiger Prüfung aller Felder und Verweise (alle Fehler auf einmal)</td></tr>
+          <tr><td>fileName</td><td><code>suggestedFileName(workbook, today, suffix): string</code></td><td>Dateiname aus Jahr, Organisation, Datum</td></tr>
+          <tr><td>stopwatch</td><td><code>startStopwatch</code> · <code>stopStopwatch</code> · <code>finishStopwatch(state, now)</code> · <code>elapsed(state, now)</code> · <code>isRunning(state)</code></td><td>Stoppuhr mit Zieleinläufen; Zeit wird übergeben</td></tr>
+          <tr><td>stopwatch</td><td><code>elapsedAs(kind, ms)</code> · <code>formatStopwatch(ms)</code></td><td>Wert für die Prüfkarte: Schnelligkeit auf Zehntel, Ausdauer auf Sekunden abgelesen (weitere Stellen abgeschnitten); Anzeige mit Hundertsteln</td></tr>
+          <tr><td>stopwatch</td><td><code>readingParts(kind, ms): { card, finer }</code></td><td>Wert für die Prüfkarte (abgeschnitten) und die nächste Stelle, die hell angezeigt wird („8,4“ + „3“, „05:40“ + „,7“)</td></tr>
+          <tr><td>stopwatch</td><td><code>setFinish(state, index, ms)</code></td><td>Eine Zielzeit ersetzen – durch die Zeit des Zielbilds, auf dem die Person die Linie überquert</td></tr>
+          <tr><td>finishVideo</td><td><code>emptyVideo()</code> · <code>isFrameDue(lastAt, at)</code> · <code>pictureTime(callbackAt, captureTime)</code> · <code>addFrame(video, frame)</code> · <code>markFinish(video, finishIndex, pressAt, pressElapsed)</code> · <code>stopRecording(video)</code></td><td>Zielvideo, nur im Arbeitsspeicher (nie in der Datei): die letzten <code>FINISH_WINDOW.beforeMs</code> (2 s) Bilder rollend, je „Zieleinlauf“ die Bilder von 2 s davor bis <code>afterMs</code> (1 s) danach; höchstens <code>MAX_CLIPS</code> (20) Einläufe mit Bildern, weitere stehen in <code>withoutPictures</code>; Bilder höchstens alle 25 ms (<code>MIN_FRAME_GAP_MS</code>: eine 30-fps-Kamera behält jedes Bild, eine 60-fps-Kamera jedes zweite). <code>pictureTime</code> liefert <code>{ at, exact }</code>: <code>exact</code> nur mit der Aufnahmezeit der Kamera (höchstens 500 ms vor dem Rückruf), sonst die Zeit, zu der das Bild die Seite erreicht – um die unbekannte Verzögerung der Kamera zu spät. Jedes <code>Frame</code> trägt <code>at</code>, <code>exact</code>, <code>image</code></td></tr>
+          <tr><td>finishVideo</td><td><code>clipFor(video, finishIndex)</code> · <code>frameElapsed(clip, frame)</code> · <code>pressFrameIndex(clip)</code> · <code>canTakeTime(frame)</code></td><td>Die Bilder eines Zieleinlaufs, die Stoppuhrzeit eines Bildes (Zeit beim Druck, verschoben um den Abstand des Bildes zum Druck), das Bild des Drucks (markiert); ob die Zeit eines Bildes die gemessene ersetzen darf – nur bei <code>exact</code>, sonst würde die Verzögerung der Kamera die Messung verfälschen</td></tr>
+          <tr><td>stopwatch</td><td><code>pressTime(eventTimeStamp, handlerNow)</code> · <code>PRESS_TIME_TRUST_MS</code></td><td>Der Zeitpunkt eines Drucks auf Start/Stopp/Zieleinlauf: die Zeit des Eingabe-Ereignisses (Moment der Berührung), nicht die, zu der das Programm drankommt – ein ausgelastetes Handy (Kamera) machte sonst jede Zeit zu spät. Eine Ereigniszeit auf einer anderen Uhr (ältere Browser) oder älter als 1 s fällt auf die Zeit des Programms zurück</td></tr>
+          <tr><td>counter</td><td><code>counterReducer(count, 'increment' | 'decrement' | 'reset')</code></td><td>Zähler, nie negativ</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="werk">Werkseinstellungen</h2>
+      <p>
+        Alles Folgende ist <strong>fest in die gebaute Datei eingebaut</strong> – Konstanten aus
+        <code>src/logic/reference.ts</code> sowie das öffentliche Datenpaket
+        <code>catalog/2026/</code> (Unterlagen „gültig ab 2026“, siehe <code>docs/quellen.md</code>).
+        Es ist <strong>nicht vom Nutzer änderbar</strong> und ändert sich nur mit einem neuen Build;
+        ein neuer Jahrgang ist ein neuer Ordner. Grenzwerte sind nur enthalten, wenn beim Bauen
+        <code>catalog/local/</code> vorhanden ist. Es gibt keine bearbeitbaren Startdaten.
+      </p>
+      <table>
+        <thead><tr><th>Daten</th><th>Inhalt</th><th>Quelle</th></tr></thead>
+        <tbody>
+          <tr><td><code>GROUPS</code></td><td>4 Disziplingruppen: Ausdauer (6.1), Kraft (6.2), Schnelligkeit (6.3), Koordination (6.4)</td><td>Prüfungswegweiser Kap. 6</td></tr>
+          <tr><td><code>LEVELS</code>, <code>AWARD_BANDS</code></td><td>Bronze 1 / Silber 2 / Gold 3 Punkte; Verleihung 4–7 / 8–10 / 11–12</td><td>Kap. 4.3</td></tr>
+          <tr><td><code>TRACKS</code></td><td>Regulär (DOSB) · Menschen mit Behinderung (DBS); Kurzform „regulär“ · „MmB“ für Meldungen</td><td>Kap. 4.4.12, 5</td></tr>
+          <tr><td><code>MEASURE_KINDS</code></td><td>6 Messarten: Min./Sek. (s) · Sek./Zehntel (1/10 s) · m/cm (cm) · Punkte · Anzahl · Stufe B/S/G</td><td>Einheiten der Prüfkarten 2026</td></tr>
+          <tr><td><code>MIN_AGE</code>, <code>ADULT_AGE</code>, <code>ADULT_SWIM_PROOF_YEARS</code></td><td>6 · 18 · 5</td><td>Kap. 1, 4.2</td></tr>
+          <tr><td><code>catalog/2026/catalog.json</code> – classes</td><td>10 Klassen A–J</td><td>Kap. 5.1</td></tr>
+          <tr><td><code>catalog/2026/catalog.json</code> – exercises</td><td>42 Übungen: 17 unter beiden Bedingungen, 14 nur regulär, 11 nur MmB (regulär je Gruppe 6/10/4/11 – mit je 4 Übungen des Erweiterten Leistungskatalogs Kraft und Koordination; MmB 7/8/6/7 – eine Übung je Messart wie auf der Plattform). Jede Übung mit Aufbau-Text in eigenen Worten und Quelle (offene Punkte: <code>docs/aufbau-offene-punkte.md</code>)</td><td>Gruppenprüfkarte Allgemein, Einzelprüfkarte MmB, Erweiterter Leistungskatalog Kraft &amp; Koordination 2026, Prüfungswegweiser, DBS-Handbuch</td></tr>
+          <tr><td><code>catalog/2026/spaz.json</code></td><td>80 SpAz-Bezeichnungen: 27 „Behindertensport“ (davon 4 „Ausgleichsbedingung“) und 53 „Normal“; vollständig bis auf die bewusst ausgelassenen Abzeichen anderer Sportverbände</td><td>Alle 88 SpAz-Laufzettel (Export 02.11.2026)</td></tr>
+          <tr><td><code>METRONOME_PRESETS</code></td><td>Je Übung mit Takt im amtlichen Text (<code>exerciseId</code>, Pflichttakt oder Richtwert, Wortlaut): Curl-Up-Test 6.2.6.2 40 BPM „hoch“/„runter“ (Pflichttakt); Push-Ups 6.2.6.1 60 BPM „hoch“/„runter“ (Richtwert „ca. zwei Sekunden, je eine Sekunde pro Bewegungsrichtung“); dazu „Frei“ 60 BPM. Triceps-Dips, Pull-Ups: kein Tempo im Text</td><td>Erweiterter Leistungskatalog Kraft und Koordination 2026</td></tr>
+          <tr><td>Grenzwerte (<code>requirements</code>)</td><td><strong>leer</strong> im öffentlichen Paket – nur aus <code>catalog/local/2026.requirements.json</code> (lokales Paket aus dem privaten Begleit-Repo, erzeugt mit <code>npm run katalog:lokal</code>; Stand 11.11.2026: 17 669 Zeilen, regulär 1 108, MmB 16 561); Untergruppen aus <code>catalog/local/2026.classes.json</code> (28 Klassen, 18 Untergruppen)</td><td>DOSB-Tabellen 2026, DBS-Handbuch MmB (gültig ab 2026)</td></tr>
+          <tr><td>Ausführungen (<code>details</code>)</td><td><strong>leer</strong> im öffentlichen Paket – nur aus <code>catalog/local/2026.details.json</code> + <code>2026.images/</code> (25 Einträge: 7 Schrittfolgen der Koordinationsleiter mit Schrittbild und Video, 18 Elemente des Gerätturnens mit Material, Bildstreifen und Aufgabe je Stufe; Texte wörtlich, Bilder ausgeschnitten, erzeugt mit den Skripten in <code>.tmp/details/</code>). Nicht vom Nutzer änderbar</td><td>DOSB-Prüfungswegweiser 2026 (6.2.7, 6.3.4, 6.4.8), Erweiterter Leistungskatalog 2026 (6.4.7.4)</td></tr>
+        </tbody>
+      </table>
+      <p>
+        <strong>Nutzerdaten:</strong> keine Vorbelegung. Eine neue Arbeitsmappe ist leer und trägt
+        das aktuelle Jahr. Der Browser-Entwurf liegt unter dem Schlüssel
+        <code>sportabzeichen-vorerfassung:entwurf</code> und wird mit „Neu beginnen“ gelöscht. Außerdem merkt sich die App die offene Seite (<code>sportabzeichen-vorerfassung:ort</code>, 4 Stunden) und die gezeigte Gruppe (<code>sportabzeichen-vorerfassung:gruppe</code>) – beides nur Bequemlichkeit.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,235 @@
+// Page „Möglich“: which Abnahmen the children of a group can do (test limits only).
+import {
+  STATUS_TEXT,
+  detailsInUse,
+  expectedValues,
+  isPlanned,
+  offerLabels,
+  offerText,
+  offersByChild,
+  offersByExercise,
+} from '../../src/logic/overview';
+import { combine } from '../../src/logic/combinations';
+import { exerciseById, exerciseDetails, variantName } from '../../src/logic/catalog';
+import { TEST_CATALOG, YEAR, athlete, sampleWorkbook } from '../fixtures/testCatalog';
+import { workbookReducer } from '../../src/logic/workbook';
+
+const book = sampleWorkbook();
+const ids = (list: { athleteId: string }[]) => list.map((c) => c.athleteId);
+
+describe('offersByExercise', () => {
+  const groups = offersByExercise(book, TEST_CATALOG, 'g1');
+
+  it('lists the four Disziplingruppen, each with only the exercises someone can do', () => {
+    expect(groups.map((g) => g.group)).toEqual(['endurance', 'strength', 'speed', 'coordination']);
+    const endurance = groups[0]?.offers.map((o) => o.exercise.id);
+    expect(endurance).toEqual(['run-endurance', 'run-continuous']);
+  });
+
+  it('names who can, and who of the same Bedingungen cannot and why', () => {
+    const run = groups[0]?.offers.find((o) => o.exercise.id === 'run-endurance');
+    expect(ids(run?.possible ?? [])).toEqual(['p1', 'p2']);
+    const continuous = groups[0]?.offers.find((o) => o.exercise.id === 'run-continuous');
+    expect(ids(continuous?.possible ?? [])).toEqual(['p1']);
+    // Max (MmB, 25) has no Dauerlauf requirement in the test limits
+    expect(continuous?.notPossible.map((c) => [c.athleteId, c.status])).toEqual([
+      ['p2', 'noRequirement'],
+    ]);
+  });
+
+  it('an exercise of the other Bedingungen is no „cannot“ (no noise for regular children)', () => {
+    const walking = groups[2]?.offers.find((o) => o.exercise.id === 'race-walking');
+    expect(ids(walking?.possible ?? [])).toEqual(['p2']);
+    expect(walking?.notPossible).toEqual([]);
+  });
+
+  it('an unknown group offers nothing', () => {
+    expect(offersByExercise(book, TEST_CATALOG, 'nope').every((g) => g.offers.length === 0)).toBe(
+      true,
+    );
+  });
+});
+
+describe('offersByChild', () => {
+  it('per child the possible exercises of each group and the groups still missing', () => {
+    const [girl, max] = offersByChild(book, TEST_CATALOG, 'g1', book.athletes);
+    expect(girl?.missing).toEqual([]);
+    expect(girl?.groups.map((g) => g.possible.map((c) => c.exerciseId))).toEqual([
+      ['run-endurance', 'run-continuous'],
+      ['medicine-ball'],
+      ['sprint'],
+      ['zone-long-jump', 'gymnastics-coordination'],
+    ]);
+    expect(max?.missing).toEqual([]);
+    expect(girl?.blocked).toBeNull();
+  });
+
+  it('says why nothing is possible: too young or class open', () => {
+    const young = athlete({ id: 'p9', birthYear: YEAR - 5 });
+    const open = athlete({ id: 'p8', track: 'mmb', classIds: [] });
+    const withThem = {
+      ...book,
+      athletes: [...book.athletes, young, open],
+      groups: [{ id: 'g1', name: 'Gruppe 1', athleteIds: ['p1', 'p2', 'p9', 'p8'] }],
+    };
+    const [, , tooYoung, classOpen] = offersByChild(
+      withThem,
+      TEST_CATALOG,
+      'g1',
+      withThem.athletes,
+    );
+    expect(tooYoung?.blocked).toBe('tooYoung');
+    expect(classOpen?.blocked).toBe('classOpen');
+    expect(STATUS_TEXT.classOpen).toBe('Behinderungsklasse noch offen');
+  });
+});
+
+describe('expectedValues (test limits)', () => {
+  const run = exerciseById(TEST_CATALOG, 'run-endurance');
+  const [girl, max] = book.athletes;
+  if (!run || !girl || !max) throw new Error('fixture');
+
+  it('the limits of the child in card notation', () => {
+    expect(expectedValues(combine(girl, run, TEST_CATALOG, YEAR), run)).toEqual([
+      {
+        classId: null,
+        label: '800 m',
+        limits: { bronze: '05:33', silver: '04:52', gold: '04:12' },
+      },
+    ]);
+  });
+
+  it('per class where the class decides', () => {
+    const values = expectedValues(combine(max, run, TEST_CATALOG, YEAR), run);
+    expect(values.map((v) => [v.classId, v.label])).toEqual([
+      ['A', '800 m'],
+      ['H', '800 m Rollstuhl'],
+    ]);
+  });
+
+  it('judged by execution: no limits; no Bronze in the table: „–“', () => {
+    const turnen = exerciseById(TEST_CATALOG, 'gymnastics-coordination');
+    if (!turnen) throw new Error('fixture');
+    expect(expectedValues(combine(girl, turnen, TEST_CATALOG, YEAR), turnen)[0]?.limits).toBeNull();
+    const [first] = TEST_CATALOG.requirements;
+    if (!first?.thresholds) throw new Error('fixture');
+    const noBronze = {
+      ...TEST_CATALOG,
+      requirements: [
+        { ...first, thresholds: { ...first.thresholds, bronze: first.thresholds.silver } },
+      ],
+    };
+    const exercise = exerciseById(noBronze, first.exerciseId);
+    if (!exercise) throw new Error('fixture');
+    expect(
+      expectedValues(combine(girl, exercise, noBronze, YEAR), exercise)[0]?.limits?.bronze,
+    ).toBe('–');
+  });
+});
+
+describe('detailsInUse (Tobias 2026-11-10: Schrittfolgen und Ausführungsbilder je Kind)', () => {
+  const run = exerciseById(TEST_CATALOG, 'run-endurance');
+  const [girl, max] = book.athletes;
+  if (!run || !girl || !max) throw new Error('fixture');
+  const detail = (label: string) => ({
+    exerciseId: 'run-endurance',
+    label,
+    title: `T ${label}`,
+    source: 'S',
+  });
+  const withDetails = {
+    ...TEST_CATALOG,
+    details: [detail('800 m Rollstuhl'), detail('800 m'), { ...detail('Reck'), exerciseId: 'x' }],
+  };
+  const both = [combine(girl, run, withDetails, YEAR), combine(max, run, withDetails, YEAR)];
+
+  it('each variant once, in the order the children bring them, with the children it applies to', () => {
+    expect(
+      detailsInUse(withDetails, 'run-endurance', both).map((u) => [u.detail.label, u.athleteIds]),
+    ).toEqual([
+      ['800 m', ['p1', 'p2']],
+      ['800 m Rollstuhl', ['p2']],
+    ]);
+  });
+
+  it('only the details of this exercise; none without the local package', () => {
+    expect(detailsInUse(withDetails, 'gymnastics-coordination', both)).toEqual([]);
+    expect(detailsInUse(TEST_CATALOG, 'run-endurance', both)).toEqual([]);
+    expect(exerciseDetails(withDetails, 'run-endurance').map((d) => d.label)).toEqual([
+      '800 m Rollstuhl',
+      '800 m',
+    ]);
+  });
+
+  // Tobias 2026-11-11: „ja“ to the official names — the Wegweiser's „Kopfstand“ for the platform's
+  // „Schulterstand“, but „Handstütz-Sprungüberschlag auf Sprungtisch“ keeps its distinguishing part
+  it('shows the official name of a variant; a label that is that name plus an addition stays', () => {
+    expect(variantName(withDetails, 'run-endurance', '800 m')).toBe('T 800 m');
+    const vault = {
+      ...withDetails,
+      details: [{ ...detail('800 m Rollstuhl'), title: '800 m' }],
+    };
+    expect(variantName(vault, 'run-endurance', '800 m Rollstuhl')).toBe('800 m Rollstuhl');
+    // no detail for it, another exercise, or no local package: the label as it is
+    expect(variantName(vault, 'run-endurance', '800 m')).toBe('800 m');
+    expect(variantName(withDetails, 'gymnastics-coordination', '800 m')).toBe('800 m');
+    expect(variantName(TEST_CATALOG, 'run-endurance', '800 m')).toBe('800 m');
+  });
+
+  it('a variant without a detail is left out, the others stay', () => {
+    const one = { ...withDetails, details: [detail('800 m Rollstuhl')] };
+    expect(detailsInUse(one, 'run-endurance', both).map((u) => u.athleteIds)).toEqual([['p2']]);
+  });
+});
+
+describe('plans (Tobias 2026-11-10: „auswählen, dass die Übung von dem Kind gemacht wird“)', () => {
+  it('toggle on and off; unknown children take nothing; removing a child takes its plans', () => {
+    let state = workbookReducer(book, {
+      type: 'togglePlan',
+      athleteId: 'p1',
+      exerciseId: 'sprint',
+    });
+    expect(isPlanned(state, 'p1', 'sprint')).toBe(true);
+    expect(isPlanned(state, 'p2', 'sprint')).toBe(false);
+    expect(
+      workbookReducer(state, { type: 'togglePlan', athleteId: 'zz', exerciseId: 'sprint' }),
+    ).toBe(state);
+    state = workbookReducer(state, { type: 'removeAthlete', athleteId: 'p1' });
+    expect(state.plans).toEqual([]);
+    const twice = workbookReducer(
+      workbookReducer(book, { type: 'togglePlan', athleteId: 'p1', exerciseId: 'sprint' }),
+      { type: 'togglePlan', athleteId: 'p1', exerciseId: 'sprint' },
+    );
+    expect(twice.plans).toEqual([]);
+  });
+});
+
+describe('offerText', () => {
+  it('the variant is what the child does; an element alone gets its exercise in front', () => {
+    expect(offerText({ id: 'run-endurance', name: 'Laufen' }, ['800 m Lauf'])).toBe('800 m Lauf');
+    expect(offerText({ id: 'bowling', name: 'Kegeln' }, ['Kegeln Asphalt', 'Kegeln Bohle'])).toBe(
+      'Kegeln Asphalt / Kegeln Bohle',
+    );
+    expect(offerText({ id: 'gymnastics-strength', name: 'Gerätturnen' }, ['Stützschwingen'])).toBe(
+      'Gerätturnen: Stützschwingen',
+    );
+    expect(
+      offerText({ id: 'coordination-ladder', name: 'Koordinationsleiter (6.4.7.4)' }, [
+        'Dreifachschritt',
+      ]),
+    ).toBe('Koordinationsleiter: Dreifachschritt');
+    expect(offerText({ id: 'sprint', name: 'Laufen' }, [])).toBe('Laufen');
+  });
+});
+
+describe('offerLabels', () => {
+  it('each variant once, also over several classes', () => {
+    const max = book.athletes[1];
+    const run = exerciseById(TEST_CATALOG, 'run-endurance');
+    if (!max || !run) throw new Error('fixture');
+    expect(offerLabels(combine(max, run, TEST_CATALOG, YEAR))).toEqual([
+      '800 m',
+      '800 m Rollstuhl',
+    ]);
+  });
+});
