@@ -305,6 +305,15 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
 
 ## Status (2026-11-10)
 
+**Task (Kanzlei PC session, 2026-11-15, Tobias): a GitHub check named „Tests“.**
+
+- Every app's upload through the repo `Freigabe` waits for the app's own GitHub check **„Tests“**,
+  green for exactly the commit that is uploaded. Tobias wants one way for all projects.
+- This repo has no check yet. Add `.github/workflows/tests.yml` with `name: Tests`, run on every push
+  to main and on pull requests (unit tests, typecheck, lint, format).
+- Tests that need the DOSB/DBS data of the companion must skip there; they still run locally.
+- Then the Kanzlei PC adds the app to `Freigabe` (test zone `sportabzeichentest`).
+
 **Task (Kanzlei PC session, 2026-11-15, Tobias): footer link „Tester einladen“ in the hosted build.**
 
 - The hosted app moves from IONOS to a protected test zone of its own in Tobias' private bunny.net
