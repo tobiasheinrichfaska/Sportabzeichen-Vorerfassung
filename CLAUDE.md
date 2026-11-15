@@ -313,6 +313,11 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   to main and on pull requests (unit tests, typecheck, lint, format).
 - Tests that need the DOSB/DBS data of the companion must skip there; they still run locally.
 - Then the Kanzlei PC adds the app to `Freigabe` (test zone `sportabzeichentest`).
+- **Done (cloud session, 2026-11-15):** `.github/workflows/tests.yml` — workflow and job both named
+  „Tests“, on pushes to main and on pull requests: `npm ci`, typecheck, lint, format, tests and both
+  builds, Node 22 on Ubuntu, read-only token. Without the companion the real-package tests skip
+  (`skipIf`), the converter's test is not in the repo, both builds say „ohne Grenzwerte gebaut“ —
+  run in a clean clone without the companion before the push. Open: the PC adds the app to `Freigabe`.
 
 **Task (Kanzlei PC session, 2026-11-15, Tobias): footer link „Tester einladen“ in the hosted build.**
 
@@ -325,8 +330,19 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   link (7 days) and leads back with „Zurück zur App“.
 - There is no live version yet. Once there is one, the link stays out of it, and a test checks that.
 - Style it like the rest of the app. It is a plain navigation, no fetch, so the CSP stays as it is.
-- This project is not edited in the cloud: a local session builds it.
 - Background: `Testumgebung` `docs/plan.md`, „Fußzeile ‚Tester einladen‘“.
+- **Done (cloud session, 2026-11-15 — Tobias: „Dieses Projekt ist, wie fast alle, nun in der
+  cloud“):** build profiles carry `stage` (`file` / `test` / `live`) and `testerInvite`; only the
+  hosted test build has `/_zugang/einladen` (`__TESTER_INVITE__`), and a test in `csp.test.ts` locks
+  that a `live` profile never carries it. The link sits in a slim footer of the frame (`Rahmen` prop
+  `fuss`, through `ReibNavi`), bottom right under the wheels and every page, quiet like the status
+  line (`.tester-einladen`). Checked at iPhone size, light and dark.
+- **Found on the way and fixed with it:** the service worker answered _every_ navigation of its
+  scope with the cached app — at the root of the test zone a tap on „Tester einladen“ would have
+  opened the app again. It now answers only for its own files (`PAGE_PATHS`, `FILE_PATHS`) and
+  stores a page only when it is the app (`isApp`: not redirected, carries the hosted head's title tag
+  `APP_MARK`), so a login page answered in its place can never replace the app on a device. Five new
+  tests in `tests/build/sw.test.ts`, each shown failing on the old worker.
 
 ### Handover — where to pick up
 
@@ -334,9 +350,18 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   „ja, mach das“). Fresh start — one start commit; the history before it holds DOSB/DBS data and is
   kept only as a bundle in the companion repo (`historie/`). Commit and push after each meaningful
   session; **before every push** run the DOSB/DBS scan (values, verbatim texts, platform hints — see
-  the companion's README). Not switched to cloud editing (_Division of work_) unless Tobias says so.
-  Re-run `typecheck`, `lint`, `format:check`, `test`, `build`, `build:hosted` before claiming a
-  green gate; after a change of `catalog/2026/` or the local sources run `npm run katalog:lokal` first.
+  the companion's README). Re-run `typecheck`, `lint`, `format:check`, `test`, `build`,
+  `build:hosted` before claiming a green gate; after a change of `catalog/2026/` or the local sources
+  run `npm run katalog:lokal` first. The check „Tests“ (`.github/workflows/tests.yml`) runs the same
+  on GitHub, without the companion's data.
+- **Division of work (Tobias 2026-11-15: „Dieses Projekt ist, wie fast alle, nun in der cloud“ —
+  „upload erfolgt durch github workflows in Projekt Freigabe“):** all editing — code, docs, tests —
+  happens in cloud sessions through commits and pull requests, with invented data only (the DOSB/DBS
+  package comes from the companion, never into this repo). Uploads go through the GitHub workflows of
+  the private repo `Freigabe`; each waits for this repo's check „Tests“, green for exactly the
+  uploaded commit — never from a cloud session. What needs a server dashboard or a real device stays
+  with Tobias: the bunny.net zone and its headers, hand tests on the phones. `npm run hochladen` /
+  `tester` (Auslieferung, PC) serve only the old IONOS folder until the move.
 - **Private companion repo** `tobiasheinrichfaska/Sportabzeichen-Vorerfassung-privat` (local clone
   `c:\skripte\private\Sportabzeichen-Vorerfassung-privat\`): every DOSB/DBS file — `catalog/local/`
   (limits, class details, Ausführung texts and pictures), `archiv/` (official PDFs, platform data,
@@ -423,6 +448,7 @@ are named in the error, never skipped silently. The archive itself is kept in th
 | `.gitignore`, `.gitattributes`                                                                        | Git rules (LF line endings; saved workbooks `*.sportabzeichen.json` and `import/` never committed)                                                  |
 | `.prettierrc.json`, `.prettierignore`, `eslint.config.js`                                             | Formatting/linting; ESLint forbids React/DOM/storage in `src/logic/`                                                                                |
 | `package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`                                | Build/test configuration (Vitest `pool: 'forks'`)                                                                                                   |
+| `.github/workflows/tests.yml`                                                                         | Check „Tests“ on GitHub (push to main, pull requests) — the gate of every upload through `Freigabe`                                                 |
 | `index.html`                                                                                          | HTML shell; the build inlines everything into `dist/index.html`                                                                                     |
 | `docs/data-model.html`                                                                                | Self-contained data-model reference (regenerate when the model changes)                                                                             |
 | `docs/quellen.md`                                                                                     | Official sources used, with URLs and what was taken from each                                                                                       |
@@ -576,6 +602,13 @@ Key decisions:
   to the screen, sends the page's own Stand, and the worker reports `neu` also when the stored page
   is another than the running one (stored at an earlier start, never reloaded) — then the status is
   the green button „Neue Version – neu starten“.
+- **Updates in the bunny.net test zone not adjusted yet** (2026-11-15): the update flow is built for
+  the IONOS folder with the browser's login. The quiet look sends no credentials, so behind the
+  zone's cookie login it never finds a new version; „Mit Anmeldung aktualisieren“ and the manifest's
+  `use-credentials` should work with the cookie but are untried. Decide with the login script of
+  `Testumgebung` in view (not readable from this repo). The camera header for the Zielvideo has to
+  come from a bunny.net Edge Rule. A new address means a new install — save the groups as a file
+  first. A login page answered instead of the app is already never stored (`isApp` in `sw.js`).
 - **Hosted file with DOSB/DBS tables** in the protected folder (decided 2026-11-10): giving testers
   access is distribution — clarify with DOSB/DBS before other examiners get it.
 - **Browser draft is not reliable** — Safari drops site data after 7 days without use; the saved
