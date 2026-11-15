@@ -52,7 +52,7 @@ export function onUpdateNotice(listener: (notice: UpdateNotice) => void): () => 
   return () => navigator.serviceWorker.removeEventListener('message', handle);
 }
 
-/** Asks the worker to look for a new version without the login (works in the office network). */
+/** Asks the worker to look for a new version with the device's own right (the test zone's cookie). */
 export async function lookForVersion(): Promise<boolean> {
   if (!supported()) return false;
   const registration = await navigator.serviceWorker.ready;

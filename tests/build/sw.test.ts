@@ -1,7 +1,9 @@
 // hosted-public/sw.js is plain JavaScript outside the type check. Run here with stand-ins for the
 // browser parts it uses, it must keep Tobias' rule (2026-11-10): once opened with the right to it,
-// the app opens anywhere without a login — so with a cached copy no request may go to the folder
-// with credentials, and a refused or failed request never replaces the copy.
+// the app opens anywhere without a login — so with a cached copy the only request is the worker's
+// quiet look (never a navigation, so no login dialog can follow), and a refused or failed request
+// never replaces the copy. Since 2026-11-15 that look carries the device's own right (the test
+// zone's cookie), so a new version arrives wherever the device is online.
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { HOSTED_HEAD } from '../../src/build/profiles';
@@ -17,10 +19,12 @@ interface FakeRequest {
 }
 interface Call {
   url: string;
-  /** 'omit' = no login possible; 'with-login' = the request a navigation would make. */
+  /** 'same-origin' = the device's own right (the zone's cookie), sent by the worker, which cannot
+   *  show a login dialog; 'omit' = none; 'with-login' = the request a navigation would make. */
   credentials: string;
 }
-type Answer = (url: string) => Response | Promise<Response>;
+/** The folder's answer to a request; `credentials` as the worker sent them. */
+type Answer = (url: string, credentials: string) => Response | Promise<Response>;
 
 const keyOf = (input: string | FakeRequest, ignoreSearch = false) => {
   const url = new URL(typeof input === 'string' ? input : input.url, `${SCOPE}sw.js`);
@@ -35,11 +39,10 @@ function worker(answer: Answer) {
   const posted: unknown[] = [];
   const fetchStandIn = async (input: string | FakeRequest, init?: { credentials?: string }) => {
     const url = keyOf(input);
-    calls.push({
-      url,
-      credentials: init?.credentials ?? (typeof input === 'string' ? 'same-origin' : 'with-login'),
-    });
-    return answer(url);
+    const credentials =
+      init?.credentials ?? (typeof input === 'string' ? 'same-origin' : 'with-login');
+    calls.push({ url, credentials });
+    return answer(url, credentials);
   };
   const cacheFor = (name: string) => {
     const store = stores.get(name) ?? new Map<string, Response>();
@@ -124,7 +127,7 @@ const redirectedToLogin = () => {
 /** A worker installed on a visit with the right (office IP or login): everything answers. */
 async function installed(answerAfter: Answer) {
   let answer: Answer = (url) => ok(url === PAGE ? page('v1') : `Datei ${url}`);
-  const w = worker((url) => answer(url));
+  const w = worker((url, credentials) => answer(url, credentials));
   await w.dispatch('install', {});
   await w.dispatch('activate', {});
   answer = answerAfter;
@@ -147,12 +150,12 @@ describe('service worker of the hosted app', () => {
     );
   });
 
-  it('outside the office: the cached app opens, nothing asks with a login (Tobias 2026-11-10)', async () => {
+  it('without the right (no cookie, no office): the cached app opens, nothing asks for a login (Tobias 2026-11-10)', async () => {
     const w = await installed(refused);
     const response = await w.navigate();
     expect(await response?.text()).toBe(page('v1'));
-    // the only request is the quiet look for a new version — without credentials, so no dialog
-    expect(w.calls).toEqual([{ url: PAGE, credentials: 'omit' }]);
+    // the only request is the worker's quiet look, with the device's own right — no navigation, no dialog
+    expect(w.calls).toEqual([{ url: PAGE, credentials: 'same-origin' }]);
     expect(await w.cachedPage()).toBe(page('v1'));
     expect(w.posted).toEqual([]);
   });
@@ -161,7 +164,7 @@ describe('service worker of the hosted app', () => {
     const w = await installed(refused);
     const response = await w.navigate(`${SCOPE}index.html?x=1`);
     expect(await response?.text()).toBe(page('v1'));
-    expect(w.calls.every((call) => call.credentials === 'omit')).toBe(true);
+    expect(w.calls.every((call) => call.credentials === 'same-origin')).toBe(true);
   });
 
   it('offline: the cached app opens and the failed look changes nothing', async () => {
@@ -240,7 +243,7 @@ describe('service worker of the hosted app', () => {
       source: { postMessage: (message: unknown) => answers.push(message) },
     });
     expect(answers).toEqual([{ typ: 'such-ergebnis', ok: false, status: 401, neu: false }]);
-    expect(w.calls).toEqual([{ url: PAGE, credentials: 'omit' }]);
+    expect(w.calls).toEqual([{ url: PAGE, credentials: 'same-origin' }]);
   });
 
   it('a stored version other than the running page is reported, also outside the office', async () => {
@@ -271,6 +274,23 @@ describe('service worker of the hosted app', () => {
     expect(
       await w.dispatch('fetch', { request: { url: PAGE, method: 'POST', mode: 'cors' } }),
     ).toBeUndefined();
+  });
+
+  // Test zone on bunny.net (2026-11-15): the login script lets a request in by the device's cookie
+  // (`__Secure-Zugang`), which a request without credentials does not carry
+  it('in the test zone a new version arrives wherever the device is online, by its cookie', async () => {
+    const zone: Answer = (url, credentials) =>
+      credentials === 'omit' ? refused() : ok(url === PAGE ? page('v2') : `Datei ${url}`);
+    const w = await installed(zone);
+    expect(await (await w.navigate())?.text()).toBe(page('v1'));
+    expect(await w.cachedPage()).toBe(page('v2'));
+    expect(w.posted).toEqual([{ typ: 'neue-version' }]);
+    const answers: unknown[] = [];
+    await w.dispatch('message', {
+      data: { typ: 'suche-version', stand: 'App v1' },
+      source: { postMessage: (message: unknown) => answers.push(message) },
+    });
+    expect(answers).toEqual([{ typ: 'such-ergebnis', ok: true, neu: true }]);
   });
 
   // Test zone on bunny.net (2026-11-15): the login script serves other paths of the same address
