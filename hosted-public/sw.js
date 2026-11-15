@@ -12,6 +12,12 @@
 // and showed the cached copy), so this one navigation is NOT taken: the browser loads it itself and
 // asks for the login. The page that arrives then asks the worker to store it (`nach-anmeldung`),
 // fetched with the login the browser now holds.
+//
+// The worker answers only for its own files (2026-11-15, test zone on bunny.net): the login script
+// of the zone serves other paths of the same address, e.g. „Tester einladen“ (`/_zugang/einladen`),
+// and those must come from the network, never as the cached app. And it stores only a page that is
+// the app — a login page that a login script answers instead (redirected, or the same address
+// without the app's head tag) would replace the app on the device.
 const CACHE = 'sportabzeichen-app-v1';
 const PAGE = './';
 const FILES = [
@@ -21,13 +27,32 @@ const FILES = [
   './icon-512.png',
   './apple-touch-icon.png',
 ];
+/** In the head of every hosted page (HOSTED_HEAD in src/build/profiles.ts); a login page lacks it. */
+const APP_MARK = '<meta name="apple-mobile-web-app-title" content="Sportabzeichen"';
+
+const pathOf = (file) => new URL(file, self.location.href).pathname;
+const PAGE_PATHS = [pathOf(PAGE), pathOf('./index.html')];
+const FILE_PATHS = FILES.map(pathOf);
+
+/** Whether a response is the app's page (not a login page answered in its place). */
+async function isApp(response) {
+  return response.ok && !response.redirected && (await response.clone().text()).includes(APP_MARK);
+}
 
 self.addEventListener('install', (event) => {
   // The first visit came with the right (IP or login), so these requests get through too.
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => Promise.allSettled(FILES.map((file) => cache.add(file))))
+      .then((cache) =>
+        Promise.allSettled(
+          FILES.map((file) =>
+            file === PAGE
+              ? fetch(PAGE).then(async (r) => ((await isApp(r)) ? cache.put(PAGE, r) : undefined))
+              : cache.add(file),
+          ),
+        ),
+      )
       .then(() => self.skipWaiting()),
   );
 });
@@ -52,7 +77,7 @@ async function tellClients(message) {
 async function quietUpdate() {
   try {
     const response = await fetch(PAGE, { credentials: 'omit', cache: 'no-store' });
-    if (!response.ok) return { ok: false, status: response.status };
+    if (!(await isApp(response))) return { ok: false, status: response.status };
     const fresh = await response.clone().text();
     const cache = await caches.open(CACHE);
     const old = await cache.match(PAGE);
@@ -70,7 +95,7 @@ async function storeAfterLogin() {
   const cache = await caches.open(CACHE);
   try {
     const response = await fetch(PAGE, { credentials: 'include', cache: 'no-store' });
-    if (!response.ok) return { ok: false, status: response.status };
+    if (!(await isApp(response))) return { ok: false, status: response.status };
     await cache.put(PAGE, response);
     await Promise.allSettled(
       FILES.filter((file) => file !== PAGE).map((file) =>
@@ -89,23 +114,26 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  const navigate = request.mode === 'navigate';
+  // only the app's own files; everything else at this address (the login script's pages) from the network
+  if (!(navigate ? PAGE_PATHS : FILE_PATHS).includes(url.pathname)) return;
   // the update with the login: the browser's own navigation, so it can ask for the login
-  if (request.mode === 'navigate' && url.searchParams.has('neu')) return;
+  if (navigate && url.searchParams.has('neu')) return;
   event.respondWith(
     (async () => {
       const cache = await caches.open(CACHE);
-      const hit =
-        request.mode === 'navigate'
-          ? await cache.match(PAGE)
-          : await cache.match(request, { ignoreSearch: true });
+      const hit = navigate
+        ? await cache.match(PAGE)
+        : await cache.match(request, { ignoreSearch: true });
       if (hit) {
-        if (request.mode === 'navigate') event.waitUntil(quietUpdate());
+        if (navigate) event.waitUntil(quietUpdate());
         return hit;
       }
-      // Not cached yet (the very first visit): from the network, kept for the next start.
+      // Not cached yet (the very first visit): from the network, kept for the next start — the
+      // page only when it is the app.
       const response = await fetch(request);
-      if (response.ok)
-        await cache.put(request.mode === 'navigate' ? PAGE : request, response.clone());
+      if (navigate ? await isApp(response) : response.ok)
+        await cache.put(navigate ? PAGE : request, response.clone());
       return response;
     })(),
   );

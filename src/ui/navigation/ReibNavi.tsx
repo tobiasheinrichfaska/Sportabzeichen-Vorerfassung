@@ -56,6 +56,8 @@ export interface ReibNaviProps {
   readonly status?: string | undefined;
   /** When given, the status line is a button. */
   readonly onStatus?: (() => void) | undefined;
+  /** A slim footer under the wheels and every page (e.g. „Tester einladen“ in the test build). */
+  readonly fuss?: ReactNode | undefined;
 }
 
 /**
@@ -73,6 +75,7 @@ export function ReibNavi({
   seiteZeigen,
   status,
   onStatus,
+  fuss,
 }: ReibNaviProps) {
   const wenigBewegung = useWenigBewegung();
   const dunkel = useDunkel();
@@ -201,7 +204,13 @@ export function ReibNavi({
     const vorige = nachbar(bereich, hier.knoten, -1);
     const naechste = nachbar(bereich, hier.knoten, 1);
     return (
-      <Rahmen weg={weg.map((s) => s.knoten)} onSprung={zurueck} status={status} onStatus={onStatus}>
+      <Rahmen
+        weg={weg.map((s) => s.knoten)}
+        onSprung={zurueck}
+        status={status}
+        onStatus={onStatus}
+        fuss={fuss}
+      >
         <Wischflaeche
           key={hier.knoten.id}
           onWisch={(r) => {
@@ -282,7 +291,13 @@ export function ReibNavi({
   })();
 
   return (
-    <Rahmen weg={weg.map((s) => s.knoten)} onSprung={zurueck} status={status} onStatus={onStatus}>
+    <Rahmen
+      weg={weg.map((s) => s.knoten)}
+      onSprung={zurueck}
+      status={status}
+      onStatus={onStatus}
+      fuss={fuss}
+    >
       <div ref={flaeche} style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
         <svg
           width={groesse.b}

@@ -277,6 +277,15 @@ export function App() {
         onStatus={
           update === 'new' && errors.length === 0 ? () => window.location.reload() : undefined
         }
+        fuss={
+          // Test build only (Tobias 2026-11-15): the zone's login script makes the invitation and
+          // leads back with „Zurück zur App“; a plain link, so the CSP stays as it is
+          __TESTER_INVITE__ ? (
+            <a href={__TESTER_INVITE__} className="tester-einladen">
+              Tester einladen
+            </a>
+          ) : undefined
+        }
       />
       <input
         ref={fileInput}

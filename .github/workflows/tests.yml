@@ -1,0 +1,36 @@
+# Check „Tests“ (Tobias 2026-11-15): every upload through the repo Freigabe waits for it, green for
+# exactly the commit that is uploaded. Runs without the companion's DOSB/DBS data — the tests that
+# need it skip, both builds say „ohne Grenzwerte gebaut“; with the companion they run locally.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  # a newer push to a PR replaces the older run; on main every commit keeps its own check
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+      - run: npm run build:hosted

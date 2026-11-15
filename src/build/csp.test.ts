@@ -2,7 +2,7 @@
 // pages that load anything from outside are refused.
 import { createHash } from 'node:crypto';
 import { cspFor, withCsp } from './csp';
-import { BUILD_PROFILES, HOSTED_HEAD, profileFor } from './profiles';
+import { BUILD_PROFILES, HOSTED_HEAD, profileFor, type BuildProfile } from './profiles';
 
 const hash = (text: string) =>
   `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`;
@@ -52,6 +52,20 @@ describe('withCsp', () => {
       'rel="manifest" href="manifest.json" crossorigin="use-credentials"',
     );
     expect(HOSTED_HEAD).toContain('rel="apple-touch-icon"');
+  });
+
+  // Tobias 2026-11-15: the footer link „Tester einladen“ in the hosted (test) build, never in a live one
+  it('only a test build carries „Tester einladen“, the plain file and any live build never', () => {
+    expect(BUILD_PROFILES.hosted).toMatchObject({
+      stage: 'test',
+      testerInvite: '/_zugang/einladen',
+    });
+    expect(BUILD_PROFILES.file.testerInvite).toBe(false);
+    for (const [name, profile] of Object.entries(BUILD_PROFILES)) {
+      const p: BuildProfile = profile;
+      if (p.testerInvite !== false) expect(p.stage, name).toBe('test');
+      if (p.stage === 'live') expect(p.testerInvite, name).toBe(false);
+    }
   });
 
   it.each([
