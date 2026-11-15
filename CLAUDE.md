@@ -319,7 +319,8 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   „Tests“, on pushes to main and on pull requests: `npm ci`, typecheck, lint, format, tests and both
   builds, Node 22 on Ubuntu, read-only token. Without the companion the real-package tests skip
   (`skipIf`), the converter's test is not in the repo, both builds say „ohne Grenzwerte gebaut“ —
-  run in a clean clone without the companion before the push. Open: the PC adds the app to `Freigabe`.
+  run in a clean clone without the companion before the push. **Done (Tobias 2026-11-15):** the app is
+  in `Freigabe`; `cd937cd` was uploaded to the test zone and runs on his phone.
 
 **Task (Kanzlei PC session, 2026-11-15, Tobias): footer link „Tester einladen“ in the hosted build.**
 
@@ -388,9 +389,13 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   (companion README). Browser checks in the cloud: `require('playwright')` (global, preinstalled
   Chromium), not `import`; no WebKit there, so the iPhone rehearsal in WebKit stays on the PC.
 - **App (2026-11-10):** the standalone app of the section above — wheels, groups, children,
-  „Möglich“, „Erfassen“, „Je Kind“, „Gruppe“, „Aufbau“, tools; hosted in
-  `NebenprojektSportabzeichen/` with the local tables. Tobias installs it on his phone in the
-  office (MT-18) — then it starts anywhere without login. Next: his feedback from the phone;
+  „Möglich“, „Erfassen“, „Je Kind“, „Gruppe“, „Aufbau“, tools, with the local tables. **Hosted since
+  2026-11-15 in the bunny.net test zone `sportabzeichentest`** (upload through `Freigabe`, login of
+  `Testumgebung`); `cd937cd` runs on Tobias' phone — a pull-down reload brought it, because the new
+  `sw.js` was installed by the browser's own worker check (which sends the cookie). The quiet look
+  with the cookie is proven only by a later upload with an unchanged `sw.js` (MT-43 step 4). The old
+  IONOS folder `NebenprojektSportabzeichen/` goes before the DNS switch of the Fragebogen subdomain;
+  there the app started anywhere without login after one start in the office (MT-18). Next: his feedback from the phone;
   „Übertragen“ / „Prüfungstag“ (QR transfer from TKD-Trainerbuch's technique, see the memory
   „Transfer technique“); SpAz transfer view.
 - **Verification of the official tables (done 2026-11-02)** and its deliverables (Klärungs-PDF,
