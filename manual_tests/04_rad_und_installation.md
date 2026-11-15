@@ -98,3 +98,33 @@ installieren, MT-18).
 4. Noch einmal „Mit Anmeldung aktualisieren“, das Anmeldefenster mit „Abbrechen“ schließen.
    - **Nicht ungewöhnlich:** Der Browser zeigt eine Fehlerseite („Unauthorized“). App schließen und
      vom Home-Bildschirm neu öffnen – sie startet wieder aus dem Speicher.
+
+## MT-43: Testzone auf bunny.net – anmelden, unterwegs aktualisieren, Tester einladen
+
+Ab dem Umzug liegt die Testfassung in einer eigenen, geschützten Testzone auf bunny.net. Die Tester
+melden sich einmal an, danach erkennt ein Cookie das Gerät. Es gibt dort kein Büronetz mehr.
+
+**Vorbedingungen:** Die App ist über „Freigabe“ in die Testzone hochgeladen. Adresse und
+Tester-Zugang kommen von Tobias. Die Zone erlaubt die Kamera schon (Einrichtung der Testumgebung).
+
+1. Die Adresse der Testzone in Safari (Android: Chrome) öffnen.
+   - Der Browser fragt nach Benutzername und Passwort („Sportabzeichen - Test“). Anmelden.
+   - Die Räder erscheinen, unten rechts steht „Tester einladen“.
+2. Zum Home-Bildschirm hinzufügen und die App **vom Home-Bildschirm** öffnen.
+   - **Nicht ungewöhnlich:** Auf iPhone/iPad hat die App vom Home-Bildschirm einen eigenen Speicher
+     und fragt beim ersten Start noch einmal nach der Anmeldung. Danach startet sie ohne.
+3. Die App schließen, Flugmodus an, die App wieder öffnen.
+   - Sie startet ohne Anmeldung, die Eingaben von vorher sind da.
+4. Flugmodus aus (mobile Daten, kein Büro-WLAN). Tobias lädt eine neue Version hoch. Die App öffnen
+   oder aus dem Hintergrund zurückholen.
+   - Nach kurzer Zeit erscheint oben rechts der grüne Knopf „Neue Version – neu starten“, **ohne**
+     Anmeldefenster. Antippen: Oben steht der neue Stand, die Eingaben sind erhalten.
+5. Seite „Datei“ › „Nach neuer Version suchen“ tippen.
+   - „Diese Version ist aktuell.“ Es erscheint **kein** Anmeldefenster.
+6. Unten rechts „Tester einladen“ antippen.
+   - Die Einladungsseite der Testumgebung erscheint, **nicht** wieder die App. „Zurück zur App“
+     führt zurück.
+7. Seite „Stoppuhr“ › „Zielvideo“ an.
+   - Das Bild der Rückkamera erscheint. Kommt stattdessen „Die Kamera ist für diese Seite nicht
+     erlaubt“, obwohl der Browser die Kamera erlaubt: Bildschirmfoto an Tobias, den Header
+     `Permissions-Policy` der Zone prüfen.

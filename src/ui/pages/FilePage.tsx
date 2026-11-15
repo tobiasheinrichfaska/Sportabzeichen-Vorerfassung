@@ -13,10 +13,10 @@ const UPDATE_TEXT: Record<Exclude<UpdateState, 'idle'>, string> = {
   new: 'Eine neue Version ist geladen – sie gilt nach dem Neustart der App.',
   offline: 'Keine Verbindung – die gespeicherte Version läuft weiter.',
   refused:
-    'Ohne Anmeldung nicht erreichbar (außerhalb des Büronetzes) – die gespeicherte Version läuft weiter.',
+    'Dieses Gerät ist gerade nicht angemeldet – die gespeicherte Version läuft weiter. „Mit Anmeldung aktualisieren“ meldet es wieder an.',
   stored: 'Mit der Anmeldung aktualisiert – diese Version startet jetzt auch ohne Anmeldung.',
   'not-stored':
-    'Diese Version läuft, ließ sich aber nicht speichern – beim nächsten Start kommt die vorige. Bitte im Büro-WLAN öffnen.',
+    'Diese Version läuft, ließ sich aber nicht speichern – beim nächsten Start kommt die vorige. Bitte „Mit Anmeldung aktualisieren“ noch einmal tippen.',
 };
 
 /** Page „Datei“: save, open, start anew, the exam year and organisation, the catalog, updates. */
@@ -210,9 +210,10 @@ export function FilePage({
               </p>
             )}
             <p className="muted">
-              Die App startet immer aus dem Speicher dieses Geräts, auch ohne Netz und außerhalb des
-              Büros – ohne Anmeldung. Neue Versionen kommen im Büronetz von selbst; unterwegs holt
-              „Mit Anmeldung aktualisieren“ sie mit der Tester-Anmeldung.
+              Die App startet immer aus dem Speicher dieses Geräts, auch ohne Netz – ohne Anmeldung.
+              Neue Versionen kommen von selbst, sobald das Gerät online ist und einmal angemeldet
+              war; gilt die Anmeldung nicht mehr, holt „Mit Anmeldung aktualisieren“ sie mit der
+              Tester-Anmeldung.
             </p>
           </>
         )}

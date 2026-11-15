@@ -286,16 +286,18 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   only the whitelist of result lines — see the Auslieferung memory), `npm run tester` (window, Tobias).
 - **Start without login (Tobias' rule):** `hosted-public/sw.js` serves the app's files from its
   cache whenever they are there — opening never asks the protected folder, so no 401 and no login
-  dialog can reach the screen, in the office, outside or offline. After each start it looks for a
-  new version **without credentials** (`credentials: 'omit'` → no dialog possible): in the office
-  network that stores the new version and the page shows „Neue Version bereit“ / „Jetzt neu
-  starten“; elsewhere it fails silently. „Mit Anmeldung aktualisieren“ (page „Datei“) navigates to
+  dialog can reach the screen, in the office, outside or offline. After each start the worker looks
+  for a new version **with the device's own right** (`credentials: 'same-origin'`, since 2026-11-15;
+  until then `'omit'`): in the bunny.net test zone that is the login script's cookie, so the new
+  version comes wherever the device is online (on the IONOS folder: the office network) and the page
+  shows „Neue Version – neu starten“; without the right it gets a 401 and fails silently — a
+  worker's request cannot show the login dialog (see below). „Mit Anmeldung aktualisieren“ (page „Datei“) navigates to
   `./?neu=…` and the worker **leaves this one navigation to the browser** — a worker can never show
   the login dialog (Tobias on the phone 2026-11-10: „Es wird kein User abgefragt“; the first build
   answered it from the worker, got the 401 and showed the cached copy). The page that arrives asks
   the worker to store itself (`nach-anmeldung`, fetched with `credentials: 'include'` — the login
   the browser now holds); „Abbrechen“ in the dialog shows the server's error page (reopen the app). Locked by `tests/build/sw.test.ts` (the worker run with stand-ins: with a cached copy the
-  only request is the quiet one without credentials).
+  only request is the worker's quiet look; behind a cookie-only zone a new version arrives).
 - Build profiles as data (`src/build/profiles.ts`): `file` (no worker, no manifest) and `hosted`
   (worker + manifest from `'self'`, head tags `HOSTED_HEAD`, manifest with
   `crossorigin="use-credentials"` like TKD); `connect-src 'none'` in both. `__HOSTED__` switches the
@@ -601,21 +603,30 @@ Key decisions:
   stand-ins; open on devices (MT-19): whether the browser's own check of `sw.js` outside the office
   (it gets a 401) ever shows a login dialog, and the first start from the home screen on iPhone
   (its own storage — open it once in the office, MT-18).
-- **Remote testers get updates only by „Mit Anmeldung aktualisieren“** — the quiet look sends no
-  credentials on purpose (no dialog), so it only succeeds from the office network; since 2026-11-10
-  the target `app` has one tester login (list in the gitignored `deploy/.local/`) — outside the office „Mit Anmeldung aktualisieren“.
+- **On the old IONOS folder** remote testers got updates only by „Mit Anmeldung aktualisieren“ (the
+  quiet look sent no credentials until 2026-11-15; one tester login, list in the gitignored
+  `deploy/.local/`). In the bunny.net test zone the look carries the zone's cookie (see below).
 - **Update flow (2026-11-10, after „in meinem Handy geht es nicht“):** the top bar shows „Stand
   <commit>“ (`__APP_STAND__`); the look for a version runs at start and whenever the app comes back
   to the screen, sends the page's own Stand, and the worker reports `neu` also when the stored page
   is another than the running one (stored at an earlier start, never reloaded) — then the status is
   the green button „Neue Version – neu starten“.
-- **Updates in the bunny.net test zone not adjusted yet** (2026-11-15): the update flow is built for
-  the IONOS folder with the browser's login. The quiet look sends no credentials, so behind the
-  zone's cookie login it never finds a new version; „Mit Anmeldung aktualisieren“ and the manifest's
-  `use-credentials` should work with the cookie but are untried. Decide with the login script of
-  `Testumgebung` in view (not readable from this repo). The camera header for the Zielvideo has to
-  come from a bunny.net Edge Rule. A new address means a new install — save the groups as a file
-  first. A login page answered instead of the app is already never stored (`isApp` in `sw.js`).
+- **Updates in the bunny.net test zone — adjusted, untried on devices** (2026-11-15, read from the
+  login script of the private repo `Testumgebung`, `zugang/src/logik.ts` and `rahmen.ts`): without a
+  cookie the zone answers 401 with HTTP Basic; with the cookie `__Secure-Zugang` (HMAC, 400 days,
+  `Path=/; Secure; HttpOnly; SameSite=Lax`, renewed on requests) it lets the request in and sends
+  `Cache-Control: private, no-cache`. So the quiet look now sends the device's cookie
+  (`same-origin`) — the new version arrives anywhere online, and those requests also keep the cookie
+  renewed on a device that otherwise starts from its cache. „Mit Anmeldung aktualisieren“ (a
+  navigation: Basic dialog when the cookie is gone, then the cookie) and the manifest's
+  `use-credentials` (sends the cookie) work as they are. Regression test in `sw.test.ts` (shown
+  failing on the old worker). Open on devices (MT-43): the login on the home-screen app, an update
+  arriving without the office, „Tester einladen“, the camera. The zone already allows the camera:
+  its rule „Sicherheits-Header“ from the `Testumgebung` setup sends `Permissions-Policy:
+camera=(self), …` (checked 2026-11-15 without login and by Claude in Chrome; record in the
+  companion, `hosting/bunny-testzone.md`). A new address means a new
+  install — save the groups as a file first. A login page answered instead of the app is never
+  stored (`isApp` in `sw.js`).
 - **Hosted file with DOSB/DBS tables** in the protected folder (decided 2026-11-10): giving testers
   access is distribution — clarify with DOSB/DBS before other examiners get it.
 - **Browser draft is not reliable** — Safari drops site data after 7 days without use; the saved

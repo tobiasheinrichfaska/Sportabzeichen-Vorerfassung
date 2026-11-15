@@ -3,9 +3,13 @@
 //
 // So the app's files are always served from this worker's cache once they are in it: opening the
 // app never asks the protected folder, and a 401 can never reach the screen. New versions are
-// looked for quietly: after each start the worker fetches the page WITHOUT credentials (no login
-// dialog can follow) — in the office network that brings the new version, elsewhere it fails
-// silently and the cached one stays.
+// looked for quietly: after each start the worker fetches the page with the device's own right
+// (`credentials: 'same-origin'`, 2026-11-15). In the bunny.net test zone that is the login script's
+// cookie (`__Secure-Zugang`, 400 days, renewed by exactly these requests), so a new version arrives
+// wherever the device is online; on the IONOS folder it was the office network. A device without
+// the right gets a 401 — the look fails silently, because a worker cannot show the login dialog
+// (see below), and the cached version stays. Until 2026-11-15 the look sent no credentials at all,
+// which behind the zone's cookie login would never have found a version.
 //
 // „Mit Anmeldung aktualisieren“ opens `./?neu=…`. A worker can never show the browser's login
 // dialog (Tobias 2026-11-10 on the phone: „Es wird kein User abgefragt“ — the worker got the 401
@@ -73,10 +77,10 @@ async function tellClients(message) {
   for (const client of clients) client.postMessage(message);
 }
 
-/** The page from the network without credentials; stored and announced when it is new. */
+/** The page from the network with the device's right (the zone's cookie); stored and announced when new. */
 async function quietUpdate() {
   try {
-    const response = await fetch(PAGE, { credentials: 'omit', cache: 'no-store' });
+    const response = await fetch(PAGE, { credentials: 'same-origin', cache: 'no-store' });
     if (!(await isApp(response))) return { ok: false, status: response.status };
     const fresh = await response.clone().text();
     const cache = await caches.open(CACHE);
