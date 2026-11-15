@@ -362,6 +362,12 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   uploaded commit — never from a cloud session. What needs a server dashboard or a real device stays
   with Tobias: the bunny.net zone and its headers, hand tests on the phones. `npm run hochladen` /
   `tester` (Auslieferung, PC) serve only the old IONOS folder until the move.
+- **Weekly check** (Tobias 2026-11-15): the scheduled task „Wochenprüfung“ (Sundays 3:42) works
+  through [`docs/wochenpruefung.md`](docs/wochenpruefung.md) — new editions of the DOSB/DBS
+  documents, open questions to DOSB/DBS, the next exam year, Sportabzeichen-Digital and SpAz, and
+  the tests with the companion's package. **A change to `docs/wochenpruefung.md` is merged only by
+  Tobias** — it is an order to the scheduled task — even where reversible merges are otherwise
+  allowed; the task's own PRs are not merged either.
 - **Private companion repo** `tobiasheinrichfaska/Sportabzeichen-Vorerfassung-privat` (local clone
   `c:\skripte\private\Sportabzeichen-Vorerfassung-privat\`): every DOSB/DBS file — `catalog/local/`
   (limits, class details, Ausführung texts and pictures), `archiv/` (official PDFs, platform data,
@@ -452,6 +458,7 @@ are named in the error, never skipped silently. The archive itself is kept in th
 | `index.html`                                                                                          | HTML shell; the build inlines everything into `dist/index.html`                                                                                     |
 | `docs/data-model.html`                                                                                | Self-contained data-model reference (regenerate when the model changes)                                                                             |
 | `docs/quellen.md`                                                                                     | Official sources used, with URLs and what was taken from each                                                                                       |
+| `docs/wochenpruefung.md`                                                                              | List of the scheduled weekly check (DOSB/DBS editions, open questions, next exam year, targets, private-package tests) — merged only by Tobias      |
 | `catalog/`                                                                                            | Catalog data package per "gültig ab" year — see `catalog/README.md`                                                                                 |
 | `catalog/2026/catalog.json`                                                                           | Public: exercises, classes A–J, sources                                                                                                             |
 | `catalog/2026/spaz.json`                                                                              | Public: SpAz discipline names per Laufzettel (regular, MmB) → exercises                                                                             |
