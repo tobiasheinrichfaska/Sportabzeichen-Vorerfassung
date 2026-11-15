@@ -621,8 +621,10 @@ Key decisions:
   navigation: Basic dialog when the cookie is gone, then the cookie) and the manifest's
   `use-credentials` (sends the cookie) work as they are. Regression test in `sw.test.ts` (shown
   failing on the old worker). Open on devices (MT-43): the login on the home-screen app, an update
-  arriving without the office, „Tester einladen“, the camera. The camera header comes from a
-  bunny.net Edge Rule (prompt and record in the companion, `hosting/`). A new address means a new
+  arriving without the office, „Tester einladen“, the camera. The zone already allows the camera:
+  its rule „Sicherheits-Header“ from the `Testumgebung` setup sends `Permissions-Policy:
+camera=(self), …` (checked 2026-11-15 without login and by Claude in Chrome; record in the
+  companion, `hosting/bunny-testzone.md`). A new address means a new
   install — save the groups as a file first. A login page answered instead of the app is never
   stored (`isApp` in `sw.js`).
 - **Hosted file with DOSB/DBS tables** in the protected folder (decided 2026-11-10): giving testers

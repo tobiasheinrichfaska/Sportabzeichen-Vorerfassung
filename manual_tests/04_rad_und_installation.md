@@ -105,7 +105,7 @@ Ab dem Umzug liegt die Testfassung in einer eigenen, geschützten Testzone auf b
 melden sich einmal an, danach erkennt ein Cookie das Gerät. Es gibt dort kein Büronetz mehr.
 
 **Vorbedingungen:** Die App ist über „Freigabe“ in die Testzone hochgeladen. Adresse und
-Tester-Zugang kommen von Tobias. Die Kamera-Regel der Zone ist angelegt (Begleit-Repo, `hosting/`).
+Tester-Zugang kommen von Tobias. Die Zone erlaubt die Kamera schon (Einrichtung der Testumgebung).
 
 1. Die Adresse der Testzone in Safari (Android: Chrome) öffnen.
    - Der Browser fragt nach Benutzername und Passwort („Sportabzeichen - Test“). Anmelden.
@@ -126,5 +126,5 @@ Tester-Zugang kommen von Tobias. Die Kamera-Regel der Zone ist angelegt (Begleit
      führt zurück.
 7. Seite „Stoppuhr“ › „Zielvideo“ an.
    - Das Bild der Rückkamera erscheint. Kommt stattdessen „Die Kamera ist für diese Seite nicht
-     erlaubt“, obwohl der Browser die Kamera erlaubt: Bildschirmfoto an Tobias, die Kamera-Regel
-     der Zone prüfen.
+     erlaubt“, obwohl der Browser die Kamera erlaubt: Bildschirmfoto an Tobias, den Header
+     `Permissions-Policy` der Zone prüfen.
