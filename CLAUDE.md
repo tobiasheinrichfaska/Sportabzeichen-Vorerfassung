@@ -305,6 +305,29 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
 
 ## Status (2026-11-10)
 
+**Task (Kanzlei PC session, 2026-11-15, Tobias): a GitHub check named „Tests“.**
+
+- Every app's upload through the repo `Freigabe` waits for the app's own GitHub check **„Tests“**,
+  green for exactly the commit that is uploaded. Tobias wants one way for all projects.
+- This repo has no check yet. Add `.github/workflows/tests.yml` with `name: Tests`, run on every push
+  to main and on pull requests (unit tests, typecheck, lint, format).
+- Tests that need the DOSB/DBS data of the companion must skip there; they still run locally.
+- Then the Kanzlei PC adds the app to `Freigabe` (test zone `sportabzeichentest`).
+
+**Task (Kanzlei PC session, 2026-11-15, Tobias): footer link „Tester einladen“ in the hosted build.**
+
+- The hosted app moves from IONOS to a protected test zone of its own in Tobias' private bunny.net
+  account. The login script comes from the private repo `Testumgebung` (`zugang/`): testers log in
+  once, then a cookie recognises the device. Every tester of that account may test every project of
+  it.
+- Add a link **„Tester einladen“** to the footer of the hosted build (`build:hosted`), pointing to
+  the relative address `/_zugang/einladen`. That page of the login script makes a one-time invitation
+  link (7 days) and leads back with „Zurück zur App“.
+- There is no live version yet. Once there is one, the link stays out of it, and a test checks that.
+- Style it like the rest of the app. It is a plain navigation, no fetch, so the CSP stays as it is.
+- This project is not edited in the cloud: a local session builds it.
+- Background: `Testumgebung` `docs/plan.md`, „Fußzeile ‚Tester einladen‘“.
+
 ### Handover — where to pick up
 
 - **Code:** public on GitHub, `tobiasheinrichfaska/Sportabzeichen-Vorerfassung` (Tobias 2026-11-14:
