@@ -72,6 +72,7 @@ export default defineConfig(({ mode }) => {
       __APP_VERSION__: JSON.stringify(pkg.version),
       __APP_STAND__: JSON.stringify(stand()),
       __HOSTED__: JSON.stringify(profile.hosted),
+      __TESTER_INVITE__: JSON.stringify(profile.testerInvite || ''),
       // Every catalog year (public structure + local limits); a broken package stops the build
       __CATALOGS__: JSON.stringify(
         loadCatalogs(fileURLToPath(new URL('./catalog', import.meta.url))),

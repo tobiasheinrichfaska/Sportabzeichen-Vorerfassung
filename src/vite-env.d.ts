@@ -9,5 +9,8 @@ declare const __APP_STAND__: string;
 /** True in the hosted app (service worker, manifest), false in the plain file. */
 declare const __HOSTED__: boolean;
 
+/** Address of „Tester einladen“ in the footer of a test build (`/_zugang/einladen`), else ''. */
+declare const __TESTER_INVITE__: string;
+
 /** Every catalog year, assembled and checked by vite.config.ts (src/build/catalogFiles.ts). */
 declare const __CATALOGS__: import('./logic/types').Catalog[];

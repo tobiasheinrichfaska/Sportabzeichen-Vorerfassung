@@ -560,3 +560,11 @@ details.detail > summary {
   flex: 1;
   min-width: 8rem;
 }
+
+/* „Tester einladen“ in the footer of the test build: quiet like the frame's status line, a finger-sized target */
+.tester-einladen {
+  color: inherit;
+  text-decoration: underline;
+  display: inline-block;
+  padding: 6px 4px;
+}

@@ -4,6 +4,7 @@
 // with credentials, and a refused or failed request never replaces the copy.
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { HOSTED_HEAD } from '../../src/build/profiles';
 
 const SW = readFileSync(new URL('../../hosted-public/sw.js', import.meta.url), 'utf8');
 const SCOPE = 'https://example.org/NebenprojektSportabzeichen/';
@@ -109,10 +110,20 @@ function worker(answer: Answer) {
 
 const ok = (body: string) => new Response(body, { status: 200 });
 const refused = () => new Response('Anmeldung nötig', { status: 401 });
+/** A version of the app's page: its head carries the app's title tag (HOSTED_HEAD). */
+const MARK = '<meta name="apple-mobile-web-app-title" content="Sportabzeichen" />';
+const page = (version: string) => `${MARK} App ${version}`;
+/** What a login script may answer instead of the app: a page of its own, or a redirect to one. */
+const loginPage = () => ok('<title>Anmeldung</title> Bitte anmelden');
+const redirectedToLogin = () => {
+  const response = loginPage();
+  Object.defineProperty(response, 'redirected', { value: true });
+  return response;
+};
 
 /** A worker installed on a visit with the right (office IP or login): everything answers. */
 async function installed(answerAfter: Answer) {
-  let answer: Answer = (url) => ok(url === PAGE ? 'App v1' : `Datei ${url}`);
+  let answer: Answer = (url) => ok(url === PAGE ? page('v1') : `Datei ${url}`);
   const w = worker((url) => answer(url));
   await w.dispatch('install', {});
   await w.dispatch('activate', {});
@@ -124,7 +135,7 @@ async function installed(answerAfter: Answer) {
 describe('service worker of the hosted app', () => {
   it('stores the page, manifest and icons when installed', async () => {
     const w = await installed(refused);
-    expect(await w.cachedPage()).toBe('App v1');
+    expect(await w.cachedPage()).toBe(page('v1'));
     const keys = [...(w.stores.values().next().value?.keys() ?? [])];
     expect(keys).toEqual(
       expect.arrayContaining([
@@ -139,36 +150,36 @@ describe('service worker of the hosted app', () => {
   it('outside the office: the cached app opens, nothing asks with a login (Tobias 2026-11-10)', async () => {
     const w = await installed(refused);
     const response = await w.navigate();
-    expect(await response?.text()).toBe('App v1');
+    expect(await response?.text()).toBe(page('v1'));
     // the only request is the quiet look for a new version — without credentials, so no dialog
     expect(w.calls).toEqual([{ url: PAGE, credentials: 'omit' }]);
-    expect(await w.cachedPage()).toBe('App v1');
+    expect(await w.cachedPage()).toBe(page('v1'));
     expect(w.posted).toEqual([]);
   });
 
   it('a deep link or a reload with a search opens the cached app as well', async () => {
     const w = await installed(refused);
     const response = await w.navigate(`${SCOPE}index.html?x=1`);
-    expect(await response?.text()).toBe('App v1');
+    expect(await response?.text()).toBe(page('v1'));
     expect(w.calls.every((call) => call.credentials === 'omit')).toBe(true);
   });
 
   it('offline: the cached app opens and the failed look changes nothing', async () => {
     const w = await installed(() => Promise.reject(new TypeError('offline')));
-    expect(await (await w.navigate())?.text()).toBe('App v1');
-    expect(await w.cachedPage()).toBe('App v1');
+    expect(await (await w.navigate())?.text()).toBe(page('v1'));
+    expect(await w.cachedPage()).toBe(page('v1'));
   });
 
   it('in the office a new version is stored quietly and announced; the same one is not', async () => {
-    const same = await installed(() => ok('App v1'));
+    const same = await installed(() => ok(page('v1')));
     await same.navigate();
     expect(same.posted).toEqual([]);
 
-    const w = await installed(() => ok('App v2'));
+    const w = await installed(() => ok(page('v2')));
     // this start still shows the version it has …
-    expect(await (await w.navigate())?.text()).toBe('App v1');
+    expect(await (await w.navigate())?.text()).toBe(page('v1'));
     // … the next one the new one, and the page is told
-    expect(await w.cachedPage()).toBe('App v2');
+    expect(await w.cachedPage()).toBe(page('v2'));
     expect(w.posted).toEqual([{ typ: 'neue-version' }]);
   });
 
@@ -190,17 +201,17 @@ describe('service worker of the hosted app', () => {
   });
 
   it('after the login the arriving page has itself stored, with the login the browser holds', async () => {
-    const w = await installed((url) => ok(url === PAGE ? 'App v3' : `Datei neu ${url}`));
+    const w = await installed((url) => ok(url === PAGE ? page('v3') : `Datei neu ${url}`));
     const answers: unknown[] = [];
     await w.dispatch('message', {
       data: { typ: 'nach-anmeldung' },
       source: { postMessage: (message: unknown) => answers.push(message) },
     });
     expect(answers).toEqual([{ typ: 'nach-anmeldung-ergebnis', ok: true }]);
-    expect(await w.cachedPage()).toBe('App v3');
+    expect(await w.cachedPage()).toBe(page('v3'));
     expect(w.calls.every((call) => call.credentials === 'include')).toBe(true);
     // the next start without login opens the new version from the cache
-    expect(await (await w.navigate())?.text()).toBe('App v3');
+    expect(await (await w.navigate())?.text()).toBe(page('v3'));
   });
 
   it('storing after the login refused: reported, the stored version stays', async () => {
@@ -211,14 +222,14 @@ describe('service worker of the hosted app', () => {
       source: { postMessage: (message: unknown) => answers.push(message) },
     });
     expect(answers).toEqual([{ typ: 'nach-anmeldung-ergebnis', ok: false, status: 401 }]);
-    expect(await w.cachedPage()).toBe('App v1');
+    expect(await w.cachedPage()).toBe(page('v1'));
   });
 
   it('the very first visit loads from the folder and keeps the page', async () => {
-    const w = worker(() => ok('App v1'));
+    const w = worker(() => ok(page('v1')));
     const response = await w.navigate();
-    expect(await response?.text()).toBe('App v1');
-    expect(await w.cachedPage()).toBe('App v1');
+    expect(await response?.text()).toBe(page('v1'));
+    expect(await w.cachedPage()).toBe(page('v1'));
   });
 
   it('answers the app’s look for a version with the result', async () => {
@@ -244,7 +255,7 @@ describe('service worker of the hosted app', () => {
     // the running page is the stored one: nothing new
     const same: unknown[] = [];
     await w.dispatch('message', {
-      data: { typ: 'suche-version', stand: 'App v1' },
+      data: { typ: 'suche-version', stand: page('v1') },
       source: { postMessage: (message: unknown) => same.push(message) },
     });
     expect(same).toEqual([{ typ: 'such-ergebnis', ok: false, status: 401, neu: false }]);
@@ -260,6 +271,55 @@ describe('service worker of the hosted app', () => {
     expect(
       await w.dispatch('fetch', { request: { url: PAGE, method: 'POST', mode: 'cors' } }),
     ).toBeUndefined();
+  });
+
+  // Test zone on bunny.net (2026-11-15): the login script serves other paths of the same address
+  it('leaves the login script’s pages to the network, e.g. „Tester einladen“', async () => {
+    const w = await installed(refused);
+    const origin = new URL(SCOPE).origin;
+    expect(await w.navigate(`${origin}/_zugang/einladen`)).toBeUndefined();
+    expect(await w.navigate(`${SCOPE}_zugang/einladen`)).toBeUndefined();
+    expect(
+      await w.dispatch('fetch', {
+        request: { url: `${origin}/_zugang/stil.css`, method: 'GET', mode: 'no-cors' },
+      }),
+    ).toBeUndefined();
+    expect(w.calls).toEqual([]);
+    const keys = [...(w.stores.values().next().value?.keys() ?? [])];
+    expect(keys.some((key) => key.includes('_zugang'))).toBe(false);
+  });
+
+  it('a login page instead of the app never replaces the app, nor is it announced', async () => {
+    for (const answer of [loginPage, redirectedToLogin]) {
+      const w = await installed(answer);
+      expect(await (await w.navigate())?.text()).toBe(page('v1'));
+      expect(await w.cachedPage()).toBe(page('v1'));
+      expect(w.posted).toEqual([]);
+    }
+  });
+
+  it('a login page after „Mit Anmeldung aktualisieren“ is not stored either', async () => {
+    for (const answer of [loginPage, redirectedToLogin]) {
+      const w = await installed(answer);
+      const answers: unknown[] = [];
+      await w.dispatch('message', {
+        data: { typ: 'nach-anmeldung' },
+        source: { postMessage: (message: unknown) => answers.push(message) },
+      });
+      expect(answers).toEqual([{ typ: 'nach-anmeldung-ergebnis', ok: false, status: 200 }]);
+      expect(await w.cachedPage()).toBe(page('v1'));
+    }
+  });
+
+  it('a first visit answered with a login page shows it but does not keep it', async () => {
+    const w = worker(() => loginPage());
+    expect(await (await w.navigate())?.text()).toContain('Anmeldung');
+    expect(await w.cachedPage()).toBeUndefined();
+  });
+
+  it('the app’s mark is the title tag of the hosted head', () => {
+    expect(SW).toContain(MARK.replace(' />', ''));
+    expect(HOSTED_HEAD).toContain(MARK);
   });
 
   it('activating drops the caches of older versions', async () => {

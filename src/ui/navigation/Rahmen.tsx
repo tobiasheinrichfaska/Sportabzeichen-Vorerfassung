@@ -17,6 +17,7 @@ export function Rahmen({
   onSprung,
   status,
   onStatus,
+  fuss,
   children,
 }: {
   weg: readonly Knoten[];
@@ -25,6 +26,8 @@ export function Rahmen({
   status?: string | undefined;
   /** When given, the status is a button (e.g. „Neue Version – neu starten“). */
   onStatus?: (() => void) | undefined;
+  /** A slim line at the bottom, under the wheels and every page. */
+  fuss?: ReactNode | undefined;
   children: ReactNode;
 }) {
   const f = flaechen(useDunkel());
@@ -116,6 +119,19 @@ export function Rahmen({
         )}
       </nav>
       <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>{children}</div>
+      {fuss && (
+        <footer
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '0 10px',
+            fontSize: 13,
+            color: f.leise,
+          }}
+        >
+          {fuss}
+        </footer>
+      )}
     </div>
   );
 }

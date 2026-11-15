@@ -10,6 +10,13 @@ export interface BuildProfile {
   readonly csp: CspOptions;
   /** The page links its manifest and registers the service worker. */
   readonly hosted: boolean;
+  /** Where the build goes: a file on the device, the test zone for testers, or a live version. */
+  readonly stage: 'file' | 'test' | 'live';
+  /**
+   * Footer link „Tester einladen“ (Tobias 2026-11-15): the login script of the test zone (repo
+   * Testumgebung) makes a one-time invitation there. Only a test build carries it, never a live one.
+   */
+  readonly testerInvite: string | false;
 }
 
 export const BUILD_PROFILES = {
@@ -18,12 +25,16 @@ export const BUILD_PROFILES = {
     publicDir: false,
     csp: { serviceWorker: false, manifest: false },
     hosted: false,
+    stage: 'file',
+    testerInvite: false,
   },
   hosted: {
     outDir: 'dist-hosted',
     publicDir: 'hosted-public',
     csp: { serviceWorker: true, manifest: true },
     hosted: true,
+    stage: 'test',
+    testerInvite: '/_zugang/einladen',
   },
 } as const satisfies Record<string, BuildProfile>;
 
