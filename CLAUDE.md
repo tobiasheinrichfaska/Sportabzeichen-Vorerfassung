@@ -321,7 +321,16 @@ Stopp Druck stellen?“ – proposal (pictures only in memory, ~2 s before to 1 
   converter `tools/localCatalog.ts` + `tools/katalog-lokal.ts` with `tests/tools/localCatalog.test.ts`,
   and the working files of `.tmp/` — copied **1:1 over this checkout** (all gitignored here). After
   changing one of these paths here, copy it back and commit there. **Never credentials** there
-  (`deploy/.local/` stays on the PC).
+  (`deploy/.local/` stays on the PC). A new private path goes into `.gitignore` first.
+- **Cloud sessions (claude.ai/code, since 2026-11-15):** both repos are sibling checkouts. With both
+  in the session, the setup script of the Default environment runs `npm ci` here and copies the
+  companion's paths over this checkout at container build (`cp -R -u`); anything git then sees here
+  is reported loudly. A companion added mid-session gets no setup run — run its block by hand from
+  the folder holding both checkouts. Copies changed in the cloud are lost with the container unless
+  copied back and committed in the companion (compare command in its README). Only on the PC:
+  `hochladen`/`tester` (PowerShell + `private/Auslieferung`) and the Windows-bound scripts of `.tmp/`
+  (companion README). Browser checks in the cloud: `require('playwright')` (global, preinstalled
+  Chromium), not `import`; no WebKit there, so the iPhone rehearsal in WebKit stays on the PC.
 - **App (2026-11-10):** the standalone app of the section above — wheels, groups, children,
   „Möglich“, „Erfassen“, „Je Kind“, „Gruppe“, „Aufbau“, tools; hosted in
   `NebenprojektSportabzeichen/` with the local tables. Tobias installs it on his phone in the
@@ -492,7 +501,8 @@ Key decisions:
 - **Planned (Tobias 2026-11-14):** the hosted file carries the whole local package **AES-GCM-encrypted,
   unlocked with a password** (PBKDF2 like TKD-Trainerbuch E4); then the folder needs no server login.
   Reasons and the rights research: the private companion repo (`docs/privat/plattform-abgleich.md`) and `docs/privat/recherche-rechte-dosb.md`.
-- **Limits only in builds on a PC with the local package** (`catalog/local/`, never in git) — the
+- **Limits only in builds with the local package** (`catalog/local/`, never in git — on the PC or
+  in a cloud session with the companion repo, where `dist/` then holds the tables too) — the
   public plain file says „ohne Grenzwerte gebaut“. Gerätturnen descriptions per level and the
   platform's discipline descriptions are not taken over.
 - **25 m Schwimmen in Minuten / 200 m Handbike** are entered in min:sec as on the platform; the
@@ -588,5 +598,7 @@ npm --prefix "c:/skripte/public/Sportabzeichen-Vorerfassung" run import:archivie
 
 Note: the `cd-discipline` hook mistakes a shell variable holding this hyphenated project name for
 a PowerShell cmdlet — write the full path inline instead of `P=".../Sportabzeichen-Vorerfassung"`.
+In a cloud session the same scripts run from the checkout (`npm test`, …), except `hochladen` and
+`tester` (PC only).
 
-_Last updated: 2026-11-14_
+_Last updated: 2026-11-15_
