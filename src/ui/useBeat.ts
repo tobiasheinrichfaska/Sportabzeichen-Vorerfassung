@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   alignToGroup,
+  confirmedShift,
   beatsInWindow,
   groupHit,
   isMilestone,
   type Beat,
   type BeatCount,
   type GroupAlignment,
+  type HitMark,
 } from '../logic/metronome';
 
-/** A group hit and what it did to the beat. */
-export type HitAlignment = GroupAlignment & { size: number };
+/**
+ * A group hit and what it did to the beat; `waiting`: off the beat, but the shift waits for a
+ * second hit to confirm it.
+ */
+export type HitAlignment = GroupAlignment & { size: number; waiting: boolean };
 
 // Look-ahead scheduling: every 25 ms the beats of the next 100 ms are handed to the audio clock,
 // which plays them exactly on time even when the page is busy.
@@ -53,6 +58,8 @@ export function useBeat(pattern: readonly string[]) {
   // hit used — read and changed only in tap handlers
   const counts = useRef<BeatCount[]>([]);
   const used = useRef(-Infinity);
+  // the hit before (no hit since), to confirm a shift with a second one
+  const previous = useRef<HitMark | null>(null);
 
   useEffect(() => {
     const audio = context.current;
@@ -99,6 +106,7 @@ export function useBeat(pattern: readonly string[]) {
       setError('');
       counts.current = [];
       used.current = -Infinity;
+      previous.current = null;
       setRun({ start: context.current.currentTime + 0.05, bpm });
     } catch (reason) {
       setError(`Ton nicht verfügbar: ${String(reason)}`);
@@ -117,8 +125,9 @@ export function useBeat(pattern: readonly string[]) {
     realign: (start: number) => setRun((current) => (current ? { ...current, start } : current)),
     /**
      * A count of one person (press time, performance clock): when it completes a group hit
-     * (`groupHit`), the beat follows the hit where it is off as a whole (`alignToGroup`). Returns
-     * the hit, or null (beat not running, no hit yet).
+     * (`groupHit`), the beat moves to it only when this hit and the one before it are both off
+     * the same way a repetition apart (`confirmedShift`). Returns the hit, or null (beat not
+     * running, no hit yet).
      */
     groupCount: (who: string, pressedAt: number, people: number): HitAlignment | null => {
       const audio = context.current;
@@ -129,9 +138,20 @@ export function useBeat(pattern: readonly string[]) {
       const hit = groupHit(counts.current, people, used.current);
       if (!hit) return null;
       used.current = hit.last;
-      const alignment = alignToGroup(run.start, run.bpm, pattern, hit.taps);
-      if (alignment.realigned) setRun({ ...run, start: alignment.start });
-      return { ...alignment, size: hit.taps.length };
+      // where the hit lies against the beat; whether it moves the beat decides the confirmation
+      const seen = alignToGroup(run.start, run.bpm, pattern, hit.taps);
+      const middle = hit.taps.reduce((sum, tap) => sum + tap, 0) / hit.taps.length;
+      const mark = { middle, deviation: seen.deviation };
+      const shift = confirmedShift(previous.current, mark, run.bpm, pattern);
+      if (shift) setRun({ ...run, start: middle });
+      previous.current = shift ? null : mark;
+      return {
+        ...seen,
+        start: shift ? middle : run.start,
+        realigned: shift,
+        waiting: !shift && seen.realigned,
+        size: hit.taps.length,
+      };
     },
     /** A press time (performance clock, ms) on the audio clock; undefined before the first start. */
     toAudioTime: (pressedAt: number) => {

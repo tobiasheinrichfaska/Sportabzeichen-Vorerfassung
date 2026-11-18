@@ -19,7 +19,11 @@ function hitText(last: HitAlignment, people: number) {
   const off = Math.abs(last.deviation);
   if (off < 0.05) return `${who} genau im Takt.`;
   return `${who} ${seconds(off)} s ${last.deviation > 0 ? 'später' : 'früher'} als der Takt${
-    last.realigned ? ' – Takt neu ausgerichtet' : ''
+    last.realigned
+      ? ' – bestätigt, Takt neu ausgerichtet'
+      : last.waiting
+        ? ' – noch ein Treffer, dann richtet sich der Takt aus'
+        : ''
   }.`;
 }
 
@@ -33,8 +37,8 @@ interface Person {
  * braucht es getrennte Zählfelder“). With a beat (Push-Ups) one shared beat runs. It follows group
  * hits (`groupHit`): at least two counts close together with a free corridor before them — nobody
  * waits for a person who lags or stopped (Tobias: „wenn einer langsam nachzieht oder aufhört,
- * sollte trotzdem neu ausgerichtet werden können“); a hit off the beat as a whole moves it
- * (`alignToGroup`). With one person every count is a hit.
+ * sollte trotzdem neu ausgerichtet werden können“); two consecutive hits a repetition apart, both
+ * off the same way, move it (`confirmedShift`). With one person every count is a hit.
  */
 export function CounterPads({
   heat,

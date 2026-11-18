@@ -237,3 +237,39 @@ export function groupHit(
   );
   return blocked ? null : { taps, first, last: newest.at };
 }
+
+/**
+ * Two group hits confirm a shift (Tobias 2026-11-18: „zwei Gruppen von Treffern mit realistischem
+ * Abstand ohne Treffer dazwischen“): consecutive hits — no hit between them — whose middles lie
+ * about one repetition apart, from half a cycle to two cycles (at 60 BPM: 1–4 s).
+ */
+export const HIT_GAP_CYCLES = { min: 0.5, max: 2 } as const;
+
+/** A group hit as the beat saw it: its middle and how far that lies off the nearest cycle start. */
+export interface HitMark {
+  middle: number;
+  deviation: number;
+}
+
+/**
+ * The beat moves to `current` only when it and the hit before it (`previous`, the last hit — so
+ * none lies between) are both off by more than `threshold` and lie a realistic repetition apart.
+ * One stray hit never moves the beat. No „same way“: a group falling behind by more than half a
+ * cycle lies nearer the next cycle start and reads as early — demanding the same sign kept such a
+ * group from ever confirming (seen in Chromium 2026-11-18; simulated: a group slower together was
+ * followed 3.2 times per run with it, 6.8 without, a group in time 0.2 / 0.3).
+ */
+export function confirmedShift(
+  previous: HitMark | null,
+  current: HitMark,
+  bpm: number,
+  pattern: readonly string[],
+  threshold: number = REALIGN_THRESHOLD_S,
+): boolean {
+  if (!previous) return false;
+  const cycle = beatInterval(bpm) * Math.max(1, pattern.length);
+  const gap = current.middle - previous.middle;
+  const realistic = gap >= HIT_GAP_CYCLES.min * cycle && gap <= HIT_GAP_CYCLES.max * cycle;
+  const off = (mark: HitMark) => Math.abs(mark.deviation) > threshold;
+  return realistic && off(previous) && off(current);
+}

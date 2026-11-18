@@ -182,9 +182,10 @@ eine Metronom-Funktion“). **Vorbedingungen:** wie MT-38, Ton an.
    antippen.
    - Unter dem Takt-Knopf z. B. „Letzte Zählung 0,1 s später als der Takt.“ – der Takt bleibt, wie
      er ist.
-7. Einmal deutlich (mehr als eine halbe Sekunde) zu spät oder zu früh tippen.
-   - „… – Takt neu ausgerichtet.“: der hohe Ton kommt sofort und von da an im selben Tempo; die
-     nächste Zählung im Takt steht wieder bei „genau im Takt“ bzw. wenigen Zehnteln.
-   - **Nicht ungewöhnlich:** Das Tempo ändert sich nie – es ist der Richtwert. Ein Sportler, der
-     dauerhaft langsamer ist, bekommt öfter „neu ausgerichtet“.
+7. Zweimal hintereinander deutlich (mehr als eine halbe Sekunde) daneben tippen.
+   - Nach dem ersten: „… – noch eine, dann richtet sich der Takt aus.“; nach dem zweiten: „… –
+     bestätigt, Takt neu ausgerichtet.“ – der hohe Ton kommt sofort und von da an im selben Tempo.
+   - Nur einmal daneben, danach wieder im Takt: Der Takt bleibt.
+   - **Nicht ungewöhnlich:** Das Tempo ändert sich nie – es ist der Richtwert. Wer dauerhaft
+     langsamer ist, bekommt etwa jede zweite bis dritte Wiederholung „bestätigt“.
 8. Beim Kind „Zähler (n)“ antippen und speichern.

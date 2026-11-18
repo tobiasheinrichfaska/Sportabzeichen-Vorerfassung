@@ -9,6 +9,7 @@ import {
   GROUP_SPREAD_S,
   REALIGN_THRESHOLD_S,
   alignToGroup,
+  confirmedShift,
   groupHit,
   type BeatCount,
   alignToTap,
@@ -212,5 +213,32 @@ describe('groupHit (Tobias 2026-11-18: „nach zwei Gruppentreffern“, wer nach
   it('a hit already used never counts again; one person tapping twice is still one person', () => {
     expect(groupHit([c('a', 10), c('b', 10.2), c('c', 10.4)], 3, 10.2)).toBeNull();
     expect(groupHit([c('a', 10), c('a', 10.3)], 2)).toBeNull();
+  });
+});
+
+describe('confirmedShift (Tobias 2026-11-18: „zwei Gruppen von Treffern mit realistischem Abstand ohne Treffer dazwischen“)', () => {
+  const pattern = ['hoch', 'runter'];
+  const mark = (middle: number, deviation: number) => ({ middle, deviation });
+
+  it('one hit alone never moves the beat', () => {
+    expect(confirmedShift(null, mark(10, 0.9), 60, pattern)).toBe(false);
+  });
+
+  it('two hits a repetition apart, both clearly off: the beat moves', () => {
+    expect(confirmedShift(mark(10, 0.6), mark(12.4, 1.0), 60, pattern)).toBe(true);
+    expect(confirmedShift(mark(10, -0.7), mark(11.7, -0.9), 60, pattern)).toBe(true);
+    // a group falling behind past half a cycle reads as early next: still confirmed
+    expect(confirmedShift(mark(10, 0.7), mark(12.4, -0.9), 60, pattern)).toBe(true);
+  });
+
+  it('not when one of them is near the beat', () => {
+    expect(confirmedShift(mark(10, 0.2), mark(12.4, 0.8), 60, pattern)).toBe(false);
+    expect(confirmedShift(mark(10, 0.8), mark(12.1, 0.3), 60, pattern)).toBe(false);
+  });
+
+  it('not when the two lie no realistic repetition apart (60 BPM: 1–4 s)', () => {
+    expect(confirmedShift(mark(10, 0.7), mark(10.8, 0.8), 60, pattern)).toBe(false);
+    expect(confirmedShift(mark(10, 0.7), mark(14.5, 0.8), 60, pattern)).toBe(false);
+    expect(confirmedShift(mark(10, 0.7), mark(14, 0.8), 60, pattern)).toBe(true);
   });
 });

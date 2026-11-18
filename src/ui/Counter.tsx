@@ -1,8 +1,8 @@
 import { useState, type KeyboardEvent } from 'react';
 import type { CounterAction } from '../logic/counter';
-import { alignToTap, beatLabel, type MetronomePreset, type TapAlignment } from '../logic/metronome';
+import { beatLabel, type MetronomePreset } from '../logic/metronome';
 import { fastPress } from './fastPress';
-import { useBeat } from './useBeat';
+import { useBeat, type HitAlignment } from './useBeat';
 
 // One shared empty pattern, so the beat's effect does not restart on every render
 const NO_PATTERN: readonly string[] = [];
@@ -10,12 +10,16 @@ const NO_PATTERN: readonly string[] = [];
 const seconds = (value: number) => value.toFixed(1).replace('.', ',');
 
 /** What the last count said about the tempo, in words. */
-function deviationText(last: TapAlignment) {
+function deviationText(last: HitAlignment) {
   const off = Math.abs(last.deviation);
   const way = last.deviation > 0 ? 'später' : 'früher';
   if (off < 0.05) return 'Letzte Zählung genau im Takt.';
   return `Letzte Zählung ${seconds(off)} s ${way} als der Takt${
-    last.realigned ? ' – Takt neu ausgerichtet' : ''
+    last.realigned
+      ? ' – bestätigt, Takt neu ausgerichtet'
+      : last.waiting
+        ? ' – noch eine, dann richtet sich der Takt aus'
+        : ''
   }.`;
 }
 
@@ -33,23 +37,20 @@ export function Counter({
   dispatch: (action: CounterAction) => void;
   compact?: boolean;
   /**
-   * A beat to count along (Push-Ups, Tobias 2026-11-18): it runs at its fixed tempo; a count far
-   * from a cycle start moves the cycle to the count (`alignToTap`), a near one leaves it alone.
+   * A beat to count along (Push-Ups, Tobias 2026-11-18): it runs at its fixed tempo; two counts in
+   * a row a repetition apart, both far off the same way, move the cycle (`confirmedShift` through
+   * `useBeat.groupCount`, one person: every count a hit); near ones leave it alone.
    */
   beat?: MetronomePreset | undefined;
 }) {
   const pattern = beat?.pattern ?? NO_PATTERN;
   const ticking = useBeat(pattern);
-  const [last, setLast] = useState<TapAlignment | null>(null);
+  const [last, setLast] = useState<HitAlignment | null>(null);
 
   function count1(at: number) {
     dispatch('increment');
-    const { run } = ticking;
-    const tap = ticking.toAudioTime(at);
-    if (!run || tap === undefined) return;
-    const alignment = alignToTap(run.start, run.bpm, pattern, tap);
-    if (alignment.realigned) ticking.realign(alignment.start);
-    setLast(alignment);
+    const hit = ticking.groupCount('zaehler', at, 1);
+    if (hit) setLast(hit);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>) {

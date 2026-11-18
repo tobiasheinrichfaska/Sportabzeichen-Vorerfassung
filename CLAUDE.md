@@ -213,16 +213,24 @@ andere Wiederholungen braucht es getrennte Zählfelder“.
   ausgerichtet. Also nach zwei Gruppentreffern“): the beat follows **group hits** (`groupHit`): the
   latest count per person within `GROUP_SPREAD_S` 0.8 s up to the newest — at least two people
   (one person in the run: that one) — with no other count `GROUP_CORRIDOR_S` 0.4 s before it; a
-  hit is used once. Off the beat as a whole by more than 0.5 s → the cycle starts at its middle
-  (`alignToGroup`, phase only). Nobody waits for a person who lags or stopped. The counts live in
+  hit is used once. **Two hits confirm a shift** (Tobias: „zwei Gruppen von Treffern mit
+  realistischem Abstand ohne Treffer dazwischen“, `confirmedShift`): consecutive hits, 0.5–2 cycles
+  apart (`HIT_GAP_CYCLES`, 1–4 s at 60 BPM), both off by more than 0.5 s → the cycle starts at the
+  second hit's middle (phase only); one stray hit never moves the beat. No „same way“ demanded: a
+  group falling behind past half a cycle reads as early (seen in Chromium — with the sign rule it
+  never confirmed). Simulated: a group in time 0.3 realignments per run (one hit alone: 1.0), slower
+  together / one dragging / one stopped ~6 (beat ≈ 0.4 s off the real ends on average, one hit
+  alone: ~10, 0.27 s), different tempos 3.2 (5.7). The single counter of „Erfassen“ uses the same
+  rule (`groupCount` with one person). Nobody waits for a person who lags or stopped. The counts live in
   `useBeat` (`groupCount`, refs read only in tap handlers). **Simulated** (three athletes, one
   examiner 0.15 s per field, scatter 0.12 s, 20 repetitions): a group in time ~1 realignment per
   run; slower together, one dragging behind (2.7 s) or one stopping after 5 — all followed (~10);
   three different tempos ~6 (two happen to meet: the price of not waiting for all). The corridor
   hardly changes these cases; it stops a count just before the pair. The earlier rule (a full round
   of all, 2026-11-18) never followed a group with one person stopped. Checked in Chromium (three
-  adults): one stopped, two 0.8 s late → realigned; then in time, the third 1 s behind alone moved
-  nothing.
+  adults): one stopped, two 0.7 s late → „noch ein Treffer …“; 2.4 s later 1.1 s late → confirmed,
+  realigned; then 0.1 s, the third alone moved nothing. One person: 0.7 s early waits, the next
+  confirms.
 
 ### Curl-Up counted by the metronome, Push-Ups with the beat in the counter (2026-11-18)
 
@@ -242,6 +250,7 @@ die Zählung stark genug abweicht“.
   realigning on every count made the beat jump audibly on about every second repetition even for an
   athlete at exactly 2 s; with 0.5 s only about 5 %. A different tempo is not followed (the tempo is
   the guide); the counter says „Letzte Zählung 0,3 s später als der Takt“.
+  Since the same day two counts must confirm a shift (`confirmedShift`, see „Durchgang“ above).
 - Shared audio: `src/ui/useBeat.ts` (look-ahead scheduling as before, realign, press time → audio
   clock).
 - **Fixed on the way:** a value typed for one exercise stayed in the child's field when another

@@ -291,7 +291,10 @@ die App neu, sind nicht gespeicherte Ergebnisse weg – auf „Zuordnen“ bald 
    - Der Takt folgt **Gruppentreffern**: mindestens zwei Zählungen nah beieinander (höchstens
      0,8 s), davor 0,4 s frei. Liegen beide nah am hohen Ton: „Gruppentreffer (2 von 2) 0,1 s
      später als der Takt.“ – der Takt bleibt.
-   - Beide gemeinsam deutlich (mehr als eine halbe Sekunde) zu spät: „… – Takt neu ausgerichtet“.
+   - Beide gemeinsam deutlich (mehr als eine halbe Sekunde) daneben: „… – noch ein Treffer, dann
+     richtet sich der Takt aus.“ Liegt auch der nächste Treffer (etwa eine Wiederholung später)
+     deutlich daneben: „… – bestätigt, Takt neu ausgerichtet.“ Ein einzelner Ausreißer verschiebt
+     nie etwas.
    - Mit drei Personen, eine hört auf oder zieht deutlich nach: Die beiden anderen richten den Takt
      trotzdem aus („Gruppentreffer (2 von 3) …“); eine einzelne späte Zählung verschiebt nichts.
    - **Nicht ungewöhnlich:** Turnen alle in verschiedenem Tempo, richtet sich der Takt gelegentlich
