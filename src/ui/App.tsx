@@ -41,6 +41,8 @@ import type { BookProps } from './pages/GroupSwitch';
 import { PlannedPage } from './pages/PlannedPage';
 import { PossiblePage } from './pages/PossiblePage';
 import { PlanPage } from './pages/PlanPage';
+import { AssignPage, HeatPage } from './pages/HeatPages';
+import { heatReducer, newHeat } from '../logic/heat';
 import { ChildResultPage, GroupResultPage } from './pages/ResultPages';
 import { SetupPage } from './pages/SetupPage';
 import { Stopwatch } from './Stopwatch';
@@ -81,6 +83,8 @@ export function App() {
   // The tools' state lives here, so a running stopwatch survives a change of page
   const [stopwatch, setStopwatch] = useState<StopwatchState>(STOPWATCH_RESET);
   const [count, countDispatch] = useReducer(counterReducer, 0);
+  // the Durchgang lives in the app like the stopwatch, so a page change keeps its results
+  const [heat, heatDispatch] = useReducer(heatReducer, '', newHeat);
   // the Zielvideo's camera, likewise kept while pages change
   const finishVideo = useFinishVideo();
   const [groupChoice, setGroupChoice] = useState(readGroupChoice);
@@ -219,6 +223,26 @@ export function App() {
         finishVideo={finishVideo}
         count={count}
         countDispatch={countDispatch}
+      />
+    ),
+    durchgang: () => (
+      <HeatPage
+        {...book}
+        heat={heat}
+        heatDispatch={heatDispatch}
+        stopwatch={stopwatch}
+        setStopwatch={setStopwatch}
+        finishVideo={finishVideo}
+      />
+    ),
+    zuordnen: () => (
+      <AssignPage
+        {...book}
+        heat={heat}
+        heatDispatch={heatDispatch}
+        stopwatch={stopwatch}
+        setStopwatch={setStopwatch}
+        finishVideo={finishVideo}
       />
     ),
     'je-kind': () => <ChildResultPage {...book} />,

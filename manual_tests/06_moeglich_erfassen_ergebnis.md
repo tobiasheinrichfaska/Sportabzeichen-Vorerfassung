@@ -44,7 +44,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-31: Zeit von der Stoppuhr übernehmen
 
-1. Rad: „Abnahme“ › „Stoppuhr“: Start, zweimal „Zieleinlauf“, Stopp.
+1. Rad: „Werkzeuge“ › „Stoppuhr“: Start, zweimal „Zieleinlauf“, Stopp.
 2. Oben „Erfassen ›“ antippen, „Schnelligkeit“ › „Laufen“ wählen.
    - „Stoppuhr: 1) … · 2) …“ und bei jedem Kind die Knöpfe „⏱ 1) …“ und „⏱ 2) …“.
 3. Bei Lena „⏱ 1) …“, bei Ben „⏱ 2) …“ tippen.
@@ -252,3 +252,45 @@ Vorbedingung: „Gruppen“ › „Beispielgruppe mit 4 erfundenen Kindern“.
      Schwimmen macht ihn wieder gültig.
 7. Mit einem Kind ab 12 (in „Kinder“ anlegen): unter den Wegen der Hinweis, dass Abzeichen ab 12
    von DLRG, DSV, Wasserwacht, DRK oder ASB abgenommen sein müssen.
+
+## MT-47: Durchgang und Zuordnen – eine oder mehrere Personen, das passende Werkzeug
+
+Seit 18.11.2026 (Tobias: „Ja, so bauen … Durchgang würde das passende Werkzeug zeigen und Zuordnen
+die Ergebnisse zuordnen, falls nicht per Knopf geschehen … für Push-Ups oder andere Wiederholungen
+braucht es getrennte Zählfelder“). „Abnahme“ = Erfassen · **Durchgang** · Zuordnen; Stoppuhr und
+Zähler stehen weiter unter „Werkzeuge“. Vorbedingung: Beispielgruppe, dazu zwei Erwachsene
+(Jahrgang 1990, 1992) für Push-Ups und Curl-Up.
+
+**Wichtig:** Ein Durchgang lebt nur im Speicher der App wie die laufende Stoppuhr. Startet das Handy
+die App neu, sind nicht gespeicherte Ergebnisse weg – auf „Zuordnen“ bald speichern.
+
+1. Rad: „Abnahme“ › „Durchgang“, unter Schnelligkeit „Laufen“.
+   - Die Übungsliste klappt zu („Übung: Laufen – ändern“); „Wer macht mit:“ mit allen, die die
+     Übung können, „Geplante (n)“ (wo geplant) und „Alle (n)“.
+2. Mia, Paul und Emma antippen.
+   - „Ein Zielknopf“ (gewählt) / „Name als Zielknopf“, darunter die Stoppuhr.
+3. „Start“, dreimal „Zieleinlauf“, „Stopp“.
+   - „3 Ergebnisse, 3 noch zuzuordnen – speichern auf „Zuordnen““.
+4. „Zuordnen ›“ (oben rechts).
+   - „1) … wer?“ mit Mia, Paul, Emma als Knöpfe; nach jeder Zuordnung fehlt die Person bei den
+     übrigen Zeiten. „ändern“ nimmt eine Zuordnung zurück.
+5. „Alle zugeordneten speichern (3)“.
+   - Jede Zeile „✓ gespeichert“; die Zeiten stehen bei „Je Kind“. Wo eine Variante oder Klasse
+     entscheidet, stehen deren Knöpfe in der Zeile, ohne Wahl kommt die Meldung „Variante wählen …“.
+6. Mit „Zielvideo an“ wiederholen (Kamera aufs Ziel).
+   - Auf „Zuordnen“ je Zeit „Zielbilder“: das Bild beim Druck rot markiert; man sieht, wer zuerst war,
+     und kann „Zeit dieses Bildes übernehmen“.
+7. „Durchgang“, eine andere Übung antippen, solange Ergebnisse nicht gespeichert sind.
+   - Rot: „Dieser Durchgang hat n nicht gespeicherte Ergebnisse …“ – die Übung wechselt nicht.
+     „Neuer Durchgang (gleiche Personen) – verwirft n …“ setzt Stoppuhr und Ergebnisse zurück.
+8. Ausdauer „Laufen“, zwei Kinder, „Name als Zielknopf“, „Start“.
+   - Statt „Zieleinlauf“ ein großer Knopf je Name. Einen antippen: die Zeit gehört der Person, ihr
+     Knopf verschwindet. Auf „Zuordnen“ steht die Zeit schon mit Namen.
+9. Kraft „Push-Ups“, beide Erwachsenen.
+   - Getrennte Zählfelder je Person (Name, Zahl, „−1“) und „Takt an (60/min)“. Mit zwei Personen:
+     „Der Takt läuft fest (mehrere zählen gleichzeitig)“; mit einer richtet er sich wie in MT-46 aus.
+10. Kraft „Crunches/Curl-Up“, beide Erwachsenen, „Start“.
+    - Je Person „Ende <Name>“: beim ersten Fehler der Person antippen – sie behält die ganzen
+      Wiederholungen bis dahin, ±1 korrigierbar. Nach der letzten Person hält das Metronom an.
+11. Übung ohne Werkzeug (z. B. Weitsprung).
+    - „Für diese Übung gibt es kein Werkzeug – die Werte direkt auf „Erfassen“ eintragen.“

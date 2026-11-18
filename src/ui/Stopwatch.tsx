@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   STOPWATCH_RESET,
   elapsed,
@@ -57,6 +57,10 @@ export function Stopwatch({
   compact = false,
   kind,
   video,
+  finishNames,
+  onNamedFinish,
+  note,
+  onReset,
 }: {
   state: StopwatchState;
   setState: (update: (current: StopwatchState) => StopwatchState) => void;
@@ -64,6 +68,16 @@ export function Stopwatch({
   kind?: TimedMeasure;
   /** The Zielvideo (camera in the app); without it the stopwatch has none. */
   video?: FinishVideoControl;
+  /**
+   * Durchgang „Name als Zielknopf“: a finish button per person still running instead of the one
+   * „Zieleinlauf“; `onNamedFinish` gets the person and the index of the new finish.
+   */
+  finishNames?: readonly { id: string; label: string }[] | undefined;
+  onNamedFinish?: ((id: string, finishIndex: number) => void) | undefined;
+  /** Replaces the note under a compact stopwatch. */
+  note?: ReactNode;
+  /** Called with the reset (a Durchgang clears its results with it). */
+  onReset?: (() => void) | undefined;
 }) {
   const [now, setNow] = useState(() => performance.now());
   // the finish whose Zielbilder are open
@@ -84,6 +98,21 @@ export function Stopwatch({
     setNow(at);
   };
   const shown = elapsed(state, now);
+  // the index the next finish gets, counted at once: two presses within one frame (a close
+  // finish) must not get the same index before the page renders again
+  const nextFinish = useRef(state.finishes.length);
+  nextFinish.current = Math.max(nextFinish.current, state.finishes.length);
+  if (state.finishes.length === 0) nextFinish.current = 0;
+  /** Records a finish; returns its index. */
+  function finish(at: number): number {
+    const index = nextFinish.current;
+    nextFinish.current += 1;
+    // the Zielvideo keeps the pictures around this press (index = the new finish)
+    video?.mark(index, at, elapsed(state, at));
+    setState((current) => finishStopwatch(current, at));
+    setNow(at);
+    return index;
+  }
   const Wrapper = compact ? 'div' : 'section';
 
   return (
@@ -100,19 +129,32 @@ export function Stopwatch({
         >
           {running ? 'Stopp' : shown > 0 ? 'Weiter' : 'Start'}
         </button>
-        <button
-          type="button"
-          className="big-button"
-          disabled={!running}
-          {...fastPress((at) => {
-            // the Zielvideo keeps the pictures around this press (index = the new finish)
-            if (running) video?.mark(state.finishes.length, at, elapsed(state, at));
-            setState((current) => finishStopwatch(current, at));
-            setNow(at);
-          })}
-        >
-          Zieleinlauf
-        </button>
+        {finishNames ? (
+          finishNames.map((person) => (
+            <button
+              key={person.id}
+              type="button"
+              className="big-button finish-name"
+              disabled={!running}
+              {...fastPress((at) => {
+                if (running) onNamedFinish?.(person.id, finish(at));
+              })}
+            >
+              {person.label}
+            </button>
+          ))
+        ) : (
+          <button
+            type="button"
+            className="big-button"
+            disabled={!running}
+            {...fastPress((at) => {
+              if (running) finish(at);
+            })}
+          >
+            Zieleinlauf
+          </button>
+        )}
         <button
           type="button"
           disabled={running}
@@ -120,6 +162,7 @@ export function Stopwatch({
             setState(() => STOPWATCH_RESET);
             setShowing(null);
             video?.clear();
+            onReset?.();
           })}
         >
           Zurücksetzen
@@ -176,7 +219,9 @@ export function Stopwatch({
         </ol>
       )}
       {video && <CameraSwitch control={video} />}
-      {compact ? (
+      {note !== undefined ? (
+        note
+      ) : compact ? (
         <p className="muted">
           Beim Kind die Zeit „⏱ …“ antippen übernimmt sie. Gemeinsamer Start: „Zieleinlauf“ je
           Person.
