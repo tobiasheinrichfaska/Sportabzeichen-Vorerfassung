@@ -198,3 +198,76 @@ export function offersByChild(
     return { athlete, groups, missing, blocked };
   });
 }
+
+/** An exercise someone of the group does on the day, and who. */
+export interface Station {
+  exercise: Exercise;
+  athleteIds: string[];
+}
+
+/** A child's Disziplingruppen with something possible but nothing planned yet. */
+export interface PlanGap {
+  athleteId: string;
+  groups: GroupId[];
+}
+
+export interface PlanOverview {
+  /** In Disziplingruppe and catalog order; only exercises the planned children can do. */
+  stations: Station[];
+  /** Children who still lack a plan in a Disziplingruppe where something is possible. */
+  gaps: PlanGap[];
+  /**
+   * Plans of the group's children for an exercise they can no longer do (e.g. the birth year or
+   * class was changed after planning) — named, not counted, never dropped silently.
+   */
+  stale: { athleteId: string; exerciseId: string }[];
+}
+
+/**
+ * The plan of a group at a glance (page „Planen“): which stations the day needs, and which child
+ * still has a Disziplingruppe without a planned exercise.
+ */
+export function planOverview(
+  workbook: Workbook,
+  catalog: Catalog,
+  groupId: string,
+  athletes: readonly Athlete[],
+): PlanOverview {
+  const byChild = offersByChild(workbook, catalog, groupId, athletes);
+  const possible = new Set(
+    byChild.flatMap((o) =>
+      o.groups.flatMap((g) => g.possible.map((c) => `${c.athleteId} ${c.exerciseId}`)),
+    ),
+  );
+  const mine = new Set(athletes.map((athlete) => athlete.id));
+  const plans = workbook.plans.filter((p) => mine.has(p.athleteId));
+  const counts = plans.filter((p) => possible.has(`${p.athleteId} ${p.exerciseId}`));
+  const order = GROUPS.map((g) => g.id);
+  const stations = catalog.exercises
+    .map((exercise) => ({
+      exercise,
+      athleteIds: athletes
+        .map((athlete) => athlete.id)
+        .filter((id) => counts.some((p) => p.athleteId === id && p.exerciseId === exercise.id)),
+    }))
+    .filter((station) => station.athleteIds.length > 0)
+    .sort((a, b) => order.indexOf(a.exercise.group) - order.indexOf(b.exercise.group));
+  const gaps = byChild
+    .map((offer) => ({
+      athleteId: offer.athlete.id,
+      groups: offer.groups
+        .filter(
+          (g) =>
+            g.possible.length > 0 &&
+            !g.possible.some((c) =>
+              counts.some((p) => p.athleteId === c.athleteId && p.exerciseId === c.exerciseId),
+            ),
+        )
+        .map((g) => g.group),
+    }))
+    .filter((gap) => gap.groups.length > 0);
+  const stale = plans
+    .filter((p) => !possible.has(`${p.athleteId} ${p.exerciseId}`))
+    .map(({ athleteId, exerciseId }) => ({ athleteId, exerciseId }));
+  return { stations, gaps, stale };
+}

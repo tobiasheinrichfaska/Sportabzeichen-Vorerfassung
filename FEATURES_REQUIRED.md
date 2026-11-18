@@ -40,17 +40,21 @@ Unchecked items are planned but not built yet (status 2026-11-10).
 
 - [x] **Enter a group of children** — first name, birth year, w/m (MmB with possible classes and consent); same name + year asked twice; group delete takes only its own children (MT-22…MT-27, `children.test.ts`)
 - [x] **„Möglich“: which Abnahmen the children of a group can do** — by exercise or by child, with variants (`overview.test.ts`)
+- [x] **„Planen“: who does what, quick to tap** — „Alle, die können“ / „Keins“ per exercise, a chip per child, the stations of the day, children still without a plan in a Disziplingruppe, plans no longer possible (MT-44, `planOverview`, `setPlans` in `overview.test.ts`)
 - [x] **MmB athlete with several possible classes** — "Klasse ausschlaggebend" shown where requirements differ
 - [ ] **Einstufung:** classes A–J with subgroups and criteria shown, several selectable, single classes deactivatable
 - [x] **Enter a measurement in card notation** („Erfassen“, `capture.test.ts`) — level Bronze/Silber/Gold shown immediately
 - [x] **Every exercise opens its help entry** — page „Aufbau“ and the fold „Aufbau“ in „Möglich“ / „Erfassen“ (MT-34)
 - [x] **Metronome at the station** for every exercise whose official text sets a beat (Curl-Up required, Push-Ups guide; MT-38, `metronome.test.ts`)
+- [x] **Durchgang / Zuordnen** — choose one or several people for a run; the tool of the exercise (stopwatch with one „Zieleinlauf“ or a button per name, separate counters — Push-Ups' beat moves after two consecutive group hits a repetition apart, both clearly off (a hit = two or more counts together, a free corridor before) — nobody waits for one who lags or stopped —, the metronome with an „Ende“ per person); results not assigned by button are assigned afterwards (Zielbilder for close finishes) and saved as measurements (MT-47, `heat.test.ts`)
+- [x] **Curl-Up: the metronome counts** — a milestone tone every 10 repetitions, „Ende“ gives the whole repetitions with −1/+1, „Metronom (n)“ per child; **Push-Ups: the counter carries the beat**, realigned only beyond 0.5 s (MT-46, `alignToTap`, `isMilestone`)
 - [x] **Tools at hand while an exercise runs** — „Erfassen“ shows the stopwatch open for timed exercises, the counter for counted ones, plus the metronome where a beat is set; same state as the tool pages (`stationTools`, MT-40, `capture.test.ts`)
 - [x] **Card notation everywhere** — long times in minutes as on the cards (e.g. „75:00“, never „1:15:00“), variant names as on the cards (Zielwurf H III distances, „…, rechts und links zusammen“, „Rollstuhlparcours“; MT-41, `measure.test.ts`; converter tests in the private companion repo)
 - [x] **Ausführung per variant** — ladder step sequence (picture, steps, video link) and Gerätturnen element (material, picture strip, task per level) of the child's age in „Möglich“, „Erfassen“, „Aufbau“; only with the local package (MT-37, `overview.test.ts`, `catalogPackage.test.ts`, `catalogFiles.test.ts`)
 - [ ] **Ausgleichsbedingung / Klassenkombination** captured as free text with the examiner's level
 - [x] **Final exam profile** („Je Kind“) — examiner picks the measurement taken over per group; otherwise the best counts
 - [x] **Evaluation per athlete** („Je Kind“, „Gruppe“) — points, award, swim proof status, blocking notes (consent, open manual decision), paper-card route
+- [x] **Schwimmnachweis** (Kap. 4.2, DBS the same) — counts by itself from a recorded swim (Ausdauer any value, Schnelligkeit from Bronze); entered separately by way (age-dependent) on „Je Kind“ or the station „Schwimmnachweis“ in „Erfassen“; earlier year by hand (MT-45, `swim.test.ts`, `evaluation.test.ts`)
 - [ ] **Transfer to SpAz** (view in SpAz order for typing in) and values for the DOSB Mustervorlage
 
 | Path                 | Impact                                       | Audit Check                                                                |

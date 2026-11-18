@@ -15,6 +15,12 @@ export interface MetronomePreset {
   binding?: 'required' | 'guide';
   /** What the source says about the beat, in our own words (no verbatim DOSB/DBS text). */
   quote?: string;
+  /**
+   * Where the beat runs at the station (Tobias 2026-11-18): 'metronome' — the metronome counts and
+   * its end gives the value (the rhythm is the rule); 'counter' — the examiner counts by hand and
+   * the counter carries the beat as a guide, realigned to the taps (`alignToTap`).
+   */
+  station?: 'metronome' | 'counter';
 }
 
 // Every exercise whose official text sets a beat (Tobias 2026-11-10: „Metronom für alle
@@ -31,6 +37,7 @@ export const METRONOME_PRESETS: readonly MetronomePreset[] = [
     exerciseId: 'curl-ups',
     binding: 'required',
     quote: 'Der Takt von 40 Schlägen pro Minute kommt vom Metronom und ist einzuhalten.',
+    station: 'metronome',
   },
   {
     id: 'push-ups',
@@ -43,6 +50,7 @@ export const METRONOME_PRESETS: readonly MetronomePreset[] = [
     binding: 'guide',
     quote:
       'Etwa zwei Sekunden je Push-Up, also rund eine Sekunde hin und eine zurück – ein Richtwert.',
+    station: 'counter',
   },
   { id: 'free', label: 'Frei', bpm: 60, pattern: [], source: '' },
 ];
@@ -87,7 +95,181 @@ export function beatLabel(pattern: readonly string[], index: number): string {
   return pattern.length === 0 ? '' : (pattern[index % pattern.length] ?? '');
 }
 
-/** Completed repetitions after `beats` beats: one repetition per full pattern cycle. */
+/**
+ * Completed repetitions after `beats` beats: one full pattern cycle is done when the cycle after it
+ * begins — „hoch“ on beat 1, „runter“ on beat 2, back at the start on beat 3. So beat 2 has done
+ * none yet, beat 3 one (until 2026-11-18 the count ran half a cycle early).
+ */
 export function completedRepetitions(pattern: readonly string[], beats: number): number {
-  return pattern.length === 0 ? 0 : Math.floor(beats / pattern.length);
+  return pattern.length === 0 || beats < 1 ? 0 : Math.floor((beats - 1) / pattern.length);
+}
+
+/** A tone of its own every ten repetitions (Tobias 2026-11-18: „Zwischenton alle 10“). */
+export const MILESTONE_EVERY = 10;
+
+/** The beat (0-based index) that completes repetition 10, 20, … — it gets the milestone tone. */
+export function isMilestone(
+  pattern: readonly string[],
+  index: number,
+  every: number = MILESTONE_EVERY,
+): boolean {
+  if (pattern.length === 0 || index <= 0 || index % pattern.length !== 0) return false;
+  return (index / pattern.length) % every === 0;
+}
+
+/**
+ * Beyond this offset a tap realigns the beat (counter with beat, Push-Ups). Simulated 2026-11-18
+ * with a tap scatter of 0.12 s: realigning on every tap made the beat jump audibly on about every
+ * second repetition even for an athlete exactly at 2 s; with 0.5 s it moved on about 5 % only. A
+ * different tempo is not followed — the tempo is the guide; `deviation` tells the examiner.
+ */
+export const REALIGN_THRESHOLD_S = 0.5;
+
+export interface TapAlignment {
+  /** The start (time of a cycle's first beat) the beat runs from after this tap. */
+  start: number;
+  /** Tap minus the nearest cycle start, in seconds: > 0 later (slower), < 0 earlier (faster). */
+  deviation: number;
+  realigned: boolean;
+}
+
+/**
+ * A count tapped at the end of a repetition is meant to fall on a cycle's first beat. Near enough
+ * it leaves the beat alone; further off it moves the cycle to the tap (phase only, never the tempo).
+ */
+export function alignToTap(
+  start: number,
+  bpm: number,
+  pattern: readonly string[],
+  tap: number,
+  threshold: number = REALIGN_THRESHOLD_S,
+): TapAlignment {
+  const cycle = beatInterval(bpm) * Math.max(1, pattern.length);
+  const nearest = start + Math.round((tap - start) / cycle) * cycle;
+  const deviation = tap - nearest;
+  return Math.abs(deviation) > threshold
+    ? { start: tap, deviation, realigned: true }
+    : { start, deviation, realigned: false };
+}
+
+/**
+ * Push-Ups in a group (Tobias 2026-11-18: „den Takt nur korrigieren, wenn alle Teilnehmer des
+ * Durchgangs zusammen ausreichend abweichen und nah genug beieinander liegen“): the counts of one
+ * round lie at most this far apart, else they are no common moment and the beat stays. Simulated
+ * 2026-11-18 (three athletes, one examiner tapping the fields one after another, 0.15 s apart, tap
+ * scatter 0.12 s): with 0.5 s a group slower together was „apart“ in 60 % of the rounds and hardly
+ * followed; with 0.8 s a group in time moved the beat in 2 % of the rounds, a group slower together
+ * was followed, athletes at different tempos never (99 % apart).
+ */
+export const GROUP_SPREAD_S = 0.8;
+
+export interface GroupAlignment extends TapAlignment {
+  /** Latest minus earliest count of the round, in seconds. */
+  spread: number;
+  /** 'apart': the counts lie too far apart to move the beat. */
+  apart: boolean;
+}
+
+/**
+ * One round of counts, one per person (with one person: every count). Moved only when the round
+ * lies together (spread ≤ `spread`) and its middle is off a cycle start by more than `threshold` —
+ * then the cycle starts at that middle. Phase only, never the tempo.
+ */
+export function alignToGroup(
+  start: number,
+  bpm: number,
+  pattern: readonly string[],
+  taps: readonly number[],
+  threshold: number = REALIGN_THRESHOLD_S,
+  spread: number = GROUP_SPREAD_S,
+): GroupAlignment {
+  if (taps.length === 0) return { start, deviation: 0, realigned: false, spread: 0, apart: false };
+  const width = Math.max(...taps) - Math.min(...taps);
+  const middle = taps.reduce((sum, tap) => sum + tap, 0) / taps.length;
+  const alignment = alignToTap(start, bpm, pattern, middle, threshold);
+  // a hair of float error must not turn „exactly at the limit“ into apart
+  if (width > spread + 1e-9)
+    return { start, deviation: alignment.deviation, realigned: false, spread: width, apart: true };
+  return { ...alignment, spread: width, apart: false };
+}
+
+/** A count of one person on the beat's clock (seconds). */
+export interface BeatCount {
+  who: string;
+  at: number;
+}
+
+/**
+ * Free time before a group hit (Tobias 2026-11-18: „wenn einer langsam nachzieht oder aufhört,
+ * sollte trotzdem neu ausgerichtet werden können … wenn alle vorhandenen Zählungen nah beieinander
+ * liegen und einen vertretbaren Korridor dazwischen frei haben … nach zwei Gruppentreffern“): no
+ * other count may lie this long before the hit's first count, else it is no distinct moment.
+ */
+export const GROUP_CORRIDOR_S = 0.4;
+
+/**
+ * The group hit the newest count completes, if any: the latest count per person within `spread`
+ * up to the newest one — at least two people (with one person in the run: that one) — with no other
+ * count in the corridor before it. Counts at or before `after` (a hit already used) never count
+ * again. Nobody has to wait for a person who lags or stopped.
+ */
+export function groupHit(
+  counts: readonly BeatCount[],
+  people: number,
+  after: number = -Infinity,
+  spread: number = GROUP_SPREAD_S,
+  corridor: number = GROUP_CORRIDOR_S,
+): { taps: number[]; first: number; last: number } | null {
+  const newest = counts[counts.length - 1];
+  if (!newest || newest.at <= after) return null;
+  const from = newest.at - spread - 1e-9;
+  const latest = new Map<string, number>();
+  for (const count of counts) {
+    if (count.at > after && count.at >= from && count.at <= newest.at) {
+      latest.set(count.who, Math.max(latest.get(count.who) ?? -Infinity, count.at));
+    }
+  }
+  if (latest.size < Math.min(2, Math.max(1, people))) return null;
+  const taps = [...latest.values()];
+  const first = Math.min(...taps);
+  const blocked = counts.some(
+    (count) => count.at < first && count.at >= first - corridor && count.at > after,
+  );
+  return blocked ? null : { taps, first, last: newest.at };
+}
+
+/**
+ * Two group hits confirm a shift (Tobias 2026-11-18: „zwei Gruppen von Treffern mit realistischem
+ * Abstand ohne Treffer dazwischen“): consecutive hits — no hit between them — whose middles lie
+ * about one repetition apart, from half a cycle to two cycles (at 60 BPM: 1–4 s).
+ */
+export const HIT_GAP_CYCLES = { min: 0.5, max: 2 } as const;
+
+/** A group hit as the beat saw it: its middle and how far that lies off the nearest cycle start. */
+export interface HitMark {
+  middle: number;
+  deviation: number;
+}
+
+/**
+ * The beat moves to `current` only when it and the hit before it (`previous`, the last hit — so
+ * none lies between) are both off by more than `threshold` and lie a realistic repetition apart.
+ * One stray hit never moves the beat. No „same way“: a group falling behind by more than half a
+ * cycle lies nearer the next cycle start and reads as early — demanding the same sign kept such a
+ * group from ever confirming (seen in Chromium 2026-11-18; simulated: a group slower together was
+ * followed 3.2 times per run with it, 6.8 without, a group in time 0.2 / 0.3).
+ */
+export function confirmedShift(
+  previous: HitMark | null,
+  current: HitMark,
+  bpm: number,
+  pattern: readonly string[],
+  threshold: number = REALIGN_THRESHOLD_S,
+): boolean {
+  if (!previous) return false;
+  const cycle = beatInterval(bpm) * Math.max(1, pattern.length);
+  const gap = current.middle - previous.middle;
+  const realistic = gap >= HIT_GAP_CYCLES.min * cycle && gap <= HIT_GAP_CYCLES.max * cycle;
+  const off = (mark: HitMark) => Math.abs(mark.deviation) > threshold;
+  return realistic && off(previous) && off(current);
 }

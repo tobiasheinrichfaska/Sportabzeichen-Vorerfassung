@@ -41,3 +41,24 @@ export function writeGroupChoice(groupId: string): void {
     // without storage the first group is shown
   }
 }
+
+const VIEW_KEY = 'sportabzeichen-vorerfassung:moeglich-ansicht';
+
+export type PossibleView = 'exercise' | 'child';
+
+/** The view of „Möglich“ chosen last (je Übung / je Kind); none = je Übung. */
+export function readPossibleView(): PossibleView {
+  try {
+    return window.localStorage.getItem(VIEW_KEY) === 'child' ? 'child' : 'exercise';
+  } catch {
+    return 'exercise';
+  }
+}
+
+export function writePossibleView(view: PossibleView): void {
+  try {
+    window.localStorage.setItem(VIEW_KEY, view);
+  } catch {
+    // without storage „Möglich“ opens je Übung
+  }
+}

@@ -49,7 +49,8 @@ außerhalb des Büronetzes aufgerufen werden können soll, ohne ein Login zu erf
   protected like the other two apps (office IPs or tester login), the app names the rights of
   DOSB/DBS; before other examiners get access he clarifies it with DOSB/DBS. The public repo still
   never holds the tables (`catalog/local/`, `dist-hosted/` gitignored).
-- **Page tree** (his „So bauen“): six areas of three — Vorbereiten (Gruppen · Kinder · Möglich),
+- **Page tree** (his „So bauen“): six areas of three — Vorbereiten (Gruppen · Kinder · Möglich —
+  since 2026-11-18 · Planen, see below),
   Übungen (Aufbau · Möglich · Klassen), Abnahme (Stoppuhr · Erfassen · Zähler), Werkzeuge (Zähler ·
   Stoppuhr · Metronom), Ergebnis (Je Kind · Gruppe · Erfassen), Geräte (Datei · Übertragen ·
   Prüfungstag). „Übertragen“ and „Prüfungstag“ are planned pages with a description only.
@@ -151,6 +152,138 @@ erwartet werden … auswählen, dass die Übung von dem Kind gemacht werden wird
   values, „Macht diese Übung“ and the setup. „Erfassen“: exercise buttons carry the number of
   planned children, „Geplante (n)“ / „Alle, die können (m)“, planned first with „✓ geplant“ and
   their expected values at the station. „Je Kind“: „geplant: …“ per Disziplingruppe. MT-35, MT-36.
+
+### „Planen“ instead of „Möglich“ in „Vorbereiten“ (2026-11-18)
+
+Tobias: „Prüfe den Bereich Vorbereiten – wie sinnvoll ist der Punkt ‚Möglich‘ hier?“ – review: the
+step belongs there, but in „Vorbereiten“ the work is planning, and „Möglich“ was slow for it (one tap
+per child and exercise inside a fold full of values and setup, no overview of the plan) – „Go“.
+
+- Page tree: Vorbereiten = Gruppen · Kinder · **Planen**; „Möglich“ stays in „Übungen“ (middle).
+  A stored place `vorbereiten/moeglich` no longer exists → the wheel opens (as for any gone page).
+- `PlanPage.tsx`: per Disziplingruppe the exercises someone can do; folded open: „Alle, die können
+  (n)“ / „Keins“ and a chip per child (red border: the child has nothing planned in this
+  Disziplingruppe yet). On top „Stationen am Tag“, „Noch nichts geplant in: <Kind> – <Gruppen>“,
+  „Kann noch nichts: …“ and plans no longer possible (age/class changed) with „Plan entfernen“.
+  No values, setup or Ausführung there — those stay on „Möglich“.
+- Logic: reducer `setPlans` (several children, one exercise, on/off; unknown skipped, never
+  doubled, unchanged → same state), `planOverview` (overview.ts: stations, gaps, stale — a stale
+  plan is named, not counted, never dropped silently). File format unchanged.
+- „Möglich“ remembers „je Übung“ / „je Kind“ (localStorage `sportabzeichen-vorerfassung:moeglich-ansicht`).
+- Checked in Chromium at iPhone size, light and dark, with the example group and the local package
+  (stations, gaps, „Erfassen“ counts, remembered view, no horizontal scroll). MT-44.
+
+### Durchgang and Zuordnen (2026-11-18)
+
+Tobias: „Entfallen dann Werkzeuge komplett? Und bei der Abnahme Menschen auswählen, für die abgenommen
+wird – entweder einen oder mehrere. Bei mehreren … jede Person als Button? Oder besser mit Kamera?“ –
+proposal (Werkzeuge stay: the public file has no limits, training, free beat; Abnahme gets a run and
+the assigning; one big „Zieleinlauf“ by default, names as finish buttons for runners who arrive
+apart, the Zielbild for close finishes) – „Ja, so bauen … Durchgang würde das passende Werkzeug
+zeigen und Zuordnen die Ergebnisse zuordnen, falls nicht per Knopf geschehen … für Push-Ups oder
+andere Wiederholungen braucht es getrennte Zählfelder“.
+
+- Page tree: Abnahme = Erfassen · **Durchgang** (middle) · **Zuordnen**; Stoppuhr and Zähler only in
+  „Werkzeuge“ (the stored places `abnahme/stoppuhr`, `abnahme/zaehler` open the wheel).
+- Logic `src/logic/heat.ts` (pure, `heat.test.ts`): `heatTool` (metronome for a 'metronome' preset,
+  else stopwatch / counter / none from `stationTools`), `Heat` (exercise, people, finish mode,
+  finish → person — one finish per person, a count per person, repetitions at a person's „Ende“,
+  saved keys), `heatReducer`, `heatResults` (card notation via `readingParts`; one person gets the
+  single finish or the stopped time without assigning), `withoutResult`.
+- UI `HeatPages.tsx`: `HeatPage` (exercise chips fold away once chosen, „Wer macht mit“, „Geplante“
+  / „Alle“, the tool, „Neuer Durchgang (gleiche Personen)“; another exercise is refused while
+  results are unsaved) and `AssignPage` (per result: person chips, Zielbilder with „Zeit dieses
+  Bildes übernehmen“, class/variant chips via `checkAttempt`, „Speichern“ / „Alle zugeordneten
+  speichern“ → `addMeasurement` with date). `HeatTools.tsx`: `CounterPads` (separate counters;
+  Push-Ups' beat by rounds, see below) and `HeatMetronome` (one beat, „Ende
+  <Name>“ per person, stops after the last). `Stopwatch` props `finishNames`/`onNamedFinish`
+  (a big button per runner; the finish index counted at the press, so two presses in one frame
+  never share it), `note`, `onReset`.
+- The run lives in App memory (`useReducer`) like the stopwatch: a page change keeps it, a restart
+  of the app loses unsaved results (MT-47 says: save soon).
+- Checked in Chromium at iPhone size (fake camera, fake audio): sprint with 3 runners assigned
+  afterwards and saved; 800 m with names as finish buttons; switching exercise refused while
+  unsaved; Push-Ups 3 + 2 on separate counters; Curl-Up „Ende“ per person 1 and 2 repetitions; Zielbilder
+  on „Zuordnen“ with a picture time taken. MT-47.
+
+- **Push-Ups in a group** (Tobias: „den Takt nur korrigieren, wenn alle Teilnehmer des Durchgangs
+  zusammen ausreichend abweichen und nah genug beieinander liegen“, then: „wenn einer langsam
+  nachzieht oder aufhört, sollte trotzdem neu ausgerichtet werden können. Wenn alle vorhandenen
+  Zählungen nah beieinander liegen und einen vertretbaren Korridor dazwischen frei haben, wird neu
+  ausgerichtet. Also nach zwei Gruppentreffern“): the beat follows **group hits** (`groupHit`): the
+  latest count per person within `GROUP_SPREAD_S` 0.8 s up to the newest — at least two people
+  (one person in the run: that one) — with no other count `GROUP_CORRIDOR_S` 0.4 s before it; a
+  hit is used once. **Two hits confirm a shift** (Tobias: „zwei Gruppen von Treffern mit
+  realistischem Abstand ohne Treffer dazwischen“, `confirmedShift`): consecutive hits, 0.5–2 cycles
+  apart (`HIT_GAP_CYCLES`, 1–4 s at 60 BPM), both off by more than 0.5 s → the cycle starts at the
+  second hit's middle (phase only); one stray hit never moves the beat. No „same way“ demanded: a
+  group falling behind past half a cycle reads as early (seen in Chromium — with the sign rule it
+  never confirmed). Simulated: a group in time 0.3 realignments per run (one hit alone: 1.0), slower
+  together / one dragging / one stopped ~6 (beat ≈ 0.4 s off the real ends on average, one hit
+  alone: ~10, 0.27 s), different tempos 3.2 (5.7). The single counter of „Erfassen“ uses the same
+  rule (`groupCount` with one person). Nobody waits for a person who lags or stopped. The counts live in
+  `useBeat` (`groupCount`, refs read only in tap handlers). **Simulated** (three athletes, one
+  examiner 0.15 s per field, scatter 0.12 s, 20 repetitions): a group in time ~1 realignment per
+  run; slower together, one dragging behind (2.7 s) or one stopping after 5 — all followed (~10);
+  three different tempos ~6 (two happen to meet: the price of not waiting for all). The corridor
+  hardly changes these cases; it stops a count just before the pair. The earlier rule (a full round
+  of all, 2026-11-18) never followed a group with one person stopped. Checked in Chromium (three
+  adults): one stopped, two 0.7 s late → „noch ein Treffer …“; 2.4 s later 1.1 s late → confirmed,
+  realigned; then 0.1 s, the third alone moved nothing. One person: 0.7 s early waits, the next
+  confirms.
+
+### Curl-Up counted by the metronome, Push-Ups with the beat in the counter (2026-11-18)
+
+Tobias: „Für welche Übung wird das Metronom verwendet? Sollte das Metronom gestartet werden können,
+und dann Zwischenzählungen und Ende?“ – „Ja, bauen, Zwischenton alle 10. Dazu eine Zahl zum
+Übernehmen. Für die Push-Ups machen wir das anders herum, der Zähler bekommt eine Metronom-Funktion,
+wobei wir prüfen müssen, ob wir bei jeder Zählung das Metronom neu ausrichten, oder besser nur, wenn
+die Zählung stark genug abweicht“.
+
+- **Curl-Up (station 'metronome'):** a milestone tone (520 Hz, long) on the beat that completes
+  repetition 10, 20, … (`isMilestone`); „Ende“ stops and shows the whole repetitions with −1/+1;
+  „Metronom (n)“ per child takes it (`Metronome` `onResult`). **Fixed:** `completedRepetitions` ran
+  half a cycle early (2 beats = 1) — a repetition is done when the next cycle begins.
+- **Push-Ups (station 'counter'):** no metronome of its own; `Counter` `beat` („Takt an (60/min)“).
+  A count far from a cycle start moves the cycle there (`alignToTap`, phase only, never the tempo),
+  beyond `REALIGN_THRESHOLD_S` 0.5 s. **Checked by simulation** (tap scatter 0.12 s, 400 runs of 30):
+  realigning on every count made the beat jump audibly on about every second repetition even for an
+  athlete at exactly 2 s; with 0.5 s only about 5 %. A different tempo is not followed (the tempo is
+  the guide); the counter says „Letzte Zählung 0,3 s später als der Takt“.
+  Since the same day two counts must confirm a shift (`confirmedShift`, see „Durchgang“ above).
+- Shared audio: `src/ui/useBeat.ts` (look-ahead scheduling as before, realign, press time → audio
+  clock).
+- **Fixed on the way:** a value typed for one exercise stayed in the child's field when another
+  exercise was chosen (a Curl-Up count could be saved as Push-Ups) — „Erfassen“ now starts afresh
+  per exercise (`key`).
+- Checked in Chromium (fake audio, oscillators recorded): 240/min for 23 beats → 11 repetitions,
+  milestone exactly on beat index 20, „−1“ then „Metronom (10)“ → 10; Push-Ups: 0.1/0.2 s left the
+  beat, 0.7 s realigned, the next count „genau im Takt“. MT-46.
+
+### Schwimmnachweis (2026-11-18)
+
+Tobias: „Kann die App schon den Schwimmnachweis? Entweder separat oder als Automatik aus den anderen
+Übungen?“ – „Beides“; DBS check first „Ja“; the Ausdauer swim without Bronze counts as in the
+Wegweiser „Ja“.
+
+- **DBS handbook** (4.1, 4.10, MmB Prüfkarten): the proof as in the Wegweiser, nobody freed, the same
+  five ways (an exercise of the badge, 15 min Dauerschwimmen, 50/200 m, badges, Kleiderschwimmen) and
+  validity; swimming aids only in exceptions after asking the DBS. One rule set for both tracks.
+- **Automatic** (`swim.ts` `SWIM_PROOF_EXERCISES`, `swimProof`): a recorded `swim-endurance` counts
+  with any value, `swim-sprint` / `swim-sprint-minutes` from Bronze; year = the measurement's date,
+  else the workbook's. The latest proof counts, at the same year the recorded swim.
+  `AthleteEvaluation.swimProof` names the source; `swimProofStatus` applies Kap. 4.2's validity.
+- **Separate:** `Athlete.swimProofWay` (`SwimWay`, needs `swimProofYear`; file format stays 2, an
+  unknown way or a way without year is refused, `updateAthlete` drops a way without year).
+  `swimWaysFor(age)` splits at 12 (50 m / 200 m in 11 min; Rettungsschwimm- and Fünfkampfabzeichen
+  from 12, with the note on who must take the badge). UI `SwimProof.tsx` (`SwimProofEditor`) on „Je
+  Kind“ (with „Nachweisjahr (auch ein früheres)“ and „Erstmaliger Erwerb“) and as the station
+  „Schwimmnachweis“ in „Erfassen“ (`SWIM_STATION`, chips per child, a stopwatch); „Gruppe“ names the
+  source in the ✓/✗ cell's title.
+- **Fixed on the way:** the year field of „Je Kind“ was bound to the stored year and dropped every
+  partial input — typing „2025“ left it empty (seen in Chromium on main). Now a draft until four
+  digits. Checked in Chromium at iPhone size, light and dark (automatic ✓ from a 15:00 swim below
+  Bronze, station chip, typed year). MT-45.
 
 ### Ausführung: ladder step sequences and Gerätturnen elements (2026-11-10)
 
@@ -452,85 +585,85 @@ are named in the error, never skipped silently. The archive itself is kept in th
 
 ## Project Directory
 
-| File/Folder                                                                                           | Purpose                                                                                                                                             |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CLAUDE.md`                                                                                           | Project documentation and conventions                                                                                                               |
-| `README.md`                                                                                           | German user-facing description + license section                                                                                                    |
-| `FEATURES_REQUIRED.md`                                                                                | Critical user paths the audit validates end-to-end                                                                                                  |
-| `LICENSE`, `LICENSE_COMMERCIAL.md`, `CONTRIBUTING.md`                                                 | AGPLv3 + commercial dual license (workspace templates)                                                                                              |
-| `.gitignore`, `.gitattributes`                                                                        | Git rules (LF line endings; saved workbooks `*.sportabzeichen.json` and `import/` never committed)                                                  |
-| `.prettierrc.json`, `.prettierignore`, `eslint.config.js`                                             | Formatting/linting; ESLint forbids React/DOM/storage in `src/logic/`                                                                                |
-| `package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`                                | Build/test configuration (Vitest `pool: 'forks'`)                                                                                                   |
-| `.github/workflows/tests.yml`                                                                         | Check „Tests“ on GitHub (push to main, pull requests) — the gate of every upload through `Freigabe`                                                 |
-| `index.html`                                                                                          | HTML shell; the build inlines everything into `dist/index.html`                                                                                     |
-| `docs/data-model.html`                                                                                | Self-contained data-model reference (regenerate when the model changes)                                                                             |
-| `docs/quellen.md`                                                                                     | Official sources used, with URLs and what was taken from each                                                                                       |
-| `docs/wochenpruefung.md`                                                                              | List of the scheduled weekly check (DOSB/DBS editions, open questions, next exam year, targets, private-package tests) — merged only by Tobias      |
-| `catalog/`                                                                                            | Catalog data package per "gültig ab" year — see `catalog/README.md`                                                                                 |
-| `catalog/2026/catalog.json`                                                                           | Public: exercises, classes A–J, sources                                                                                                             |
-| `catalog/2026/spaz.json`                                                                              | Public: SpAz discipline names per Laufzettel (regular, MmB) → exercises                                                                             |
-| `catalog/local/`                                                                                      | NOT versioned: limit tables, class details (rights of DOSB/DBS) — from the private companion repo                                                   |
-| `docs/privat/`, `tools/localCatalog.ts`, `tools/katalog-lokal.ts`, `tests/tools/localCatalog.test.ts` | NOT versioned: from the private companion repo (verification record, rights research, converter + its tests)                                        |
-| `import/`                                                                                             | NOT versioned: inbox for deliveries — empty after every processing (`npm run import:archivieren`); shapes only                                      |
-| `archiv/`                                                                                             | NOT versioned: archived deliveries per processing (`<date>_<label>/` + `MANIFEST.json`, `INDEX.md`)                                                 |
-| `tools/importArchive.ts`                                                                              | Moves `import/` to `archiv/<date>_<label>/` with manifest and index line (`archiveImport`)                                                          |
-| `tools/import-archivieren.ts`                                                                         | CLI for `npm run import:archivieren -- <Bezeichnung>`                                                                                               |
-| `manual_tests/`                                                                                       | Human-tester instructions (German)                                                                                                                  |
-| `src/main.tsx`                                                                                        | Entry point; mounts `App`                                                                                                                           |
-| `src/build/profiles.ts`                                                                               | Build profiles `file` / `hosted` (worker, manifest, head tags) as data                                                                              |
-| `hosted-public/`                                                                                      | Copied next to the hosted page: `sw.js` (start from the cache, quiet update), `manifest.json`, icons                                                |
-| `deploy/upload.json`                                                                                  | Upload target `app` → `NebenprojektSportabzeichen/` for `private/Auslieferung` (`deploy/.local/` gitignored)                                        |
-| `tools/icons.ts`                                                                                      | Writes the PNG icons (`npm run icons`)                                                                                                              |
-| `src/logic/navigation/`                                                                               | Reibräder from TKD-Trainerbuch: `baum.ts` (our tree, where the app was), `rad.ts`, `ring.ts`, `getriebe.ts`                                         |
-| `src/ui/navigation/`                                                                                  | `ReibNavi.tsx` (the two wheels, pages), `Rahmen.tsx`, `lage.ts`, `Ring.tsx`, `Getriebe.tsx`, `MiniRad.tsx`, colours                                 |
-| `src/ui/pages/`                                                                                       | Pages of the wheel: `FilePage.tsx` („Datei“, updates), `PlannedPage.tsx` („Übertragen“, „Prüfungstag“)                                              |
-| `src/ui/Messages.tsx`                                                                                 | Errors and notes on top of every page                                                                                                               |
-| `src/io/place.ts`, `src/io/serviceWorker.ts`                                                          | Where the app was; worker registration, quiet look for a version, update with the login                                                             |
-| `tests/build/sw.test.ts`, `tests/build/navigation-ui.test.ts`                                         | The worker run with stand-ins (no login with a cached copy); no tap boxes, pages on the app's sheet                                                 |
-| `tests/logic/navigation/navigation.test.ts`                                                           | Tree, where the app was, swiping, Reibräder, gear train, wheel geometry                                                                             |
-| `src/vite-env.d.ts`                                                                                   | Vite types + `__APP_VERSION__`, `__CATALOGS__`                                                                                                      |
-| `src/build/csp.ts`                                                                                    | Build step: hash-based Content-Security-Policy (+ `csp.test.ts`)                                                                                    |
-| `src/build/catalogFiles.ts`                                                                           | Build step: loads every `catalog/<year>/` + `catalog/local/` file; a broken package stops the build (+ test)                                        |
-| **`src/logic/`**                                                                                      | **UI-free data + rules**                                                                                                                            |
-| `src/logic/types.ts`                                                                                  | All entities (Catalog, Exercise, Requirement, DisabilityClass, Workbook, Athlete, …)                                                                |
-| `src/logic/reference.ts`                                                                              | Fixed reference data: groups, levels/points, award bands, tracks, measure kinds, age limits                                                         |
-| `src/logic/catalogPackage.ts`                                                                         | Checks the raw JSON of a catalog year and assembles it (`assembleCatalog`), `catalogForYear`                                                        |
-| `src/logic/classes.ts`                                                                                | Active classes of an athlete, class tree (main classes + subgroups) for the Einstufung                                                              |
-| `src/logic/catalog.ts`                                                                                | Lookups, `requirementFromRow` (card notation), `validateCatalog`                                                                                    |
-| `src/logic/age.ts`                                                                                    | Age in the exam year (Jahrgangsprinzip), ISO-date check                                                                                             |
-| `src/logic/measure.ts`                                                                                | Parse/format values per measure kind (stored in smallest unit)                                                                                      |
-| `src/logic/combinations.ts`                                                                           | Selections → combinations (variants per class, "class decisive"), grouping by athlete/exercise                                                      |
-| `src/logic/evaluation.ts`                                                                             | Level per measurement, best per group, points, award, notes (German texts)                                                                          |
-| `src/logic/swim.ts`                                                                                   | Nachweis der Schwimmfertigkeit (Kap. 4.2)                                                                                                           |
-| `src/logic/workbook.ts`                                                                               | Workbook reducer (cascades on athlete removal / class change)                                                                                       |
-| `src/logic/fileFormat.ts`                                                                             | Save/load JSON with full validation                                                                                                                 |
-| `src/logic/fileName.ts`                                                                               | Suggested file name                                                                                                                                 |
-| `src/logic/stopwatch.ts`                                                                              | Stopwatch state machine, finish times, card reading (cut off) + one finer digit                                                                     |
-| `src/logic/finishVideo.ts`                                                                            | Zielvideo: rolling buffer, pictures around each „Zieleinlauf“, press marked, time of a picture (memory only)                                        |
-| `src/logic/counter.ts`                                                                                | Tally counter reducer                                                                                                                               |
-| `src/logic/metronome.ts`                                                                              | Metronome timing (beats in a window, pattern labels, repetitions), presets per exercise (`metronomePresetFor`)                                      |
-| **`src/io/`**                                                                                         | **Browser APIs**                                                                                                                                    |
-| `src/io/browserDraft.ts`                                                                              | localStorage draft (every failure returned with reason)                                                                                             |
-| `src/io/fileTransfer.ts`                                                                              | Download/upload of the workbook file                                                                                                                |
-| **`src/ui/`**                                                                                         | **Rendering only**                                                                                                                                  |
-| `src/ui/App.tsx`                                                                                      | Shell: workbook, draft, tool state, messages; the pages behind the wheels                                                                           |
-| `src/ui/Classes.tsx`                                                                                  | Page „Klassen“: classes A–J with subgroups and criteria (Einstufungshilfe)                                                                          |
-| `src/ui/Stopwatch.tsx`                                                                                | Stopwatch with finish times and Schnelligkeit/Ausdauer readings; `compact` at the exercise on „Erfassen“; Zielbilder per finish                     |
-| `src/ui/useFinishVideo.ts`                                                                            | Zielvideo camera (App level): getUserMedia, frame loop, JPEG pictures into memory                                                                   |
-| `src/ui/FinishVideo.tsx`                                                                              | Zielvideo switch + live picture, Zielbilder viewer (step, mark of the press, take the time)                                                         |
-| `src/ui/Counter.tsx`                                                                                  | Tally counter (acts on pointer down)                                                                                                                |
-| `src/ui/Metronome.tsx`                                                                                | Metronome: Web Audio look-ahead scheduling, beat light, up/down labels; started by a click (audio unlock on touch)                                  |
-| `src/ui/fastPress.ts`                                                                                 | Pointer-down handlers with keyboard fallback; hand the action the moment of the press (`pressTime`)                                                 |
-| `src/ui/styles.css`                                                                                   | Styles (light/dark)                                                                                                                                 |
-| `tests/logic/`                                                                                        | Unit tests of every logic module                                                                                                                    |
-| `tests/fixtures/testCatalog.ts`                                                                       | **Test-only** limits + sample workbook                                                                                                              |
-| `tests/static/hiddenChars.test.ts`                                                                    | Guard against invisible characters in sources                                                                                                       |
-| `tests/tools/importArchive.test.ts`                                                                   | Archiving of `import/` (temp project under `.tmp/`)                                                                                                 |
-| `src/logic/children.ts`                                                                               | Children by first name + birth year, groups (check, label, twins, current group, delete with group)                                                 |
-| `src/logic/overview.ts`, `src/logic/capture.ts`                                                       | „Möglich“ (offers by exercise/child, variants) and „Erfassen“ (rows, class/variant choice, live level)                                              |
-| `src/ui/pages/`                                                                                       | `GroupsPage`, `ChildrenPage`, `PossiblePage`, `CapturePage`, `ResultPages` (Je Kind, Gruppe), `SetupPage`, `FilePage`, `PlannedPage`, `GroupSwitch` |
-| `docs/aufbau-offene-punkte.md`                                                                        | What the official texts leave open about each exercise's setup (to clarify)                                                                         |
-| `catalog/local/2026.details.json`, `catalog/local/2026.images/`                                       | NOT versioned: Ausführung per variant (ladder step sequences, Gerätturnen elements) — DOSB text verbatim, cut-out pictures (WebP)                   |
+| File/Folder                                                                                           | Purpose                                                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE.md`                                                                                           | Project documentation and conventions                                                                                                                                                                                         |
+| `README.md`                                                                                           | German user-facing description + license section                                                                                                                                                                              |
+| `FEATURES_REQUIRED.md`                                                                                | Critical user paths the audit validates end-to-end                                                                                                                                                                            |
+| `LICENSE`, `LICENSE_COMMERCIAL.md`, `CONTRIBUTING.md`                                                 | AGPLv3 + commercial dual license (workspace templates)                                                                                                                                                                        |
+| `.gitignore`, `.gitattributes`                                                                        | Git rules (LF line endings; saved workbooks `*.sportabzeichen.json` and `import/` never committed)                                                                                                                            |
+| `.prettierrc.json`, `.prettierignore`, `eslint.config.js`                                             | Formatting/linting; ESLint forbids React/DOM/storage in `src/logic/`                                                                                                                                                          |
+| `package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`                                | Build/test configuration (Vitest `pool: 'forks'`)                                                                                                                                                                             |
+| `.github/workflows/tests.yml`                                                                         | Check „Tests“ on GitHub (push to main, pull requests) — the gate of every upload through `Freigabe`                                                                                                                           |
+| `index.html`                                                                                          | HTML shell; the build inlines everything into `dist/index.html`                                                                                                                                                               |
+| `docs/data-model.html`                                                                                | Self-contained data-model reference (regenerate when the model changes)                                                                                                                                                       |
+| `docs/quellen.md`                                                                                     | Official sources used, with URLs and what was taken from each                                                                                                                                                                 |
+| `docs/wochenpruefung.md`                                                                              | List of the scheduled weekly check (DOSB/DBS editions, open questions, next exam year, targets, private-package tests) — merged only by Tobias                                                                                |
+| `catalog/`                                                                                            | Catalog data package per "gültig ab" year — see `catalog/README.md`                                                                                                                                                           |
+| `catalog/2026/catalog.json`                                                                           | Public: exercises, classes A–J, sources                                                                                                                                                                                       |
+| `catalog/2026/spaz.json`                                                                              | Public: SpAz discipline names per Laufzettel (regular, MmB) → exercises                                                                                                                                                       |
+| `catalog/local/`                                                                                      | NOT versioned: limit tables, class details (rights of DOSB/DBS) — from the private companion repo                                                                                                                             |
+| `docs/privat/`, `tools/localCatalog.ts`, `tools/katalog-lokal.ts`, `tests/tools/localCatalog.test.ts` | NOT versioned: from the private companion repo (verification record, rights research, converter + its tests)                                                                                                                  |
+| `import/`                                                                                             | NOT versioned: inbox for deliveries — empty after every processing (`npm run import:archivieren`); shapes only                                                                                                                |
+| `archiv/`                                                                                             | NOT versioned: archived deliveries per processing (`<date>_<label>/` + `MANIFEST.json`, `INDEX.md`)                                                                                                                           |
+| `tools/importArchive.ts`                                                                              | Moves `import/` to `archiv/<date>_<label>/` with manifest and index line (`archiveImport`)                                                                                                                                    |
+| `tools/import-archivieren.ts`                                                                         | CLI for `npm run import:archivieren -- <Bezeichnung>`                                                                                                                                                                         |
+| `manual_tests/`                                                                                       | Human-tester instructions (German)                                                                                                                                                                                            |
+| `src/main.tsx`                                                                                        | Entry point; mounts `App`                                                                                                                                                                                                     |
+| `src/build/profiles.ts`                                                                               | Build profiles `file` / `hosted` (worker, manifest, head tags) as data                                                                                                                                                        |
+| `hosted-public/`                                                                                      | Copied next to the hosted page: `sw.js` (start from the cache, quiet update), `manifest.json`, icons                                                                                                                          |
+| `deploy/upload.json`                                                                                  | Upload target `app` → `NebenprojektSportabzeichen/` for `private/Auslieferung` (`deploy/.local/` gitignored)                                                                                                                  |
+| `tools/icons.ts`                                                                                      | Writes the PNG icons (`npm run icons`)                                                                                                                                                                                        |
+| `src/logic/navigation/`                                                                               | Reibräder from TKD-Trainerbuch: `baum.ts` (our tree, where the app was), `rad.ts`, `ring.ts`, `getriebe.ts`                                                                                                                   |
+| `src/ui/navigation/`                                                                                  | `ReibNavi.tsx` (the two wheels, pages), `Rahmen.tsx`, `lage.ts`, `Ring.tsx`, `Getriebe.tsx`, `MiniRad.tsx`, colours                                                                                                           |
+| `src/ui/pages/`                                                                                       | Pages of the wheel: `FilePage.tsx` („Datei“, updates), `PlannedPage.tsx` („Übertragen“, „Prüfungstag“)                                                                                                                        |
+| `src/ui/Messages.tsx`                                                                                 | Errors and notes on top of every page                                                                                                                                                                                         |
+| `src/io/place.ts`, `src/io/serviceWorker.ts`                                                          | Where the app was; worker registration, quiet look for a version, update with the login                                                                                                                                       |
+| `tests/build/sw.test.ts`, `tests/build/navigation-ui.test.ts`                                         | The worker run with stand-ins (no login with a cached copy); no tap boxes, pages on the app's sheet                                                                                                                           |
+| `tests/logic/navigation/navigation.test.ts`                                                           | Tree, where the app was, swiping, Reibräder, gear train, wheel geometry                                                                                                                                                       |
+| `src/vite-env.d.ts`                                                                                   | Vite types + `__APP_VERSION__`, `__CATALOGS__`                                                                                                                                                                                |
+| `src/build/csp.ts`                                                                                    | Build step: hash-based Content-Security-Policy (+ `csp.test.ts`)                                                                                                                                                              |
+| `src/build/catalogFiles.ts`                                                                           | Build step: loads every `catalog/<year>/` + `catalog/local/` file; a broken package stops the build (+ test)                                                                                                                  |
+| **`src/logic/`**                                                                                      | **UI-free data + rules**                                                                                                                                                                                                      |
+| `src/logic/types.ts`                                                                                  | All entities (Catalog, Exercise, Requirement, DisabilityClass, Workbook, Athlete, …)                                                                                                                                          |
+| `src/logic/reference.ts`                                                                              | Fixed reference data: groups, levels/points, award bands, tracks, measure kinds, age limits                                                                                                                                   |
+| `src/logic/catalogPackage.ts`                                                                         | Checks the raw JSON of a catalog year and assembles it (`assembleCatalog`), `catalogForYear`                                                                                                                                  |
+| `src/logic/classes.ts`                                                                                | Active classes of an athlete, class tree (main classes + subgroups) for the Einstufung                                                                                                                                        |
+| `src/logic/catalog.ts`                                                                                | Lookups, `requirementFromRow` (card notation), `validateCatalog`                                                                                                                                                              |
+| `src/logic/age.ts`                                                                                    | Age in the exam year (Jahrgangsprinzip), ISO-date check                                                                                                                                                                       |
+| `src/logic/measure.ts`                                                                                | Parse/format values per measure kind (stored in smallest unit)                                                                                                                                                                |
+| `src/logic/combinations.ts`                                                                           | Selections → combinations (variants per class, "class decisive"), grouping by athlete/exercise                                                                                                                                |
+| `src/logic/evaluation.ts`                                                                             | Level per measurement, best per group, points, award, notes (German texts)                                                                                                                                                    |
+| `src/logic/swim.ts`                                                                                   | Nachweis der Schwimmfertigkeit (Kap. 4.2): validity, ways by age, proof from recorded swims                                                                                                                                   |
+| `src/logic/workbook.ts`                                                                               | Workbook reducer (cascades on athlete removal / class change)                                                                                                                                                                 |
+| `src/logic/fileFormat.ts`                                                                             | Save/load JSON with full validation                                                                                                                                                                                           |
+| `src/logic/fileName.ts`                                                                               | Suggested file name                                                                                                                                                                                                           |
+| `src/logic/stopwatch.ts`                                                                              | Stopwatch state machine, finish times, card reading (cut off) + one finer digit                                                                                                                                               |
+| `src/logic/finishVideo.ts`                                                                            | Zielvideo: rolling buffer, pictures around each „Zieleinlauf“, press marked, time of a picture (memory only)                                                                                                                  |
+| `src/logic/counter.ts`                                                                                | Tally counter reducer                                                                                                                                                                                                         |
+| `src/logic/metronome.ts`                                                                              | Metronome timing (beats in a window, pattern labels, repetitions), presets per exercise (`metronomePresetFor`)                                                                                                                |
+| **`src/io/`**                                                                                         | **Browser APIs**                                                                                                                                                                                                              |
+| `src/io/browserDraft.ts`                                                                              | localStorage draft (every failure returned with reason)                                                                                                                                                                       |
+| `src/io/fileTransfer.ts`                                                                              | Download/upload of the workbook file                                                                                                                                                                                          |
+| **`src/ui/`**                                                                                         | **Rendering only**                                                                                                                                                                                                            |
+| `src/ui/App.tsx`                                                                                      | Shell: workbook, draft, tool state, messages; the pages behind the wheels                                                                                                                                                     |
+| `src/ui/Classes.tsx`                                                                                  | Page „Klassen“: classes A–J with subgroups and criteria (Einstufungshilfe)                                                                                                                                                    |
+| `src/ui/Stopwatch.tsx`                                                                                | Stopwatch with finish times and Schnelligkeit/Ausdauer readings; `compact` at the exercise on „Erfassen“; Zielbilder per finish                                                                                               |
+| `src/ui/useFinishVideo.ts`                                                                            | Zielvideo camera (App level): getUserMedia, frame loop, JPEG pictures into memory                                                                                                                                             |
+| `src/ui/FinishVideo.tsx`                                                                              | Zielvideo switch + live picture, Zielbilder viewer (step, mark of the press, take the time)                                                                                                                                   |
+| `src/ui/Counter.tsx`                                                                                  | Tally counter (acts on pointer down)                                                                                                                                                                                          |
+| `src/ui/Metronome.tsx`                                                                                | Metronome: Web Audio look-ahead scheduling, beat light, up/down labels; started by a click (audio unlock on touch)                                                                                                            |
+| `src/ui/fastPress.ts`                                                                                 | Pointer-down handlers with keyboard fallback; hand the action the moment of the press (`pressTime`)                                                                                                                           |
+| `src/ui/styles.css`                                                                                   | Styles (light/dark)                                                                                                                                                                                                           |
+| `tests/logic/`                                                                                        | Unit tests of every logic module                                                                                                                                                                                              |
+| `tests/fixtures/testCatalog.ts`                                                                       | **Test-only** limits + sample workbook                                                                                                                                                                                        |
+| `tests/static/hiddenChars.test.ts`                                                                    | Guard against invisible characters in sources                                                                                                                                                                                 |
+| `tests/tools/importArchive.test.ts`                                                                   | Archiving of `import/` (temp project under `.tmp/`)                                                                                                                                                                           |
+| `src/logic/children.ts`                                                                               | Children by first name + birth year, groups (check, label, twins, current group, delete with group)                                                                                                                           |
+| `src/logic/overview.ts`, `src/logic/capture.ts`                                                       | „Möglich“ (offers by exercise/child, variants) and „Erfassen“ (rows, class/variant choice, live level)                                                                                                                        |
+| `src/ui/pages/`                                                                                       | `GroupsPage`, `ChildrenPage`, `PlanPage`, `PossiblePage`, `SwimProof`, `HeatPages` + `HeatTools` (Durchgang, Zuordnen), `CapturePage`, `ResultPages` (Je Kind, Gruppe), `SetupPage`, `FilePage`, `PlannedPage`, `GroupSwitch` |
+| `docs/aufbau-offene-punkte.md`                                                                        | What the official texts leave open about each exercise's setup (to clarify)                                                                                                                                                   |
+| `catalog/local/2026.details.json`, `catalog/local/2026.images/`                                       | NOT versioned: Ausführung per variant (ladder step sequences, Gerätturnen elements) — DOSB text verbatim, cut-out pictures (WebP)                                                                                             |
 
 ---
 
@@ -597,7 +730,13 @@ Key decisions:
 - **Setup texts have open points** — 37 exercises carry details the sources leave open (listed in
   `docs/aufbau-offene-punkte.md`, not guessed in the text); Fußballzielstoß, 25 m Schwimmen in
   Minuten and 200 m Handbike have no description in the DBS handbook.
-- **Swim-proof rules for MmB** follow the DOSB-Wegweiser; not yet compared with the DBS handbook.
+- **Swim-proof rules for MmB** follow the DOSB-Wegweiser — compared with the DBS handbook on
+  2026-11-18: it refers to the Wegweiser, frees nobody, names the same ways and validity. Swimming
+  aids only after asking the DBS (4.10): not modelled, a note on the paper card.
+- **Schwimmnachweis by way, not checked against age at an earlier year** — the app offers only the
+  ways of the child's age in the exam year; an earlier year is a year only (no way). A recorded swim
+  counts whatever its level for Ausdauer (the Wegweiser: no minimum time), the app cannot see
+  whether the distance was swum to the end — the examiner records only completed swims.
 - **Stopwatch reading** follows the Wegweiser wording "abgelesen" (6.1 "auf Sekunden", 6.3 "auf
   Zehntelsekunde"): finer digits are cut off, and one finer digit is shown so the examiner can
   judge borderline cases (Tobias, 2026-11-01). No rounding direction is stated in the sources.
@@ -651,6 +790,8 @@ camera=(self), …` (checked 2026-11-15 without login and by Claude in Chrome; r
 - **Labels renamed on 2026-11-11** (both-arms shot put, Rollstuhlparcours, Zielwurf H III) — an MmB
   measurement saved before under the old label shows „Die Variante des Messwerts gibt es … nicht“;
   enter it again (no alias table).
+- **A Durchgang is not saved** — it lives in the app's memory like the running stopwatch; an app
+  restart by the phone loses results not yet saved on „Zuordnen“.
 - **„2,5 km Radfahren (Tandem bei Behinderungsklasse F)“** keeps the platform's addition for every
   class; the G II card names only „Radfahren 2,5 km“. Geschicklichkeitsgehen/Rollstuhlparcours show
   1/2/3 where the card prints 1x/2x/3x.
@@ -680,4 +821,4 @@ a PowerShell cmdlet — write the full path inline instead of `P=".../Sportabzei
 In a cloud session the same scripts run from the checkout (`npm test`, …), except `hochladen` and
 `tester` (PC only).
 
-_Last updated: 2026-11-15_
+_Last updated: 2026-11-18_

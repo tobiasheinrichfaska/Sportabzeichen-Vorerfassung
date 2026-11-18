@@ -49,13 +49,23 @@ export type WorkbookAction =
   | { type: 'setProfileChoice'; athleteId: string; group: GroupId; measurementId: string | null }
   /** The child will do the exercise — or no longer (a second toggle takes the plan back). */
   | { type: 'togglePlan'; athleteId: string; exerciseId: string }
+  /**
+   * Several children at once do the exercise, or no longer (page „Planen“: „Alle, die können“ /
+   * „Keins“). Unknown children are skipped, a plan is never doubled.
+   */
+  | { type: 'setPlans'; athleteIds: readonly string[]; exerciseId: string; planned: boolean }
   | { type: 'replace'; workbook: Workbook };
 
-/** Deactivated classes stay a subset of the possible ones; regular athletes have none. */
+/**
+ * Deactivated classes stay a subset of the possible ones; regular athletes have none. A swim-proof
+ * way never stays without its year.
+ */
 function normalizeClasses(athlete: Athlete): Athlete {
   const classIds = athlete.track === 'mmb' ? athlete.classIds : [];
   const inactiveClassIds = athlete.inactiveClassIds.filter((id) => classIds.includes(id));
-  return { ...athlete, classIds, inactiveClassIds };
+  const normalized = { ...athlete, classIds, inactiveClassIds };
+  if (normalized.swimProofYear === undefined) delete normalized.swimProofWay;
+  return normalized;
 }
 
 /** A measurement keeps its value but loses a class the athlete no longer has. */
@@ -178,6 +188,23 @@ export function workbookReducer(state: Workbook, action: WorkbookAction): Workbo
           ? state.plans.filter((plan) => !same(plan))
           : [...state.plans, { athleteId: action.athleteId, exerciseId: action.exerciseId }],
       };
+    }
+    case 'setPlans': {
+      const known = new Set(state.athletes.map((athlete) => athlete.id));
+      const chosen = new Set(action.athleteIds.filter((id) => known.has(id)));
+      const hasPlan = (athleteId: string) =>
+        state.plans.some((p) => p.athleteId === athleteId && p.exerciseId === action.exerciseId);
+      const plans = action.planned
+        ? [
+            ...state.plans,
+            ...[...chosen]
+              .filter((athleteId) => !hasPlan(athleteId))
+              .map((athleteId) => ({ athleteId, exerciseId: action.exerciseId })),
+          ]
+        : state.plans.filter(
+            (p) => !(p.exerciseId === action.exerciseId && chosen.has(p.athleteId)),
+          );
+      return plans.length === state.plans.length ? state : { ...state, plans };
     }
     case 'replace':
       return action.workbook;

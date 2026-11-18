@@ -1,5 +1,6 @@
 // Data model of the Vorerfassung. Identifiers are English; the German domain term is noted where
 // it is not obvious. Reference data (catalog) and user data (workbook) are kept strictly apart.
+import type { SwimWay } from './swim.ts';
 
 /** Bedingungen: DOSB (regular) or DBS conditions for Menschen mit Behinderung — never mixed. */
 export type Track = 'regular' | 'mmb';
@@ -152,8 +153,11 @@ export interface Athlete {
   dsaId?: string;
   postalCode?: string;
   city?: string;
-  /** Year of the last Nachweis der Schwimmfertigkeit. */
+  /** Year of the last Nachweis der Schwimmfertigkeit entered by the examiner (a swim recorded as an
+   * exercise counts by itself, see `swimProof`). */
   swimProofYear?: number;
+  /** How that proof was given (Kap. 4.2); absent = only the year is known. Needs `swimProofYear`. */
+  swimProofWay?: SwimWay;
   /** Erstmaliger Erwerb: the swim proof must be from the exam year. */
   firstTime: boolean;
 }

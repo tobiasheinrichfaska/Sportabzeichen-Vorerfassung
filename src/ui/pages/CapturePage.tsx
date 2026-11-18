@@ -30,6 +30,10 @@ import type { FinishVideoControl } from '../useFinishVideo';
 import { GroupSwitch, NoGroup, NoLimits, type BookProps } from './GroupSwitch';
 import { ExerciseDetails, ExpectedValues } from './ExerciseBits';
 import { SetupText } from './SetupPage';
+import { SwimProofEditor } from './SwimProof';
+
+/** Not an exercise: the station „Schwimmnachweis“ (Kap. 4.2), chosen like one. */
+export const SWIM_STATION = 'schwimmnachweis';
 
 const EMPTY: AttemptInput = { text: '', variant: undefined, classId: undefined };
 const levelLabel = (level: Level | null | undefined) =>
@@ -70,6 +74,8 @@ export function CapturePage({
   const [onlyPlanned, setOnlyPlanned] = useState(true);
   // a new key mounts the station's metronome anew — closing its fold stops the beat
   const [beatKey, setBeatKey] = useState(0);
+  // the repetitions the station's metronome counted at „Ende“ (Curl-Up), to take over per child
+  const [beatResult, setBeatResult] = useState<number | null>(null);
   if (!group) return <NoGroup />;
   if (!catalog || catalog.requirements.length === 0) return <NoLimits />;
   const members = groupMembers(workbook, group.id);
@@ -85,8 +91,9 @@ export function CapturePage({
     .filter((row) => !onlyPlanned || plannedCount === 0 || planned(row.athlete.id));
   const timed = exercise?.measure === 'minSec' || exercise?.measure === 'secTenth';
   const tools = exercise ? stationTools(exercise) : [];
-  const beat =
-    tools.includes('metronome') && exercise ? metronomePresetFor(exercise.id) : undefined;
+  const preset = exercise ? metronomePresetFor(exercise.id) : undefined;
+  const beat = tools.includes('metronome') ? preset : undefined;
+  const counterBeat = preset?.station === 'counter' ? preset : undefined;
   // the finish times, else the stopped time of a single run
   const stopped = !isRunning(stopwatch) && stopwatch.accumulated > 0 ? [stopwatch.accumulated] : [];
   const times =
@@ -152,7 +159,51 @@ export function CapturePage({
           </div>
         ),
       )}
-      {!exercise || !offered ? (
+      <div className="chips" role="group" aria-label="Nachweis">
+        <span className="muted chip-label">Nachweis</span>
+        <button
+          type="button"
+          className="chip"
+          aria-pressed={exerciseId === SWIM_STATION}
+          onClick={() => chooseExercise(SWIM_STATION)}
+        >
+          Schwimmnachweis
+        </button>
+      </div>
+      {exerciseId === SWIM_STATION ? (
+        <>
+          <h3>Schwimmnachweis</h3>
+          <p className="muted">
+            Je Kind antippen, womit es {workbook.year} geschwommen ist (angeboten wird, was zum
+            Alter passt). Schwimmen (Ausdauer) oder ab Bronze Schwimmen (Schnelligkeit), hier
+            erfasst, zählt von selbst. Frühere Nachweise: „Ergebnis“ › „Je Kind“.
+          </p>
+          <details className="setup-inline tool">
+            <summary>Stoppuhr</summary>
+            <Stopwatch
+              state={stopwatch}
+              setState={setStopwatch}
+              compact
+              kind="minSec"
+              video={finishVideo}
+            />
+          </details>
+          <ul className="rows">
+            {members.map((child) => (
+              <li key={child.id} className="row capture">
+                <strong>{childLabel(child, members)}</strong>
+                <SwimProofEditor
+                  child={child}
+                  workbook={workbook}
+                  catalog={catalog}
+                  dispatch={dispatch}
+                  compact
+                />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : !exercise || !offered ? (
         <p className="muted">
           Eine Übung wählen – angezeigt werden nur Übungen, die mindestens ein Kind der Gruppe
           ablegen kann.
@@ -197,7 +248,7 @@ export function CapturePage({
           {tools.includes('counter') && (
             <details className="setup-inline tool" open>
               <summary>Zähler: {count}</summary>
-              <Counter count={count} dispatch={countDispatch} compact />
+              <Counter count={count} dispatch={countDispatch} compact beat={counterBeat} />
             </details>
           )}
           {beat && (
@@ -212,7 +263,12 @@ export function CapturePage({
                 Metronom: {beat.bpm} Schläge pro Minute (
                 {beat.binding === 'required' ? 'Pflichttakt' : 'Richtwert'})
               </summary>
-              <Metronome key={`${beat.id}-${beatKey}`} initialPresetId={beat.id} compact />
+              <Metronome
+                key={`${beat.id}-${beatKey}`}
+                initialPresetId={beat.id}
+                compact
+                onResult={setBeatResult}
+              />
             </details>
           )}
           {plannedCount > 0 && (
@@ -345,6 +401,14 @@ export function CapturePage({
                         onClick={() => setInput(row.athlete.id, { text: String(count) })}
                       >
                         Zähler ({count})
+                      </button>
+                    )}
+                    {beat && beatResult !== null && (
+                      <button
+                        type="button"
+                        onClick={() => setInput(row.athlete.id, { text: String(beatResult) })}
+                      >
+                        Metronom ({beatResult})
                       </button>
                     )}
                     <button type="submit">Speichern</button>

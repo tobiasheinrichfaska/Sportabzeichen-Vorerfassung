@@ -6,7 +6,13 @@
 import { combine } from './combinations.ts';
 import { directionOf, exerciseById } from './catalog.ts';
 import { AWARD_BANDS, GROUPS, LEVELS } from './reference.ts';
-import { swimStatus, type SwimStatus } from './swim.ts';
+import {
+  swimProof,
+  swimProofStatus,
+  type SwimAttempt,
+  type SwimProof,
+  type SwimStatus,
+} from './swim.ts';
 import type {
   Athlete,
   Catalog,
@@ -146,6 +152,8 @@ export interface AthleteEvaluation {
   /** Award by points; null unless every group reaches at least Bronze. */
   award: Level | null;
   swim: SwimStatus;
+  /** The swim proof that counts: entered, or a swim recorded as an exercise; null = none. */
+  swimProof: SwimProof | null;
   /** At least one group is decided by hand: submit on the paper Prüfkarte with the final result. */
   paperCardOnly: boolean;
   /** Award reached, swim proof valid, consent on file and no manual decision still open. */
@@ -172,11 +180,18 @@ export function evaluateAthlete(
 
   // 1. Best result per group
   const levels = new Map<string, Level | null>();
+  const swims: SwimAttempt[] = [];
   for (const measurement of workbook.measurements) {
     if (measurement.athleteId !== athlete.id) continue;
     const result = measurementLevel(measurement, athlete, catalog, workbook.year);
     if ('note' in result) notes.push({ code: result.note, measurementId: measurement.id });
     levels.set(measurement.id, result.level);
+    swims.push({
+      measurementId: measurement.id,
+      exerciseId: measurement.exerciseId,
+      year: measurement.date ? Number(measurement.date.slice(0, 4)) : workbook.year,
+      level: result.level,
+    });
     const group = exerciseById(catalog, measurement.exerciseId)?.group;
     if (group && better(group, result.level)) {
       groups.set(group, {
@@ -227,7 +242,8 @@ export function evaluateAthlete(
   const results = [...groups.values()];
   const points = results.reduce((sum, result) => sum + pointsFor(result.level), 0);
   const award = results.every((result) => result.level) ? awardFor(points) : null;
-  const swim = swimStatus(athlete, workbook.year);
+  const proof = swimProof(athlete, swims);
+  const swim = swimProofStatus(athlete, proof, workbook.year);
   const blocked = notes.some(
     (note) => note.code === 'consentMissing' || note.code === 'manualOpen',
   );
@@ -237,6 +253,7 @@ export function evaluateAthlete(
     points,
     award,
     swim,
+    swimProof: proof,
     paperCardOnly: manual.length > 0,
     complete: award !== null && swim === 'valid' && !blocked,
     notes,

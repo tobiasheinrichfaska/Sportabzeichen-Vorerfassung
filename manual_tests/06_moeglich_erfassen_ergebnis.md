@@ -1,4 +1,4 @@
-# 06 – Möglich, Erfassen, Ergebnis, Aufbau
+# 06 – Möglich, Planen, Erfassen, Ergebnis, Aufbau
 
 **Vorbedingungen für alle Fälle:** die gehostete App (sie enthält die Grenzwerte), eine Gruppe
 „3b“ mit `Lena` (2017, Mädchen) und `Ben` (2016, Junge) – siehe MT-22/MT-23. Die Datei-Fassung aus
@@ -6,7 +6,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-28: Welche Abnahmen sind möglich – je Übung
 
-1. Rad: „Vorbereiten“ › „Möglich“ öffnen.
+1. Rad: „Übungen“ › „Möglich“ öffnen.
    - Überschrift „Möglich – 3b“, darunter „je Übung“ (markiert) und „je Kind“, dann Ausdauer,
      Kraft, Schnelligkeit, Koordination.
 2. Unter „Ausdauer“ „Laufen“ antippen.
@@ -44,7 +44,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-31: Zeit von der Stoppuhr übernehmen
 
-1. Rad: „Abnahme“ › „Stoppuhr“: Start, zweimal „Zieleinlauf“, Stopp.
+1. Rad: „Werkzeuge“ › „Stoppuhr“: Start, zweimal „Zieleinlauf“, Stopp.
 2. Oben „Erfassen ›“ antippen, „Schnelligkeit“ › „Laufen“ wählen.
    - „Stoppuhr: 1) … · 2) …“ und bei jedem Kind die Knöpfe „⏱ 1) …“ und „⏱ 2) …“.
 3. Bei Lena „⏱ 1) …“, bei Ben „⏱ 2) …“ tippen.
@@ -69,8 +69,9 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 1. Rad: „Ergebnis“ › „Je Kind“.
    - Kinder als Knöpfe; für das gewählte: Punkte, „Abzeichen noch nicht erreicht“ oder die Stufe,
      je Disziplingruppe die Stufe mit der zählenden Leistung („800 m Lauf 03:30“).
-2. Bei „Schwimmnachweis (Jahr)“ das aktuelle Jahr eintragen.
-   - „Schwimmnachweis fehlt.“ wird zu „Schwimmnachweis gültig.“
+2. Unter „Schwimmnachweis“ bei „Nachweisjahr (auch ein früheres)“ das aktuelle Jahr Ziffer für
+   Ziffer eintippen.
+   - Die Ziffern bleiben stehen; „Schwimmnachweis fehlt.“ wird zu „Schwimmnachweis gültig.“
 3. Für ein Kind zwei Versuche in derselben Gruppe erfassen, dann hier einen davon antippen.
    - Er steht mit „(gewählt)“; „Bester zählt“ hebt die Wahl auf.
 4. Oben „Gruppe ›“ antippen.
@@ -89,7 +90,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-35: Übung antippen – Aufbau, erwartete Werte, einplanen
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Übung“, eine Übung antippen (z. B. „Laufen“).
+1. Rad: „Übungen“ › „Möglich“, „je Übung“, eine Übung antippen (z. B. „Laufen“).
    - Je Kind die Variante mit den erwarteten Werten als farbige Felder „B … · S … · G …“, darunter
      „Macht diese Übung“; ganz unten „Aufbau“.
    - **Nicht ungewöhnlich:** Wo die Tabelle kein Bronze hat (Klimmzüge ab 85), steht „B –“; bei
@@ -98,7 +99,34 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
    - Der Knopf wird grün mit „✓“; in der Zeile der Übung steht „· 1 geplant“.
 3. „je Kind“ antippen, beim selben Kind die Übung aufklappen.
    - Vor dem Namen steht „✓“; die erwarteten Werte, der Knopf und „Aufbau“ sind da.
-4. Den Knopf noch einmal antippen.
+
+## MT-44: Planen – wer macht was, Stationen und Lücken
+
+Seit 18.11.2026 endet „Vorbereiten“ mit „Planen“; „Möglich“ (mit Werten, Aufbau, Ausführung) steht
+weiter unter „Übungen“. Vorbedingung: „Gruppen“ › „Beispielgruppe mit 4 erfundenen Kindern“.
+
+1. Rad: „Vorbereiten“ › „Planen“ öffnen.
+   - Überschrift „Planen – Beispiel“, darunter „Stationen am Tag (0)“, „Noch nichts geplant.“ und
+     rot „Noch nichts geplant in:“ mit Mia, Paul, Emma, Jonas – je alle vier Disziplingruppen.
+2. Unter „Ausdauer“ „Laufen“ antippen, dann „Alle, die können (4)“.
+   - Alle vier Namen werden grün mit „✓“, die Zeile sagt „4 geplant · 4 von 4 können“, der Knopf
+     heißt nun „Keins“. Oben: „Stationen am Tag (1)“ mit „Laufen (Ausdauer) · 4 Kinder“; bei
+     jedem Kind fehlt „Ausdauer“ in der roten Liste.
+3. „Keins“ antippen, dann nur „Mia“ antippen.
+   - Nur Mia ist grün. „Dauer-/Geländelauf“ aufklappen: Mia ohne Rand, Paul, Emma und Jonas rot
+     umrandet (sie haben in Ausdauer noch nichts).
+4. In jeder Disziplingruppe eine Übung für alle einplanen, die können.
+   - Kinder, die in einer Gruppe noch nichts haben, stehen weiter rot oben. Sind alle versorgt:
+     „Jedes Kind hat in jeder Disziplingruppe eine Übung geplant.“
+5. Rad: „Abnahme“ › „Erfassen“.
+   - Die geplanten Übungen tragen die Zahl der Kinder, z. B. „Laufen (4)“.
+6. In „Kinder“ Mia ändern: „MmB“ wählen, keine Klasse, speichern; zurück zu „Planen“.
+   - Rot „Geplant, aber nicht mehr möglich …“ mit Mias Übungen und je „Plan entfernen“; darüber
+     „Kann noch nichts: Mia (Behinderungsklasse noch offen)“. „Plan entfernen“ nimmt die Zeile weg.
+   - Danach Mia wieder auf regulär stellen.
+7. Rad: „Übungen“ › „Möglich“, „je Kind“ antippen, die Seite wechseln und zurückkommen.
+   - „je Kind“ ist noch markiert (die Ansicht wird gemerkt).
+8. Den Knopf noch einmal antippen.
    - Der Plan ist zurückgenommen.
 
 ## MT-36: Geplante Kinder beim Erfassen
@@ -120,7 +148,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 **Vorbedingungen:** gehostete App bzw. eine Datei, die mit dem lokalen Paket gebaut ist (ohne Paket
 gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gruppen“).
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, bei Mia (9) „Koordinationsleiter“ aufklappen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, bei Mia (9) „Koordinationsleiter“ aufklappen.
    - Unter „Aufbau“ steht „Ausführung: Doppelschritt“.
 2. „Ausführung: Doppelschritt“ antippen.
    - Die Altersklassen, für die diese Schrittfolge gilt, eine Unterzeile zur Schrittart, das Bild
@@ -148,7 +176,7 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 
 **Vorbedingungen:** wie MT-37; dazu ein Kind mit Jahrgang 2019 (7 Jahre) in der Gruppe.
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, beim Kind mit Jahrgang 2019 auf Kraft schauen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, beim Kind mit Jahrgang 2019 auf Kraft schauen.
    - „Gerätturnen: Kopfstand“ (nicht „Schulterstand“).
 2. Bei Schnelligkeit und Koordination schauen.
    - „Gerätturnen: Sprungaufhocken als Stützsprung“ und „Gerätturnen: Gehen auf dem Schwebebalken“.
@@ -176,7 +204,8 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 4. Unter „Koordination“ „Seilspringen“ wählen, die große Zählfläche dreimal antippen.
    - Aufgeklappt „Zähler: 3“; keine Stoppuhr. Bei jedem Kind der Knopf „Zähler (3)“.
 5. Unter „Kraft“ „Push-Ups“ wählen.
-   - Aufgeklappt „Zähler: …“ und „Metronom: 60 Schläge pro Minute (Richtwert)“.
+   - Aufgeklappt „Zähler: …“ mit „Takt an (60/min)“ unter der Zählfläche (seit 18.11.2026, MT-46);
+     bei „Crunches/Curl-Up-Test“ zusätzlich „Metronom: 40 Schläge pro Minute (Pflichttakt)“.
 6. „Stoppuhr“ bzw. „Zähler“ in der Überschrift antippen (zuklappen).
    - Das Werkzeug ist zu, die Stoppuhr läuft dabei weiter; beim nächsten Wechsel der Übung steht es
      wieder offen.
@@ -186,7 +215,7 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 **Vorbedingungen:** wie MT-29; in der Gruppe ein MmB-Kind mit Jahrgang 2013 und Klasse H 3, eines
 mit Jahrgang 2013 und Klasse G 2 und eine erwachsene Person (Jahrgang 1990).
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, beim H-3-Kind auf Koordination schauen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, beim H-3-Kind auf Koordination schauen.
    - „Zielwurf (3 m Abstand)“ (nicht 5 m) und „Rollstuhlparcours“ (nicht „Rollstuhl-Parcour“).
    - **Nicht ungewöhnlich:** Für H III nennt die Prüfkarte des DBS kürzere Abstände als für die
      anderen Klassen (Kinder 2 m bis 11 Jahre, 3 m ab 12; Erwachsene bis 44 Jahre 5 m).
@@ -195,3 +224,83 @@ mit Jahrgang 2013 und Klasse G 2 und eine erwachsene Person (Jahrgang 1990).
 3. Bei der erwachsenen Person „10 km Lauf“ aufklappen.
    - Die Zeiten stehen in Minuten wie auf der Prüfkarte, auch über einer Stunde (z. B. „75:00“), nie mit Stunden wie „1:15:00“. Auch
      „1:15:00“ eintippen geht weiterhin; gespeichert und angezeigt wird es als „75:00“.
+
+## MT-45: Schwimmnachweis – von selbst aus der Übung, eigens erfasst, früheres Jahr
+
+Prüfungswegweiser 2026 Kap. 4.2; das DBS-Handbuch verweist darauf (gleiche Regeln für MmB).
+Vorbedingung: „Gruppen“ › „Beispielgruppe mit 4 erfundenen Kindern“.
+
+1. Rad: „Ergebnis“ › „Gruppe“: Spalte „Schw.“ ✗ bei allen. „Je Kind“: „Schwimmnachweis fehlt.
+   Nachweis: kein Nachweis eingetragen oder erfasst“.
+2. Rad: „Abnahme“ › „Erfassen“, unter Ausdauer „Schwimmen“, bei Jonas eine langsame Zeit (z. B.
+   `15:00`) speichern.
+   - Stufe „unter Bronze“ – trotzdem zeigt „Gruppe“ bei Jonas ✓ und „Je Kind“ „Nachweis: 2026:
+     Schwimmen (Ausdauer) erfasst am …“ (die Strecke ganz geschwommen genügt, keine Mindestzeit).
+3. In „Erfassen“ unter Schnelligkeit „Schwimmen“ bei Paul eine Zeit unter Bronze speichern.
+   - Paul bleibt ✗. Mit einer Zeit ab Bronze wird er ✓ (Schnelligkeit zählt erst ab Bronze).
+4. In „Erfassen“ unter „Nachweis“ „Schwimmnachweis“ antippen.
+   - Je Kind der Stand und die Wege, die zum Alter passen: unter 12 „50 m am Stück, ohne
+     Zeitlimit“, ab 12 „200 m am Stück in höchstens 11 min“ (nie beide), dazu Dauerschwimmen,
+     Kleiderschwimmen und die Abzeichen; Rettungsschwimm- und Fünfkampfabzeichen erst ab 12.
+   - Eine Stoppuhr (zugeklappt) für 200 m bzw. Kleiderschwimmen.
+5. Bei Mia „50 m am Stück, ohne Zeitlimit“ antippen.
+   - Grün mit „✓“; „Schwimmnachweis gültig. Nachweis: 2026: 50 m am Stück, ohne Zeitlimit“.
+     Nochmals antippen nimmt den Nachweis zurück.
+6. Rad: „Ergebnis“ › „Je Kind“, Emma: bei „Nachweisjahr (auch ein früheres)“ `2025` eintippen.
+   - „Nachweis: 2025 (nur das Jahr eingetragen)“. Mit „Erstmaliger Erwerb“ angehakt: „Erstmaliger
+     Erwerb: Im Prüfungsjahr muss geschwommen werden.“ – ein Weg von 2026 oder ein erfasstes
+     Schwimmen macht ihn wieder gültig.
+7. Mit einem Kind ab 12 (in „Kinder“ anlegen): unter den Wegen der Hinweis, dass Abzeichen ab 12
+   von DLRG, DSV, Wasserwacht, DRK oder ASB abgenommen sein müssen.
+
+## MT-47: Durchgang und Zuordnen – eine oder mehrere Personen, das passende Werkzeug
+
+Seit 18.11.2026 (Tobias: „Ja, so bauen … Durchgang würde das passende Werkzeug zeigen und Zuordnen
+die Ergebnisse zuordnen, falls nicht per Knopf geschehen … für Push-Ups oder andere Wiederholungen
+braucht es getrennte Zählfelder“). „Abnahme“ = Erfassen · **Durchgang** · Zuordnen; Stoppuhr und
+Zähler stehen weiter unter „Werkzeuge“. Vorbedingung: Beispielgruppe, dazu zwei Erwachsene
+(Jahrgang 1990, 1992) für Push-Ups und Curl-Up.
+
+**Wichtig:** Ein Durchgang lebt nur im Speicher der App wie die laufende Stoppuhr. Startet das Handy
+die App neu, sind nicht gespeicherte Ergebnisse weg – auf „Zuordnen“ bald speichern.
+
+1. Rad: „Abnahme“ › „Durchgang“, unter Schnelligkeit „Laufen“.
+   - Die Übungsliste klappt zu („Übung: Laufen – ändern“); „Wer macht mit:“ mit allen, die die
+     Übung können, „Geplante (n)“ (wo geplant) und „Alle (n)“.
+2. Mia, Paul und Emma antippen.
+   - „Ein Zielknopf“ (gewählt) / „Name als Zielknopf“, darunter die Stoppuhr.
+3. „Start“, dreimal „Zieleinlauf“, „Stopp“.
+   - „3 Ergebnisse, 3 noch zuzuordnen – speichern auf „Zuordnen““.
+4. „Zuordnen ›“ (oben rechts).
+   - „1) … wer?“ mit Mia, Paul, Emma als Knöpfe; nach jeder Zuordnung fehlt die Person bei den
+     übrigen Zeiten. „ändern“ nimmt eine Zuordnung zurück.
+5. „Alle zugeordneten speichern (3)“.
+   - Jede Zeile „✓ gespeichert“; die Zeiten stehen bei „Je Kind“. Wo eine Variante oder Klasse
+     entscheidet, stehen deren Knöpfe in der Zeile, ohne Wahl kommt die Meldung „Variante wählen …“.
+6. Mit „Zielvideo an“ wiederholen (Kamera aufs Ziel).
+   - Auf „Zuordnen“ je Zeit „Zielbilder“: das Bild beim Druck rot markiert; man sieht, wer zuerst war,
+     und kann „Zeit dieses Bildes übernehmen“.
+7. „Durchgang“, eine andere Übung antippen, solange Ergebnisse nicht gespeichert sind.
+   - Rot: „Dieser Durchgang hat n nicht gespeicherte Ergebnisse …“ – die Übung wechselt nicht.
+     „Neuer Durchgang (gleiche Personen) – verwirft n …“ setzt Stoppuhr und Ergebnisse zurück.
+8. Ausdauer „Laufen“, zwei Kinder, „Name als Zielknopf“, „Start“.
+   - Statt „Zieleinlauf“ ein großer Knopf je Name. Einen antippen: die Zeit gehört der Person, ihr
+     Knopf verschwindet. Auf „Zuordnen“ steht die Zeit schon mit Namen.
+9. Kraft „Push-Ups“, beide Erwachsenen.
+   - Getrennte Zählfelder je Person (Name, Zahl, „−1“) und „Takt an (60/min)“.
+   - Der Takt folgt **Gruppentreffern**: mindestens zwei Zählungen nah beieinander (höchstens
+     0,8 s), davor 0,4 s frei. Liegen beide nah am hohen Ton: „Gruppentreffer (2 von 2) 0,1 s
+     später als der Takt.“ – der Takt bleibt.
+   - Beide gemeinsam deutlich (mehr als eine halbe Sekunde) daneben: „… – noch ein Treffer, dann
+     richtet sich der Takt aus.“ Liegt auch der nächste Treffer (etwa eine Wiederholung später)
+     deutlich daneben: „… – bestätigt, Takt neu ausgerichtet.“ Ein einzelner Ausreißer verschiebt
+     nie etwas.
+   - Mit drei Personen, eine hört auf oder zieht deutlich nach: Die beiden anderen richten den Takt
+     trotzdem aus („Gruppentreffer (2 von 3) …“); eine einzelne späte Zählung verschiebt nichts.
+   - **Nicht ungewöhnlich:** Turnen alle in verschiedenem Tempo, richtet sich der Takt gelegentlich
+     neu aus, wenn zwei zufällig zusammenfallen.
+10. Kraft „Crunches/Curl-Up“, beide Erwachsenen, „Start“.
+    - Je Person „Ende <Name>“: beim ersten Fehler der Person antippen – sie behält die ganzen
+      Wiederholungen bis dahin, ±1 korrigierbar. Nach der letzten Person hält das Metronom an.
+11. Übung ohne Werkzeug (z. B. Weitsprung).
+    - „Für diese Übung gibt es kein Werkzeug – die Werte direkt auf „Erfassen“ eintragen.“

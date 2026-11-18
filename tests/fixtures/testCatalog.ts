@@ -192,6 +192,38 @@ export const TEST_CATALOG: Catalog = assemble({
   localRequirements: { rows: ROWS },
 });
 
+/** TEST_CATALOG plus invented swim limits (regular, w, 8–9) for the swim proof. */
+export const SWIM_TEST_CATALOG: Catalog = assemble({
+  ...PUBLIC_FILES,
+  localRequirements: {
+    rows: [
+      ...ROWS,
+      {
+        exerciseId: 'swim-endurance',
+        track: 'regular',
+        sex: 'w',
+        ageFrom: 8,
+        ageTo: 9,
+        label: '200 m',
+        bronze: '09:00',
+        silver: '08:00',
+        gold: '07:00',
+      },
+      {
+        exerciseId: 'swim-sprint',
+        track: 'regular',
+        sex: 'w',
+        ageFrom: 8,
+        ageTo: 9,
+        label: '25 m',
+        bronze: '40,0',
+        silver: '35,0',
+        gold: '30,0',
+      },
+    ],
+  },
+});
+
 export const YEAR = 2026;
 
 export function athlete(patch: Partial<Athlete> & Pick<Athlete, 'id'>): Athlete {

@@ -2,15 +2,21 @@
 // kept, so the navigation stays comparable with its origin). Planned with Tobias 2026-11-10: six
 // areas of three pages, the most used one in the middle (it stands at the contact with its area);
 // a page needed in several situations stands in several areas, back leads where one came from.
+// 2026-11-18: „Vorbereiten“ ends with „Planen“ (who does what, quick to tap); „Möglich“ with
+// values, setup and Ausführung stays in „Übungen“. „Abnahme“ = Erfassen · Durchgang · Zuordnen
+// (Tobias 2026-11-18: „Ja, so bauen“); stopwatch and counter stay in „Werkzeuge“.
 
 export type SeitenId =
   | 'gruppen'
   | 'kinder'
+  | 'planen'
   | 'moeglich'
   | 'aufbau'
   | 'klassen'
   | 'stoppuhr'
   | 'erfassen'
+  | 'durchgang'
+  | 'zuordnen'
   | 'zaehler'
   | 'metronom'
   | 'je-kind'
@@ -28,11 +34,14 @@ export interface Seite {
 export const SEITEN: Readonly<Record<SeitenId, Seite>> = {
   gruppen: { name: 'Gruppen' },
   kinder: { name: 'Kinder' },
+  planen: { name: 'Planen' },
   moeglich: { name: 'Möglich' },
   aufbau: { name: 'Aufbau' },
   klassen: { name: 'Klassen' },
   stoppuhr: { name: 'Stoppuhr' },
   erfassen: { name: 'Erfassen' },
+  durchgang: { name: 'Durchgang' },
+  zuordnen: { name: 'Zuordnen' },
   zaehler: { name: 'Zähler' },
   metronom: { name: 'Metronom' },
   'je-kind': { name: 'Je Kind' },
@@ -76,9 +85,9 @@ export type BereichId =
 
 /** Clockwise from the top: before, at and after the exam, then the device. */
 export const BAUM: Knoten = verteiler('start', 'Start', [
-  bereich('vorbereiten', 'Vorbereiten', ['gruppen', 'kinder', 'moeglich']),
+  bereich('vorbereiten', 'Vorbereiten', ['gruppen', 'kinder', 'planen']),
   bereich('uebungen', 'Übungen', ['aufbau', 'moeglich', 'klassen']),
-  bereich('abnahme', 'Abnahme', ['stoppuhr', 'erfassen', 'zaehler']),
+  bereich('abnahme', 'Abnahme', ['erfassen', 'durchgang', 'zuordnen']),
   bereich('werkzeuge', 'Werkzeuge', ['zaehler', 'stoppuhr', 'metronom']),
   bereich('ergebnis', 'Ergebnis', ['je-kind', 'gruppe', 'erfassen']),
   bereich('geraete', 'Geräte', ['datei', 'uebertragen', 'pruefungstag']),

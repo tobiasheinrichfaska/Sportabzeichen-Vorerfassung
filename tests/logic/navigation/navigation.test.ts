@@ -70,9 +70,9 @@ const namen = (k: Knoten) => (k.kinder ?? []).map((s) => s.name);
 describe('Seitenbaum (Tobias 2026-11-10: „So bauen“)', () => {
   it('six areas of three pages in the agreed order', () => {
     expect(BAUM.kinder?.map((b) => [b.name, namen(b)])).toEqual([
-      ['Vorbereiten', ['Gruppen', 'Kinder', 'Möglich']],
+      ['Vorbereiten', ['Gruppen', 'Kinder', 'Planen']],
       ['Übungen', ['Aufbau', 'Möglich', 'Klassen']],
-      ['Abnahme', ['Stoppuhr', 'Erfassen', 'Zähler']],
+      ['Abnahme', ['Erfassen', 'Durchgang', 'Zuordnen']],
       ['Werkzeuge', ['Zähler', 'Stoppuhr', 'Metronom']],
       ['Ergebnis', ['Je Kind', 'Gruppe', 'Erfassen']],
       ['Geräte', ['Datei', 'Übertragen', 'Prüfungstag']],
@@ -127,7 +127,9 @@ describe('Seitenbaum (Tobias 2026-11-10: „So bauen“)', () => {
       [15, 3],
     ]);
     expect(gruppenMitte(gl, 2)).toBe(7);
-    expect(gl.seiten[7]?.knoten.name).toBe('Erfassen');
+    // since 2026-11-18 the run is the most used page at the station („Erfassen“ also stands in
+    // „Ergebnis“)
+    expect(gl.seiten[7]?.knoten.name).toBe('Durchgang');
   });
 });
 

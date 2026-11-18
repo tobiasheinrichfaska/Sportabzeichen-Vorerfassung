@@ -6,7 +6,7 @@ export interface BookProps {
   workbook: Workbook;
   dispatch: (action: WorkbookAction) => void;
   catalog: Catalog | undefined;
-  /** The group shown (pages „Kinder“, „Möglich“, „Erfassen“, „Je Kind“, „Gruppe“). */
+  /** The group shown (pages „Kinder“, „Planen“, „Möglich“, „Erfassen“, „Je Kind“, „Gruppe“). */
   group: AthleteGroup | undefined;
   chooseGroup: (groupId: string) => void;
 }

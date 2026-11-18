@@ -1,33 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MAX_BPM,
   METRONOME_PRESETS,
+  MILESTONE_EVERY,
   MIN_BPM,
   beatLabel,
-  beatsInWindow,
   clampBpm,
   completedRepetitions,
-  type Beat,
 } from '../logic/metronome';
+import { useBeat } from './useBeat';
 
-// Look-ahead scheduling: every 25 ms the beats of the next 100 ms are handed to the audio clock,
-// which plays them exactly on time even when the page is busy.
-const TICK_MS = 25;
-const AHEAD_S = 0.1;
 // One shared empty pattern, so the scheduling effect does not restart on every render
 const NO_PATTERN: readonly string[] = [];
-
-function click(context: AudioContext, time: number, accent: boolean) {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  oscillator.frequency.value = accent ? 1320 : 880;
-  gain.gain.setValueAtTime(0.0001, time);
-  gain.gain.exponentialRampToValueAtTime(0.6, time + 0.005);
-  gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.08);
-  oscillator.connect(gain).connect(context.destination);
-  oscillator.start(time);
-  oscillator.stop(time + 0.1);
-}
 
 const BINDING_TEXT = { required: 'Pflichttakt', guide: 'Richtwert' } as const;
 
@@ -38,74 +22,49 @@ const BINDING_TEXT = { required: 'Pflichttakt', guide: 'Richtwert' } as const;
 export function Metronome({
   initialPresetId,
   compact = false,
-}: { initialPresetId?: string; compact?: boolean } = {}) {
+  onResult,
+}: {
+  initialPresetId?: string;
+  compact?: boolean;
+  /** The repetitions at „Ende“ (after correction), for „Erfassen“; null = none (again). */
+  onResult?: (repetitions: number | null) => void;
+} = {}) {
   const [presetId, setPresetId] = useState(initialPresetId ?? METRONOME_PRESETS[0]?.id ?? 'free');
   const preset = METRONOME_PRESETS.find((entry) => entry.id === presetId) ?? METRONOME_PRESETS[0];
   const pattern = preset ? preset.pattern : NO_PATTERN;
-  const [bpm, setBpm] = useState(preset?.bpm ?? 60);
-  const [running, setRunning] = useState(false);
-  const [beat, setBeat] = useState<Beat | null>(null);
-  const [flash, setFlash] = useState(false);
-  const [error, setError] = useState('');
-  const context = useRef<AudioContext | null>(null);
+  const [bpm, setBpmValue] = useState(preset?.bpm ?? 60);
+  const { running, beat, flash, error, start, stop } = useBeat(pattern);
+  // the repetitions at „Ende“, corrected by the examiner where the last one was not clean
+  const [result, setResult] = useState<number | null>(null);
+  useEffect(() => onResult?.(result), [result, onResult]);
 
-  useEffect(() => {
-    const audio = context.current;
-    if (!running || !audio) return;
-    const start = audio.currentTime + 0.05;
-    let scheduledUntil = start;
-    const pending: Beat[] = [];
-    const timer = window.setInterval(() => {
-      const until = audio.currentTime + AHEAD_S;
-      for (const next of beatsInWindow(start, bpm, scheduledUntil, until)) {
-        click(audio, next.time, pattern.length > 0 && next.index % pattern.length === 0);
-        pending.push(next);
-      }
-      scheduledUntil = until;
-    }, TICK_MS);
-    let frame = requestAnimationFrame(function show() {
-      while (pending.length > 0 && (pending[0]?.time ?? Infinity) <= audio.currentTime) {
-        const due = pending.shift();
-        if (due) {
-          setBeat(due);
-          setFlash(true);
-          window.setTimeout(() => setFlash(false), 120);
-        }
-      }
-      frame = requestAnimationFrame(show);
-    });
-    return () => {
-      window.clearInterval(timer);
-      cancelAnimationFrame(frame);
-    };
-  }, [running, bpm, pattern]);
+  const beats = beat ? beat.index + 1 : 0;
+  const repetitions = completedRepetitions(pattern, beats);
 
-  // Started by a plain click: touch browsers only allow audio after a completed tap.
+  function setBpm(update: (value: number) => number) {
+    const next = clampBpm(update(bpm));
+    setBpmValue(next);
+    if (running) void start(next);
+  }
+
   async function toggle() {
     if (running) {
-      setRunning(false);
+      stop();
+      if (pattern.length > 0) setResult(repetitions);
       return;
     }
-    try {
-      context.current ??= new AudioContext();
-      await context.current.resume();
-      setBeat(null);
-      setError('');
-      setRunning(true);
-    } catch (reason) {
-      setError(`Ton nicht verfügbar: ${String(reason)}`);
-    }
+    setResult(null);
+    await start(bpm);
   }
 
   function choose(id: string) {
     const next = METRONOME_PRESETS.find((entry) => entry.id === id);
     if (!next) return;
     setPresetId(next.id);
-    setBpm(next.bpm);
-    setRunning(false);
+    setBpmValue(next.bpm);
+    setResult(null);
+    stop();
   }
-
-  const beats = beat ? beat.index + 1 : 0;
 
   const Wrapper = compact ? 'div' : 'section';
   return (
@@ -127,7 +86,7 @@ export function Metronome({
         <label>
           Schläge pro Minute
           <span className="bpm">
-            <button type="button" onClick={() => setBpm((value) => clampBpm(value - 1))}>
+            <button type="button" onClick={() => setBpm((value) => value - 1)}>
               −
             </button>
             <input
@@ -135,9 +94,9 @@ export function Metronome({
               min={MIN_BPM}
               max={MAX_BPM}
               value={bpm}
-              onChange={(event) => setBpm(clampBpm(Number(event.target.value)))}
+              onChange={(event) => setBpm(() => Number(event.target.value))}
             />
-            <button type="button" onClick={() => setBpm((value) => clampBpm(value + 1))}>
+            <button type="button" onClick={() => setBpm((value) => value + 1)}>
               +
             </button>
           </span>
@@ -148,7 +107,7 @@ export function Metronome({
       </div>
       <div className="actions">
         <button type="button" className="big-button" onClick={() => void toggle()}>
-          {running ? 'Stopp' : 'Start'}
+          {running ? (pattern.length > 0 ? 'Ende' : 'Stopp') : 'Start'}
         </button>
       </div>
       {error && (
@@ -158,16 +117,37 @@ export function Metronome({
       )}
       <p>
         Schläge: {beats}
-        {pattern.length > 0 && ` · Wiederholungen: ${completedRepetitions(pattern, beats)}`}
+        {pattern.length > 0 && ` · Wiederholungen: ${repetitions}`}
       </p>
+      {result !== null && (
+        <div className="metronome-result">
+          <p>
+            <strong>Ende: {result} Wiederholungen</strong>{' '}
+            <span className="muted">(ganze, bis zum letzten vollen Zyklus)</span>
+          </p>
+          <div className="actions">
+            <button type="button" onClick={() => setResult(Math.max(0, result - 1))}>
+              −1 (letzte nicht sauber)
+            </button>
+            <button type="button" onClick={() => setResult(result + 1)}>
+              +1
+            </button>
+          </div>
+          {onResult && (
+            <p className="muted">Beim Kind „Metronom ({result})“ antippen übernimmt die Zahl.</p>
+          )}
+        </div>
+      )}
       {preset?.binding && preset.quote && (
         <p>
           <strong>{BINDING_TEXT[preset.binding]}:</strong> {preset.quote}
         </p>
       )}
       <p className="muted">
-        Der erste Schlag eines Zyklus klingt höher.{preset?.source && ` Quelle: ${preset.source}.`}{' '}
-        Auf iPhone/iPad muss der Stummschalter aus sein, sonst bleibt das Metronom stumm.
+        Der erste Schlag eines Zyklus klingt höher, nach je {MILESTONE_EVERY} Wiederholungen ein
+        tiefer, langer Ton. „Ende“ beim ersten Fehler drücken: die Wiederholung, die da läuft, zählt
+        nicht.{preset?.source && ` Quelle: ${preset.source}.`} Auf iPhone/iPad muss der
+        Stummschalter aus sein, sonst bleibt das Metronom stumm.
       </p>
     </Wrapper>
   );

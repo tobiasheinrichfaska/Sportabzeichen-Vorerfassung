@@ -129,7 +129,8 @@ describe('stationTools', () => {
     ['run-endurance', 'minSec', ['stopwatch']],
     ['rope-skipping', 'count', ['counter']],
     ['curl-ups', 'count', ['counter', 'metronome']],
-    ['push-ups', 'count', ['counter', 'metronome']],
+    // Push-Ups: the counter carries the beat (Tobias 2026-11-18)
+    ['push-ups', 'count', ['counter']],
     ['long-jump', 'meterCm', []],
     ['target-throw', 'points', []],
     ['gymnastics-strength', 'level', []],

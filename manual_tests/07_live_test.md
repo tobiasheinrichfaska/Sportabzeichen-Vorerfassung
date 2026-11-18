@@ -12,10 +12,11 @@ Home-Bildschirm öffnen). Auffälligkeiten mit Uhrzeit notieren – Bildschirmfo
 3. Neue Gruppe anlegen (z. B. `Live 11.11.`), dann „Kinder ›“.
 4. Die vier Kinder mit Vorname, Jahrgang und Mädchen/Junge eintragen.
    - Jahrgang bleibt für das nächste Kind stehen; Fehler stehen rot unter den Feldern.
-5. Oben „Möglich ›“ → „je Kind“.
-   - Je Kind die möglichen Übungen je Disziplingruppe. Rot = in dieser Gruppe nichts möglich.
-   - Eine Übung antippen: erwartete Werte (B/S/G), „Macht diese Übung“ und der Aufbau. Je Kind
-     und Disziplingruppe die Übung einplanen, die es machen wird.
+5. Oben „Planen ›“.
+   - Je Disziplingruppe die Übungen, die jemand kann. Eine Übung antippen: „Alle, die können“
+     oder die Kinder einzeln. Oben stehen die Stationen am Tag und rot, wer in einer
+     Disziplingruppe noch nichts geplant hat.
+   - Erwartete Werte (B/S/G), Aufbau und Ausführung: Rad „Übungen“ › „Möglich“.
 
 ## Auf dem Sportplatz (ohne Büro-WLAN)
 
@@ -47,6 +48,6 @@ Home-Bildschirm öffnen). Auffälligkeiten mit Uhrzeit notieren – Bildschirmfo
 
 ## Danach
 
-14. Rad: „Ergebnis“ › „Je Kind“: Stufen, Punkte, Schwimmnachweis (Jahr eintragen, falls bekannt).
+14. Rad: „Ergebnis“ › „Je Kind“: Stufen, Punkte, Schwimmnachweis (früheres Jahr eintragen, falls bekannt; heute geschwommen: in „Erfassen“ › „Schwimmnachweis“ den Weg antippen – ein erfasstes Schwimmen zählt von selbst).
 15. „Gruppe ›“: Tabelle B/S/G je Disziplingruppe.
 16. Notizen und Bildschirmfotos an Tobias/Claude – mit Testfall-Schritt und Uhrzeit.
