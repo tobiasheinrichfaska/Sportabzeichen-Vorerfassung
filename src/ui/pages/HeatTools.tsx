@@ -2,21 +2,19 @@ import { useState } from 'react';
 import type { Heat, HeatAction } from '../../logic/heat';
 import {
   MILESTONE_EVERY,
-  alignToGroup,
   beatLabel,
   completedRepetitions,
   type MetronomePreset,
-  type GroupAlignment,
 } from '../../logic/metronome';
 import { fastPress } from '../fastPress';
-import { useBeat } from '../useBeat';
+import { useBeat, type HitAlignment } from '../useBeat';
 
 const NO_PATTERN: readonly string[] = [];
 const seconds = (value: number) => value.toFixed(1).replace('.', ',');
 
-/** What the last round said about the beat, in words. */
-function roundText(last: GroupAlignment, people: number) {
-  const who = people === 1 ? 'Letzte Zählung' : `Letzte Runde (alle ${people})`;
+/** What the last group hit said about the beat, in words. */
+function hitText(last: HitAlignment, people: number) {
+  const who = people === 1 ? 'Letzte Zählung' : `Gruppentreffer (${last.size} von ${people})`;
   if (last.apart) return `${who} ${seconds(last.spread)} s auseinander – Takt bleibt.`;
   const off = Math.abs(last.deviation);
   if (off < 0.05) return `${who} genau im Takt.`;
@@ -32,10 +30,11 @@ interface Person {
 
 /**
  * A separate count per person (Tobias 2026-11-18: „für Push-Ups oder andere Wiederholungen
- * braucht es getrennte Zählfelder“). With a beat (Push-Ups) one shared beat runs. Counts are taken
- * in rounds — one per person; a full round moves the beat only when it lies together and is off
- * the beat as a whole (`alignToGroup`, Tobias: „nur, wenn alle Teilnehmer des Durchgangs zusammen
- * ausreichend abweichen und nah genug beieinander liegen“). With one person every count is a round.
+ * braucht es getrennte Zählfelder“). With a beat (Push-Ups) one shared beat runs. It follows group
+ * hits (`groupHit`): at least two counts close together with a free corridor before them — nobody
+ * waits for a person who lags or stopped (Tobias: „wenn einer langsam nachzieht oder aufhört,
+ * sollte trotzdem neu ausgerichtet werden können“); a hit off the beat as a whole moves it
+ * (`alignToGroup`). With one person every count is a hit.
  */
 export function CounterPads({
   heat,
@@ -50,27 +49,12 @@ export function CounterPads({
 }) {
   const pattern = beat?.pattern ?? NO_PATTERN;
   const ticking = useBeat(pattern);
-  const [last, setLast] = useState<GroupAlignment | null>(null);
-  // the counts of the round under way: the latest per person, on the audio clock
-  const [round, setRound] = useState<Readonly<Record<string, number>>>({});
-
+  const [last, setLast] = useState<HitAlignment | null>(null);
   function count(athleteId: string, at: number) {
     dispatch({ type: 'count', athleteId, delta: 1 });
-    const { run } = ticking;
-    const tap = ticking.toAudioTime(at);
-    if (!run || tap === undefined) return;
-    const next = { ...round, [athleteId]: tap };
-    if (!people.every((person) => person.id in next)) {
-      setRound(next);
-      return;
-    }
-    const alignment = alignToGroup(run.start, run.bpm, pattern, Object.values(next));
-    if (alignment.realigned) ticking.realign(alignment.start);
-    setLast(alignment);
-    setRound({});
+    const hit = ticking.groupCount(athleteId, at, people.length);
+    if (hit) setLast(hit);
   }
-
-  const waiting = people.filter((person) => !(person.id in round)).length;
 
   return (
     <div className="heat-counter">
@@ -93,12 +77,8 @@ export function CounterPads({
           </button>
           <span className="muted">
             {last
-              ? roundText(last, people.length)
+              ? hitText(last, people.length)
               : 'Bei jeder ganzen Wiederholung zählen; der Takt ist ein Richtwert.'}
-            {ticking.running &&
-              people.length > 1 &&
-              waiting < people.length &&
-              ` Runde: noch ${waiting} von ${people.length}.`}
           </span>
           {ticking.error && (
             <p className="message error" role="alert">

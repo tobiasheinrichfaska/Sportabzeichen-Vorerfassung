@@ -9,6 +9,8 @@ import {
   GROUP_SPREAD_S,
   REALIGN_THRESHOLD_S,
   alignToGroup,
+  groupHit,
+  type BeatCount,
   alignToTap,
   completedRepetitions,
   isMilestone,
@@ -175,5 +177,40 @@ describe('alignToGroup (Push-Ups in a group, Tobias 2026-11-18)', () => {
 
   it('exactly at the spread limit still counts as together', () => {
     expect(alignToGroup(0, 60, pattern, [2.4, 2.4 + GROUP_SPREAD_S]).apart).toBe(false);
+  });
+});
+
+describe('groupHit (Tobias 2026-11-18: „nach zwei Gruppentreffern“, wer nachzieht oder aufhört, hält nicht auf)', () => {
+  const c = (who: string, at: number): BeatCount => ({ who, at });
+
+  it('two people close together are a hit; the third, who lags or stopped, is not waited for', () => {
+    expect(groupHit([c('a', 10), c('b', 10.2)], 3)).toEqual({
+      taps: [10, 10.2],
+      first: 10,
+      last: 10.2,
+    });
+    expect(groupHit([c('a', 10)], 3)).toBeNull();
+  });
+
+  it('with one person in the run every count is a hit', () => {
+    expect(groupHit([c('a', 10)], 1)).toEqual({ taps: [10], first: 10, last: 10 });
+  });
+
+  it('counts further apart than the spread are no hit', () => {
+    expect(groupHit([c('a', 10), c('b', 11)], 2)).toBeNull();
+  });
+
+  it('a count in the corridor before the hit (someone dragging behind) blocks it', () => {
+    // a and b within the spread; c just outside the group, 0.2 s before it: no free corridor
+    expect(groupHit([c('c', 9.8), c('a', 10), c('b', 10.75)], 3)).toBeNull();
+    // c further back than the corridor: the pair is a hit
+    expect(groupHit([c('c', 9.5), c('a', 10), c('b', 10.75)], 3)?.taps).toEqual([10, 10.75]);
+    // close enough, c simply belongs to the group
+    expect(groupHit([c('c', 9.7), c('a', 10), c('b', 10.1)], 3)?.taps).toEqual([9.7, 10, 10.1]);
+  });
+
+  it('a hit already used never counts again; one person tapping twice is still one person', () => {
+    expect(groupHit([c('a', 10), c('b', 10.2), c('c', 10.4)], 3, 10.2)).toBeNull();
+    expect(groupHit([c('a', 10), c('a', 10.3)], 2)).toBeNull();
   });
 });

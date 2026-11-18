@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { beatsInWindow, isMilestone, type Beat } from '../logic/metronome';
+import {
+  alignToGroup,
+  beatsInWindow,
+  groupHit,
+  isMilestone,
+  type Beat,
+  type BeatCount,
+  type GroupAlignment,
+} from '../logic/metronome';
+
+/** A group hit and what it did to the beat. */
+export type HitAlignment = GroupAlignment & { size: number };
 
 // Look-ahead scheduling: every 25 ms the beats of the next 100 ms are handed to the audio clock,
 // which plays them exactly on time even when the page is busy.
@@ -38,6 +49,10 @@ export function useBeat(pattern: readonly string[]) {
   const [beat, setBeat] = useState<Beat | null>(null);
   const [flash, setFlash] = useState(false);
   const [error, setError] = useState('');
+  // group counts (counter with beat): the recent counts on the audio clock and the end of the last
+  // hit used — read and changed only in tap handlers
+  const counts = useRef<BeatCount[]>([]);
+  const used = useRef(-Infinity);
 
   useEffect(() => {
     const audio = context.current;
@@ -82,6 +97,8 @@ export function useBeat(pattern: readonly string[]) {
       await context.current.resume();
       setBeat(null);
       setError('');
+      counts.current = [];
+      used.current = -Infinity;
       setRun({ start: context.current.currentTime + 0.05, bpm });
     } catch (reason) {
       setError(`Ton nicht verfügbar: ${String(reason)}`);
@@ -98,6 +115,24 @@ export function useBeat(pattern: readonly string[]) {
     stop: () => setRun(null),
     /** Runs on from a new beat 0 (the beat count starts again there). */
     realign: (start: number) => setRun((current) => (current ? { ...current, start } : current)),
+    /**
+     * A count of one person (press time, performance clock): when it completes a group hit
+     * (`groupHit`), the beat follows the hit where it is off as a whole (`alignToGroup`). Returns
+     * the hit, or null (beat not running, no hit yet).
+     */
+    groupCount: (who: string, pressedAt: number, people: number): HitAlignment | null => {
+      const audio = context.current;
+      if (!run || !audio) return null;
+      const at = audio.currentTime - (performance.now() - pressedAt) / 1000;
+      // a few seconds are enough for a hit and its corridor
+      counts.current = [...counts.current.filter((c) => c.at > at - 4), { who, at }];
+      const hit = groupHit(counts.current, people, used.current);
+      if (!hit) return null;
+      used.current = hit.last;
+      const alignment = alignToGroup(run.start, run.bpm, pattern, hit.taps);
+      if (alignment.realigned) setRun({ ...run, start: alignment.start });
+      return { ...alignment, size: hit.taps.length };
+    },
     /** A press time (performance clock, ms) on the audio clock; undefined before the first start. */
     toAudioTime: (pressedAt: number) => {
       const audio = context.current;

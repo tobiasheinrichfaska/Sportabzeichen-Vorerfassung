@@ -288,13 +288,14 @@ die App neu, sind nicht gespeicherte Ergebnisse weg – auf „Zuordnen“ bald 
      Knopf verschwindet. Auf „Zuordnen“ steht die Zeit schon mit Namen.
 9. Kraft „Push-Ups“, beide Erwachsenen.
    - Getrennte Zählfelder je Person (Name, Zahl, „−1“) und „Takt an (60/min)“.
-   - Gezählt wird in Runden: „Runde: noch 1 von 2“, bis jede Person einmal gezählt hat. Liegen
-     beide Zählungen nah am hohen Ton: „Letzte Runde (alle 2) 0,2 s später als der Takt.“ – der
-     Takt bleibt.
+   - Der Takt folgt **Gruppentreffern**: mindestens zwei Zählungen nah beieinander (höchstens
+     0,8 s), davor 0,4 s frei. Liegen beide nah am hohen Ton: „Gruppentreffer (2 von 2) 0,1 s
+     später als der Takt.“ – der Takt bleibt.
    - Beide gemeinsam deutlich (mehr als eine halbe Sekunde) zu spät: „… – Takt neu ausgerichtet“.
-   - Die beiden weit auseinander (z. B. eine Person eine Sekunde nach der anderen): „… 1,0 s
-     auseinander – Takt bleibt.“ – der Takt folgt nur der ganzen Gruppe.
-   - **Nicht ungewöhnlich:** Hört eine Person auf, wird die Runde nie voll und der Takt bleibt fest.
+   - Mit drei Personen, eine hört auf oder zieht deutlich nach: Die beiden anderen richten den Takt
+     trotzdem aus („Gruppentreffer (2 von 3) …“); eine einzelne späte Zählung verschiebt nichts.
+   - **Nicht ungewöhnlich:** Turnen alle in verschiedenem Tempo, richtet sich der Takt gelegentlich
+     neu aus, wenn zwei zufällig zusammenfallen.
 10. Kraft „Crunches/Curl-Up“, beide Erwachsenen, „Start“.
     - Je Person „Ende <Name>“: beim ersten Fehler der Person antippen – sie behält die ganzen
       Wiederholungen bis dahin, ±1 korrigierbar. Nach der letzten Person hält das Metronom an.

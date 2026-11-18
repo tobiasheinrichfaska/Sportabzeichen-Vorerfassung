@@ -207,14 +207,22 @@ andere Wiederholungen braucht es getrennte Zählfelder“.
   on „Zuordnen“ with a picture time taken. MT-47.
 
 - **Push-Ups in a group** (Tobias: „den Takt nur korrigieren, wenn alle Teilnehmer des Durchgangs
-  zusammen ausreichend abweichen und nah genug beieinander liegen“): counts are taken in rounds,
-  the latest per person; a full round moves the beat (phase only) to its middle only when it lies
-  within `GROUP_SPREAD_S` 0.8 s and the middle is off a cycle start by more than 0.5 s
-  (`alignToGroup`; one person = every count a round = `alignToTap`). **Simulated** (three athletes,
-  one examiner tapping the fields 0.15 s apart, scatter 0.12 s): 0.5 s called 60 % of the rounds of
-  a group slower together „apart“; 0.8 s moved a group in time in 2 % of the rounds, followed a
-  group slower together, never athletes at different tempos (99 % apart). Checked in Chromium:
-  +0.1/+0.25 left the beat, both 0.7 s late realigned, 1.1 s apart left it.
+  zusammen ausreichend abweichen und nah genug beieinander liegen“, then: „wenn einer langsam
+  nachzieht oder aufhört, sollte trotzdem neu ausgerichtet werden können. Wenn alle vorhandenen
+  Zählungen nah beieinander liegen und einen vertretbaren Korridor dazwischen frei haben, wird neu
+  ausgerichtet. Also nach zwei Gruppentreffern“): the beat follows **group hits** (`groupHit`): the
+  latest count per person within `GROUP_SPREAD_S` 0.8 s up to the newest — at least two people
+  (one person in the run: that one) — with no other count `GROUP_CORRIDOR_S` 0.4 s before it; a
+  hit is used once. Off the beat as a whole by more than 0.5 s → the cycle starts at its middle
+  (`alignToGroup`, phase only). Nobody waits for a person who lags or stopped. The counts live in
+  `useBeat` (`groupCount`, refs read only in tap handlers). **Simulated** (three athletes, one
+  examiner 0.15 s per field, scatter 0.12 s, 20 repetitions): a group in time ~1 realignment per
+  run; slower together, one dragging behind (2.7 s) or one stopping after 5 — all followed (~10);
+  three different tempos ~6 (two happen to meet: the price of not waiting for all). The corridor
+  hardly changes these cases; it stops a count just before the pair. The earlier rule (a full round
+  of all, 2026-11-18) never followed a group with one person stopped. Checked in Chromium (three
+  adults): one stopped, two 0.8 s late → realigned; then in time, the third 1 s behind alone moved
+  nothing.
 
 ### Curl-Up counted by the metronome, Push-Ups with the beat in the counter (2026-11-18)
 

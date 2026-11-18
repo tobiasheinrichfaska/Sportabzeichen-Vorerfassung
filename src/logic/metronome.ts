@@ -192,3 +192,48 @@ export function alignToGroup(
     return { start, deviation: alignment.deviation, realigned: false, spread: width, apart: true };
   return { ...alignment, spread: width, apart: false };
 }
+
+/** A count of one person on the beat's clock (seconds). */
+export interface BeatCount {
+  who: string;
+  at: number;
+}
+
+/**
+ * Free time before a group hit (Tobias 2026-11-18: „wenn einer langsam nachzieht oder aufhört,
+ * sollte trotzdem neu ausgerichtet werden können … wenn alle vorhandenen Zählungen nah beieinander
+ * liegen und einen vertretbaren Korridor dazwischen frei haben … nach zwei Gruppentreffern“): no
+ * other count may lie this long before the hit's first count, else it is no distinct moment.
+ */
+export const GROUP_CORRIDOR_S = 0.4;
+
+/**
+ * The group hit the newest count completes, if any: the latest count per person within `spread`
+ * up to the newest one — at least two people (with one person in the run: that one) — with no other
+ * count in the corridor before it. Counts at or before `after` (a hit already used) never count
+ * again. Nobody has to wait for a person who lags or stopped.
+ */
+export function groupHit(
+  counts: readonly BeatCount[],
+  people: number,
+  after: number = -Infinity,
+  spread: number = GROUP_SPREAD_S,
+  corridor: number = GROUP_CORRIDOR_S,
+): { taps: number[]; first: number; last: number } | null {
+  const newest = counts[counts.length - 1];
+  if (!newest || newest.at <= after) return null;
+  const from = newest.at - spread - 1e-9;
+  const latest = new Map<string, number>();
+  for (const count of counts) {
+    if (count.at > after && count.at >= from && count.at <= newest.at) {
+      latest.set(count.who, Math.max(latest.get(count.who) ?? -Infinity, count.at));
+    }
+  }
+  if (latest.size < Math.min(2, Math.max(1, people))) return null;
+  const taps = [...latest.values()];
+  const first = Math.min(...taps);
+  const blocked = counts.some(
+    (count) => count.at < first && count.at >= first - corridor && count.at > after,
+  );
+  return blocked ? null : { taps, first, last: newest.at };
+}
