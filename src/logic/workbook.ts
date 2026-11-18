@@ -56,11 +56,16 @@ export type WorkbookAction =
   | { type: 'setPlans'; athleteIds: readonly string[]; exerciseId: string; planned: boolean }
   | { type: 'replace'; workbook: Workbook };
 
-/** Deactivated classes stay a subset of the possible ones; regular athletes have none. */
+/**
+ * Deactivated classes stay a subset of the possible ones; regular athletes have none. A swim-proof
+ * way never stays without its year.
+ */
 function normalizeClasses(athlete: Athlete): Athlete {
   const classIds = athlete.track === 'mmb' ? athlete.classIds : [];
   const inactiveClassIds = athlete.inactiveClassIds.filter((id) => classIds.includes(id));
-  return { ...athlete, classIds, inactiveClassIds };
+  const normalized = { ...athlete, classIds, inactiveClassIds };
+  if (normalized.swimProofYear === undefined) delete normalized.swimProofWay;
+  return normalized;
 }
 
 /** A measurement keeps its value but loses a class the athlete no longer has. */

@@ -453,6 +453,11 @@ td.level-cell {
   font-variant-numeric: tabular-nums;
 }
 
+/* Schwimmnachweis („Je Kind“, station in „Erfassen“) */
+.swim-proof {
+  margin: 4px 0 8px;
+}
+
 /* page „Planen“: a child still without a plan in this Disziplingruppe */
 .chip.plan.gap {
   border-color: var(--error-fg);

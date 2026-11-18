@@ -131,6 +131,23 @@ describe('serializeWorkbook / parseWorkbook', () => {
     expect(errorsOf(damaged((data) => (data.plans = [twice, twice])))).toContain('doppelt');
   });
 
+  it('a swim-proof way must be known and needs its year', () => {
+    const way = damaged((data) => (entry(data, 'athletes', 0).swimProofWay = 'swim50'));
+    expect(way.ok && way.workbook.athletes[0]?.swimProofWay).toBe('swim50');
+    expect(
+      errorsOf(damaged((data) => (entry(data, 'athletes', 0).swimProofWay = 'seepferdchen'))),
+    ).toContain('Art des Schwimmnachweises ungültig');
+    expect(
+      errorsOf(
+        damaged((data) => {
+          const child = entry(data, 'athletes', 0);
+          delete child.swimProofYear;
+          child.swimProofWay = 'swim50';
+        }),
+      ),
+    ).toContain('Art des Schwimmnachweises ungültig');
+  });
+
   it('a child needs a first name and a birth year', () => {
     expect(errorsOf(damaged((data) => (entry(data, 'athletes', 0).firstName = ' ')))).toContain(
       'Vorname fehlt',

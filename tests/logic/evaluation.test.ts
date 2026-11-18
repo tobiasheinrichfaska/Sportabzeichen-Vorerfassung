@@ -11,7 +11,13 @@ import {
 import { parseMeasure } from '../../src/logic/measure';
 import { exerciseById } from '../../src/logic/catalog';
 import type { Athlete, Measurement, Requirement, Workbook } from '../../src/logic/types';
-import { TEST_CATALOG, YEAR, athlete, sampleWorkbook } from '../fixtures/testCatalog';
+import {
+  SWIM_TEST_CATALOG,
+  TEST_CATALOG,
+  YEAR,
+  athlete,
+  sampleWorkbook,
+} from '../fixtures/testCatalog';
 
 let next = 0;
 function measured(
@@ -237,6 +243,55 @@ describe('evaluateAthlete — regular', () => {
     expect(result.award).toBe('silver');
     expect(result.swim).toBe('missing');
     expect(result.complete).toBe(false);
+  });
+
+  it('a swim recorded as an exercise is the swim proof (Kap. 4.2), no year entered', () => {
+    const noSwim: Athlete = athlete({ id: 'p1', firstTime: true });
+    delete noSwim.swimProofYear;
+    const book = { ...full(), athletes: [noSwim] };
+    const run = (exerciseId: string, input: string) => {
+      const exercise = exerciseById(SWIM_TEST_CATALOG, exerciseId);
+      const parsed = parseMeasure(exercise?.measure ?? 'points', input);
+      if (!parsed.ok) throw new Error(parsed.error);
+      const m: Measurement = { id: 'swim', athleteId: 'p1', exerciseId, value: parsed.value };
+      return evaluateAthlete(
+        noSwim,
+        { ...book, measurements: [...book.measurements, m] },
+        SWIM_TEST_CATALOG,
+      );
+    };
+    // Ausdauer: slower than Bronze still counts — swum completely, no time needed
+    const slow = run('swim-endurance', '12:00');
+    expect(slow.swim).toBe('valid');
+    expect(slow.swimProof).toEqual({
+      from: 'measurement',
+      year: YEAR,
+      measurementId: 'swim',
+      exerciseId: 'swim-endurance',
+    });
+    expect(slow.complete).toBe(true);
+    // Schnelligkeit: only from Bronze
+    expect(run('swim-sprint', '45,0').swim).toBe('missing');
+    expect(run('swim-sprint', '39,0').swim).toBe('valid');
+  });
+
+  it('a measurement dated in an earlier year proves that year only', () => {
+    const adult = athlete({ id: 'p1', birthYear: 1990 });
+    delete adult.swimProofYear;
+    const m: Measurement = {
+      id: 'old',
+      athleteId: 'p1',
+      exerciseId: 'swim-endurance',
+      value: 600,
+      date: '2020-07-01',
+    };
+    const result = evaluateAthlete(
+      adult,
+      { ...full(), athletes: [adult], measurements: [m] },
+      SWIM_TEST_CATALOG,
+    );
+    expect(result.swimProof?.year).toBe(2020);
+    expect(result.swim).toBe('expired');
   });
 
   it('notes exercises outside the track and unknown exercises', () => {

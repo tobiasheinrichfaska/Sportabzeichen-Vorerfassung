@@ -344,7 +344,8 @@
           <tr><td><code>consentOnFile</code></td><td>boolean</td><td>ja</td><td>MmB: gesonderte Einwilligung (Gesundheitsdaten) liegt vor</td></tr>
           <tr><td><code>dsaId</code></td><td>string</td><td>nein</td><td>DSA-ID aus Sportabzeichen-Digital</td></tr>
           <tr><td><code>postalCode</code>, <code>city</code></td><td>string</td><td>nein</td><td>Wohnort; sonst gilt die Organisation</td></tr>
-          <tr><td><code>swimProofYear</code></td><td>number</td><td>nein</td><td>Jahr des letzten Schwimmnachweises</td></tr>
+          <tr><td><code>swimProofYear</code></td><td>number</td><td>nein</td><td>Jahr des letzten eingetragenen Schwimmnachweises (ein als Übung erfasstes Schwimmen zählt von selbst)</td></tr>
+          <tr><td><code>swimProofWay</code></td><td>SwimWay</td><td>nein</td><td>Womit der eingetragene Nachweis erbracht wurde: continuous15 · swim50 · swim200 · clothes100 · badgeSwim · badgeJuniorRescue · badgeRescue · badgeTriathlonYouth · badgePentathlon; fehlt = nur das Jahr bekannt; nur mit <code>swimProofYear</code> (Dateiformat bleibt 2)</td></tr>
           <tr><td><code>firstTime</code></td><td>boolean</td><td>ja</td><td>Erstmaliger Erwerb (dann muss im Prüfungsjahr geschwommen werden)</td></tr>
         </tbody>
       </table>
@@ -414,8 +415,9 @@
         <thead><tr><th>Struktur</th><th>Felder</th><th>Herkunft</th></tr></thead>
         <tbody>
           <tr><td>Combination</td><td><code>athleteId, exerciseId, age, status, variants[{ classId, options[] }], classDecisive</code></td><td><code>combine</code>; je Klasse die wählbaren Anforderungen (<code>options</code>, meist eine); <code>status</code>: possible · notInTrack · tooYoung · classOpen · noRequirement · ambiguous (dieselbe Variante doppelt). <code>classDecisive</code> = mehrere mögliche Klassen führen zu unterschiedlichen Anforderungen (gleiche Anforderungen zählen als eine)</td></tr>
-          <tr><td>AthleteEvaluation</td><td><code>athleteId, groups[{ group, level, source, sourceId, chosen }], points, award, swim, paperCardOnly, complete, notes[]</code></td><td><code>evaluateAthlete</code>. Je Gruppe entscheidet in dieser Rangfolge: Prüferentscheidung (<code>source: 'manual'</code>) &gt; Wahl im Prüfungsprofil (<code>chosen: true</code>) &gt; bestes Ergebnis aus den Messwerten. Hinweiscodes: tooYoung · classOpen · classUndecided · classInactive · notInTrack · noRequirement · ambiguous · variantUndecided · variantUnknown · unknownExercise · choiceInvalid · manualOpen · consentMissing · paperCardOnly</td></tr>
+          <tr><td>AthleteEvaluation</td><td><code>athleteId, groups[{ group, level, source, sourceId, chosen }], points, award, swim, swimProof, paperCardOnly, complete, notes[]</code></td><td><code>evaluateAthlete</code>. Je Gruppe entscheidet in dieser Rangfolge: Prüferentscheidung (<code>source: 'manual'</code>) &gt; Wahl im Prüfungsprofil (<code>chosen: true</code>) &gt; bestes Ergebnis aus den Messwerten. Hinweiscodes: tooYoung · classOpen · classUndecided · classInactive · notInTrack · noRequirement · ambiguous · variantUndecided · variantUnknown · unknownExercise · choiceInvalid · manualOpen · consentMissing · paperCardOnly</td></tr>
           <tr><td>SwimStatus</td><td>valid · missing · future · firstTimeMustSwim · childProof · expired</td><td><code>swimStatus</code></td></tr>
+          <tr><td>SwimProof</td><td><code>{ from: 'measurement', year, measurementId, exerciseId }</code> · <code>{ from: 'entered', year, way? }</code></td><td><code>swimProof</code>: der jüngste Nachweis zählt, bei gleichem Jahr das erfasste Schwimmen</td></tr>
           <tr><td>StopwatchState</td><td><code>startedAt, accumulated, finishes[]</code> (Millisekunden)</td><td>Stoppuhr; geht beim Schließen verloren</td></tr>
           <tr><td>Zähler</td><td>number</td><td><code>counterReducer</code>; geht beim Schließen verloren</td></tr>
         </tbody>
@@ -477,7 +479,8 @@
           <tr><td>evaluation</td><td><code>pointsFor(level)</code> · <code>awardFor(points)</code></td><td>1/2/3 Punkte; Verleihung 4–7 / 8–10 / 11–12</td></tr>
           <tr><td>evaluation</td><td><code>measurementLevel(measurement, athlete, catalog, year)</code> · <code>chooseOption(options, variant)</code></td><td>Stufe eines Messwerts oder Hinweiscode; Variante nach ihrem Namen, nie geraten</td></tr>
           <tr><td>evaluation</td><td><code>evaluateAthlete(athlete, workbook, catalog): AthleteEvaluation</code></td><td>Entscheidende Stufe je Gruppe, Punkte, Verleihung, Schwimmnachweis, Hinweise</td></tr>
-          <tr><td>swim</td><td><code>swimStatus(athlete, year): SwimStatus</code></td><td>Schwimmnachweis nach Kap. 4.2</td></tr>
+          <tr><td>swim</td><td><code>swimStatus(athlete, year): SwimStatus</code> · <code>swimProofStatus(athlete, proof, year)</code></td><td>Schwimmnachweis nach Kap. 4.2 (DBS-Handbuch verweist darauf: gleiche Regeln für MmB)</td></tr>
+          <tr><td>swim</td><td><code>swimProof(athlete, attempts)</code> · <code>SWIM_PROOF_EXERCISES</code> · <code>swimWaysFor(age)</code> · <code>swimProofText(proof, workbook, catalog)</code></td><td>Nachweis aus Übungen (Schwimmen Ausdauer: jeder Wert; Schnelligkeit: ab Bronze) oder eingetragen; Wege nach Alter (Grenze 12); Herkunft in Worten</td></tr>
           <tr><td>classes</td><td><code>activeClassIds(athlete): ClassId[]</code></td><td>Mögliche Klassen ohne die deaktivierten – nur diese bilden Varianten</td></tr>
           <tr><td>classes</td><td><code>classTree(catalog): { main, subgroups }[]</code></td><td>Hauptklassen mit Untergruppen für die Einstufung</td></tr>
           <tr><td>fileFormat</td><td><code>upgradeWorkbook(data)</code></td><td>Ergänzt fehlende, später hinzugekommene Listen/Felder eines älteren Entwurfs; entfernt eine leere <code>badgeRecords</code>-Liste</td></tr>

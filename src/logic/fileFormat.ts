@@ -1,5 +1,6 @@
 // The saved file and the browser draft share one JSON format. Reading checks every field and every
 // reference; a broken file is refused with its reasons instead of being loaded half.
+import { SWIM_WAY_IDS } from './swim.ts';
 import { isIsoDate } from './age.ts';
 import { fitsMeasure } from './measure.ts';
 import { catalogForYear } from './catalogPackage.ts';
@@ -139,6 +140,13 @@ export function parseWorkbook(text: string, catalogs: readonly Catalog[]): Parse
     check.require(
       athlete.swimProofYear === undefined || isYear(athlete.swimProofYear),
       `${where}: Jahr des Schwimmnachweises ungültig.`,
+    );
+    check.require(
+      athlete.swimProofWay === undefined ||
+        (isText(athlete.swimProofWay) &&
+          SWIM_WAY_IDS.includes(athlete.swimProofWay) &&
+          athlete.swimProofYear !== undefined),
+      `${where}: Art des Schwimmnachweises ungültig.`,
     );
     classesOf.set(String(athlete.id), athlete.classIds);
   }

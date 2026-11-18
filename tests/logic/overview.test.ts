@@ -292,6 +292,22 @@ describe('planOverview', () => {
   });
 });
 
+describe('a swim-proof way never stays without its year', () => {
+  it('updateAthlete drops the way when the year goes', () => {
+    const [girl] = book.athletes;
+    if (!girl) throw new Error('fixture');
+    const withWay = workbookReducer(book, {
+      type: 'updateAthlete',
+      athlete: { ...girl, swimProofYear: YEAR, swimProofWay: 'swim50' },
+    });
+    expect(withWay.athletes[0]?.swimProofWay).toBe('swim50');
+    const { swimProofYear: _gone, ...rest } = withWay.athletes[0] ?? girl;
+    void _gone;
+    const without = workbookReducer(withWay, { type: 'updateAthlete', athlete: rest });
+    expect(without.athletes[0]?.swimProofWay).toBeUndefined();
+  });
+});
+
 describe('offerText', () => {
   it('the variant is what the child does; an element alone gets its exercise in front', () => {
     expect(offerText({ id: 'run-endurance', name: 'Laufen' }, ['800 m Lauf'])).toBe('800 m Lauf');

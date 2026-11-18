@@ -69,8 +69,9 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 1. Rad: „Ergebnis“ › „Je Kind“.
    - Kinder als Knöpfe; für das gewählte: Punkte, „Abzeichen noch nicht erreicht“ oder die Stufe,
      je Disziplingruppe die Stufe mit der zählenden Leistung („800 m Lauf 03:30“).
-2. Bei „Schwimmnachweis (Jahr)“ das aktuelle Jahr eintragen.
-   - „Schwimmnachweis fehlt.“ wird zu „Schwimmnachweis gültig.“
+2. Unter „Schwimmnachweis“ bei „Nachweisjahr (auch ein früheres)“ das aktuelle Jahr Ziffer für
+   Ziffer eintippen.
+   - Die Ziffern bleiben stehen; „Schwimmnachweis fehlt.“ wird zu „Schwimmnachweis gültig.“
 3. Für ein Kind zwei Versuche in derselben Gruppe erfassen, dann hier einen davon antippen.
    - Er steht mit „(gewählt)“; „Bester zählt“ hebt die Wahl auf.
 4. Oben „Gruppe ›“ antippen.
@@ -222,3 +223,31 @@ mit Jahrgang 2013 und Klasse G 2 und eine erwachsene Person (Jahrgang 1990).
 3. Bei der erwachsenen Person „10 km Lauf“ aufklappen.
    - Die Zeiten stehen in Minuten wie auf der Prüfkarte, auch über einer Stunde (z. B. „75:00“), nie mit Stunden wie „1:15:00“. Auch
      „1:15:00“ eintippen geht weiterhin; gespeichert und angezeigt wird es als „75:00“.
+
+## MT-45: Schwimmnachweis – von selbst aus der Übung, eigens erfasst, früheres Jahr
+
+Prüfungswegweiser 2026 Kap. 4.2; das DBS-Handbuch verweist darauf (gleiche Regeln für MmB).
+Vorbedingung: „Gruppen“ › „Beispielgruppe mit 4 erfundenen Kindern“.
+
+1. Rad: „Ergebnis“ › „Gruppe“: Spalte „Schw.“ ✗ bei allen. „Je Kind“: „Schwimmnachweis fehlt.
+   Nachweis: kein Nachweis eingetragen oder erfasst“.
+2. Rad: „Abnahme“ › „Erfassen“, unter Ausdauer „Schwimmen“, bei Jonas eine langsame Zeit (z. B.
+   `15:00`) speichern.
+   - Stufe „unter Bronze“ – trotzdem zeigt „Gruppe“ bei Jonas ✓ und „Je Kind“ „Nachweis: 2026:
+     Schwimmen (Ausdauer) erfasst am …“ (die Strecke ganz geschwommen genügt, keine Mindestzeit).
+3. In „Erfassen“ unter Schnelligkeit „Schwimmen“ bei Paul eine Zeit unter Bronze speichern.
+   - Paul bleibt ✗. Mit einer Zeit ab Bronze wird er ✓ (Schnelligkeit zählt erst ab Bronze).
+4. In „Erfassen“ unter „Nachweis“ „Schwimmnachweis“ antippen.
+   - Je Kind der Stand und die Wege, die zum Alter passen: unter 12 „50 m am Stück, ohne
+     Zeitlimit“, ab 12 „200 m am Stück in höchstens 11 min“ (nie beide), dazu Dauerschwimmen,
+     Kleiderschwimmen und die Abzeichen; Rettungsschwimm- und Fünfkampfabzeichen erst ab 12.
+   - Eine Stoppuhr (zugeklappt) für 200 m bzw. Kleiderschwimmen.
+5. Bei Mia „50 m am Stück, ohne Zeitlimit“ antippen.
+   - Grün mit „✓“; „Schwimmnachweis gültig. Nachweis: 2026: 50 m am Stück, ohne Zeitlimit“.
+     Nochmals antippen nimmt den Nachweis zurück.
+6. Rad: „Ergebnis“ › „Je Kind“, Emma: bei „Nachweisjahr (auch ein früheres)“ `2025` eintippen.
+   - „Nachweis: 2025 (nur das Jahr eingetragen)“. Mit „Erstmaliger Erwerb“ angehakt: „Erstmaliger
+     Erwerb: Im Prüfungsjahr muss geschwommen werden.“ – ein Weg von 2026 oder ein erfasstes
+     Schwimmen macht ihn wieder gültig.
+7. Mit einem Kind ab 12 (in „Kinder“ anlegen): unter den Wegen der Hinweis, dass Abzeichen ab 12
+   von DLRG, DSV, Wasserwacht, DRK oder ASB abgenommen sein müssen.

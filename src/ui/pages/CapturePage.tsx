@@ -30,6 +30,10 @@ import type { FinishVideoControl } from '../useFinishVideo';
 import { GroupSwitch, NoGroup, NoLimits, type BookProps } from './GroupSwitch';
 import { ExerciseDetails, ExpectedValues } from './ExerciseBits';
 import { SetupText } from './SetupPage';
+import { SwimProofEditor } from './SwimProof';
+
+/** Not an exercise: the station „Schwimmnachweis“ (Kap. 4.2), chosen like one. */
+export const SWIM_STATION = 'schwimmnachweis';
 
 const EMPTY: AttemptInput = { text: '', variant: undefined, classId: undefined };
 const levelLabel = (level: Level | null | undefined) =>
@@ -152,7 +156,51 @@ export function CapturePage({
           </div>
         ),
       )}
-      {!exercise || !offered ? (
+      <div className="chips" role="group" aria-label="Nachweis">
+        <span className="muted chip-label">Nachweis</span>
+        <button
+          type="button"
+          className="chip"
+          aria-pressed={exerciseId === SWIM_STATION}
+          onClick={() => chooseExercise(SWIM_STATION)}
+        >
+          Schwimmnachweis
+        </button>
+      </div>
+      {exerciseId === SWIM_STATION ? (
+        <>
+          <h3>Schwimmnachweis</h3>
+          <p className="muted">
+            Je Kind antippen, womit es {workbook.year} geschwommen ist (angeboten wird, was zum
+            Alter passt). Schwimmen (Ausdauer) oder ab Bronze Schwimmen (Schnelligkeit), hier
+            erfasst, zählt von selbst. Frühere Nachweise: „Ergebnis“ › „Je Kind“.
+          </p>
+          <details className="setup-inline tool">
+            <summary>Stoppuhr</summary>
+            <Stopwatch
+              state={stopwatch}
+              setState={setStopwatch}
+              compact
+              kind="minSec"
+              video={finishVideo}
+            />
+          </details>
+          <ul className="rows">
+            {members.map((child) => (
+              <li key={child.id} className="row capture">
+                <strong>{childLabel(child, members)}</strong>
+                <SwimProofEditor
+                  child={child}
+                  workbook={workbook}
+                  catalog={catalog}
+                  dispatch={dispatch}
+                  compact
+                />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : !exercise || !offered ? (
         <p className="muted">
           Eine Übung wählen – angezeigt werden nur Übungen, die mindestens ein Kind der Gruppe
           ablegen kann.

@@ -48,6 +48,6 @@ Home-Bildschirm öffnen). Auffälligkeiten mit Uhrzeit notieren – Bildschirmfo
 
 ## Danach
 
-14. Rad: „Ergebnis“ › „Je Kind“: Stufen, Punkte, Schwimmnachweis (Jahr eintragen, falls bekannt).
+14. Rad: „Ergebnis“ › „Je Kind“: Stufen, Punkte, Schwimmnachweis (früheres Jahr eintragen, falls bekannt; heute geschwommen: in „Erfassen“ › „Schwimmnachweis“ den Weg antippen – ein erfasstes Schwimmen zählt von selbst).
 15. „Gruppe ›“: Tabelle B/S/G je Disziplingruppe.
 16. Notizen und Bildschirmfotos an Tobias/Claude – mit Testfall-Schritt und Uhrzeit.

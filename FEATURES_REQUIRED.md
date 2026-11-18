@@ -52,6 +52,7 @@ Unchecked items are planned but not built yet (status 2026-11-10).
 - [ ] **Ausgleichsbedingung / Klassenkombination** captured as free text with the examiner's level
 - [x] **Final exam profile** („Je Kind“) — examiner picks the measurement taken over per group; otherwise the best counts
 - [x] **Evaluation per athlete** („Je Kind“, „Gruppe“) — points, award, swim proof status, blocking notes (consent, open manual decision), paper-card route
+- [x] **Schwimmnachweis** (Kap. 4.2, DBS the same) — counts by itself from a recorded swim (Ausdauer any value, Schnelligkeit from Bronze); entered separately by way (age-dependent) on „Je Kind“ or the station „Schwimmnachweis“ in „Erfassen“; earlier year by hand (MT-45, `swim.test.ts`, `evaluation.test.ts`)
 - [ ] **Transfer to SpAz** (view in SpAz order for typing in) and values for the DOSB Mustervorlage
 
 | Path                 | Impact                                       | Audit Check                                                                |

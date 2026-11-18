@@ -9,9 +9,10 @@ import {
 } from '../../logic/evaluation';
 import { formatMeasure } from '../../logic/measure';
 import { GROUPS, LEVELS } from '../../logic/reference';
-import { SWIM_STATUS_TEXT } from '../../logic/swim';
-import type { Athlete, Catalog, GroupId, Level, Workbook } from '../../logic/types';
+import { SWIM_STATUS_TEXT, swimProofText } from '../../logic/swim';
+import type { Catalog, GroupId, Level, Workbook } from '../../logic/types';
 import { GroupSwitch, NoGroup, NoLimits, type BookProps } from './GroupSwitch';
+import { SwimProofEditor } from './SwimProof';
 
 const levelText = (level: Level | null) =>
   level ? (LEVELS.find((entry) => entry.id === level)?.label ?? level) : '–';
@@ -42,8 +43,6 @@ export function ChildResultPage({ workbook, dispatch, catalog, group, chooseGrou
   const child = members.find((entry) => entry.id === chosenId) ?? members[0];
   if (!child) return <p className="message info">Die Gruppe hat noch keine Kinder.</p>;
   const evaluation = evaluateAthlete(child, workbook, catalog);
-  const update = (patch: Partial<Athlete>) =>
-    dispatch({ type: 'updateAthlete', athlete: { ...child, ...patch } });
 
   return (
     <section>
@@ -153,37 +152,14 @@ export function ChildResultPage({ workbook, dispatch, catalog, group, chooseGrou
             })}
           </tbody>
         </table>
-        <div className="entry-row">
-          <label className="narrow">
-            Schwimmnachweis (Jahr)
-            <input
-              value={child.swimProofYear ?? ''}
-              inputMode="numeric"
-              maxLength={4}
-              placeholder="JJJJ"
-              onChange={(event) => {
-                const text = event.target.value.replace(/\D/g, '');
-                const { swimProofYear: _drop, ...rest } = child;
-                void _drop;
-                dispatch({
-                  type: 'updateAthlete',
-                  athlete: text.length === 4 ? { ...rest, swimProofYear: Number(text) } : rest,
-                });
-              }}
-            />
-          </label>
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={child.firstTime}
-              onChange={(event) => update({ firstTime: event.target.checked })}
-            />
-            Erstmaliger Erwerb
-          </label>
-        </div>
-        <p className={evaluation.swim === 'valid' ? 'muted' : 'message error'}>
-          {SWIM_STATUS_TEXT[evaluation.swim]}
-        </p>
+        <h3>Schwimmnachweis</h3>
+        <SwimProofEditor
+          key={child.id}
+          child={child}
+          workbook={workbook}
+          catalog={catalog}
+          dispatch={dispatch}
+        />
         {evaluation.notes.length > 0 && (
           <ul className="plain">
             {[...new Set(evaluation.notes.map((note) => note.code))].map((code) => (
@@ -248,7 +224,9 @@ export function GroupResultPage({ workbook, catalog, group, chooseGroup }: BookP
                 <td className={`level-cell level-${evaluation.award ?? 'none'}`}>
                   {evaluation.award ? levelText(evaluation.award) : '–'}
                 </td>
-                <td title={SWIM_STATUS_TEXT[evaluation.swim]}>
+                <td
+                  title={`${SWIM_STATUS_TEXT[evaluation.swim]} Nachweis: ${swimProofText(evaluation.swimProof, workbook, catalog)}`}
+                >
                   {evaluation.swim === 'valid' ? '✓' : '✗'}
                 </td>
               </tr>
