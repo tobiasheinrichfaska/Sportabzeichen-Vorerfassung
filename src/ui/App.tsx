@@ -209,6 +209,8 @@ export function App() {
     aufbau: () => <SetupPage {...book} />,
     erfassen: () => (
       <CapturePage
+        // a new exercise starts the page afresh: no value typed for another exercise stays
+        key={captureExercise ?? ''}
         {...book}
         exerciseId={captureExercise}
         chooseExercise={setCaptureExercise}

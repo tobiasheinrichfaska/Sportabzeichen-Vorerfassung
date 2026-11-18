@@ -15,6 +15,12 @@ export interface MetronomePreset {
   binding?: 'required' | 'guide';
   /** What the source says about the beat, in our own words (no verbatim DOSB/DBS text). */
   quote?: string;
+  /**
+   * Where the beat runs at the station (Tobias 2026-11-18): 'metronome' — the metronome counts and
+   * its end gives the value (the rhythm is the rule); 'counter' — the examiner counts by hand and
+   * the counter carries the beat as a guide, realigned to the taps (`alignToTap`).
+   */
+  station?: 'metronome' | 'counter';
 }
 
 // Every exercise whose official text sets a beat (Tobias 2026-11-10: „Metronom für alle
@@ -31,6 +37,7 @@ export const METRONOME_PRESETS: readonly MetronomePreset[] = [
     exerciseId: 'curl-ups',
     binding: 'required',
     quote: 'Der Takt von 40 Schlägen pro Minute kommt vom Metronom und ist einzuhalten.',
+    station: 'metronome',
   },
   {
     id: 'push-ups',
@@ -43,6 +50,7 @@ export const METRONOME_PRESETS: readonly MetronomePreset[] = [
     binding: 'guide',
     quote:
       'Etwa zwei Sekunden je Push-Up, also rund eine Sekunde hin und eine zurück – ein Richtwert.',
+    station: 'counter',
   },
   { id: 'free', label: 'Frei', bpm: 60, pattern: [], source: '' },
 ];
@@ -87,7 +95,59 @@ export function beatLabel(pattern: readonly string[], index: number): string {
   return pattern.length === 0 ? '' : (pattern[index % pattern.length] ?? '');
 }
 
-/** Completed repetitions after `beats` beats: one repetition per full pattern cycle. */
+/**
+ * Completed repetitions after `beats` beats: one full pattern cycle is done when the cycle after it
+ * begins — „hoch“ on beat 1, „runter“ on beat 2, back at the start on beat 3. So beat 2 has done
+ * none yet, beat 3 one (until 2026-11-18 the count ran half a cycle early).
+ */
 export function completedRepetitions(pattern: readonly string[], beats: number): number {
-  return pattern.length === 0 ? 0 : Math.floor(beats / pattern.length);
+  return pattern.length === 0 || beats < 1 ? 0 : Math.floor((beats - 1) / pattern.length);
+}
+
+/** A tone of its own every ten repetitions (Tobias 2026-11-18: „Zwischenton alle 10“). */
+export const MILESTONE_EVERY = 10;
+
+/** The beat (0-based index) that completes repetition 10, 20, … — it gets the milestone tone. */
+export function isMilestone(
+  pattern: readonly string[],
+  index: number,
+  every: number = MILESTONE_EVERY,
+): boolean {
+  if (pattern.length === 0 || index <= 0 || index % pattern.length !== 0) return false;
+  return (index / pattern.length) % every === 0;
+}
+
+/**
+ * Beyond this offset a tap realigns the beat (counter with beat, Push-Ups). Simulated 2026-11-18
+ * with a tap scatter of 0.12 s: realigning on every tap made the beat jump audibly on about every
+ * second repetition even for an athlete exactly at 2 s; with 0.5 s it moved on about 5 % only. A
+ * different tempo is not followed — the tempo is the guide; `deviation` tells the examiner.
+ */
+export const REALIGN_THRESHOLD_S = 0.5;
+
+export interface TapAlignment {
+  /** The start (time of a cycle's first beat) the beat runs from after this tap. */
+  start: number;
+  /** Tap minus the nearest cycle start, in seconds: > 0 later (slower), < 0 earlier (faster). */
+  deviation: number;
+  realigned: boolean;
+}
+
+/**
+ * A count tapped at the end of a repetition is meant to fall on a cycle's first beat. Near enough
+ * it leaves the beat alone; further off it moves the cycle to the tap (phase only, never the tempo).
+ */
+export function alignToTap(
+  start: number,
+  bpm: number,
+  pattern: readonly string[],
+  tap: number,
+  threshold: number = REALIGN_THRESHOLD_S,
+): TapAlignment {
+  const cycle = beatInterval(bpm) * Math.max(1, pattern.length);
+  const nearest = start + Math.round((tap - start) / cycle) * cycle;
+  const deviation = tap - nearest;
+  return Math.abs(deviation) > threshold
+    ? { start: tap, deviation, realigned: true }
+    : { start, deviation, realigned: false };
 }

@@ -204,7 +204,8 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 4. Unter „Koordination“ „Seilspringen“ wählen, die große Zählfläche dreimal antippen.
    - Aufgeklappt „Zähler: 3“; keine Stoppuhr. Bei jedem Kind der Knopf „Zähler (3)“.
 5. Unter „Kraft“ „Push-Ups“ wählen.
-   - Aufgeklappt „Zähler: …“ und „Metronom: 60 Schläge pro Minute (Richtwert)“.
+   - Aufgeklappt „Zähler: …“ mit „Takt an (60/min)“ unter der Zählfläche (seit 18.11.2026, MT-46);
+     bei „Crunches/Curl-Up-Test“ zusätzlich „Metronom: 40 Schläge pro Minute (Pflichttakt)“.
 6. „Stoppuhr“ bzw. „Zähler“ in der Überschrift antippen (zuklappen).
    - Das Werkzeug ist zu, die Stoppuhr läuft dabei weiter; beim nächsten Wechsel der Übung steht es
      wieder offen.

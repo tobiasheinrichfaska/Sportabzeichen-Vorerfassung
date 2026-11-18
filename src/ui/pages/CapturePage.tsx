@@ -74,6 +74,8 @@ export function CapturePage({
   const [onlyPlanned, setOnlyPlanned] = useState(true);
   // a new key mounts the station's metronome anew — closing its fold stops the beat
   const [beatKey, setBeatKey] = useState(0);
+  // the repetitions the station's metronome counted at „Ende“ (Curl-Up), to take over per child
+  const [beatResult, setBeatResult] = useState<number | null>(null);
   if (!group) return <NoGroup />;
   if (!catalog || catalog.requirements.length === 0) return <NoLimits />;
   const members = groupMembers(workbook, group.id);
@@ -89,8 +91,9 @@ export function CapturePage({
     .filter((row) => !onlyPlanned || plannedCount === 0 || planned(row.athlete.id));
   const timed = exercise?.measure === 'minSec' || exercise?.measure === 'secTenth';
   const tools = exercise ? stationTools(exercise) : [];
-  const beat =
-    tools.includes('metronome') && exercise ? metronomePresetFor(exercise.id) : undefined;
+  const preset = exercise ? metronomePresetFor(exercise.id) : undefined;
+  const beat = tools.includes('metronome') ? preset : undefined;
+  const counterBeat = preset?.station === 'counter' ? preset : undefined;
   // the finish times, else the stopped time of a single run
   const stopped = !isRunning(stopwatch) && stopwatch.accumulated > 0 ? [stopwatch.accumulated] : [];
   const times =
@@ -245,7 +248,7 @@ export function CapturePage({
           {tools.includes('counter') && (
             <details className="setup-inline tool" open>
               <summary>Zähler: {count}</summary>
-              <Counter count={count} dispatch={countDispatch} compact />
+              <Counter count={count} dispatch={countDispatch} compact beat={counterBeat} />
             </details>
           )}
           {beat && (
@@ -260,7 +263,12 @@ export function CapturePage({
                 Metronom: {beat.bpm} Schläge pro Minute (
                 {beat.binding === 'required' ? 'Pflichttakt' : 'Richtwert'})
               </summary>
-              <Metronome key={`${beat.id}-${beatKey}`} initialPresetId={beat.id} compact />
+              <Metronome
+                key={`${beat.id}-${beatKey}`}
+                initialPresetId={beat.id}
+                compact
+                onResult={setBeatResult}
+              />
             </details>
           )}
           {plannedCount > 0 && (
@@ -393,6 +401,14 @@ export function CapturePage({
                         onClick={() => setInput(row.athlete.id, { text: String(count) })}
                       >
                         Zähler ({count})
+                      </button>
+                    )}
+                    {beat && beatResult !== null && (
+                      <button
+                        type="button"
+                        onClick={() => setInput(row.athlete.id, { text: String(beatResult) })}
+                      >
+                        Metronom ({beatResult})
                       </button>
                     )}
                     <button type="submit">Speichern</button>

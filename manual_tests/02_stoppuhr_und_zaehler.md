@@ -117,7 +117,8 @@
 4. „Metronom: …“ antippen (zuklappen).
    - Der Ton hört auf. Wieder aufgeklappt steht „–“ und „Start“.
 5. Die Übung „Push-Ups (6.2.6.1)“ wählen.
-   - „Metronom: 60 Schläge pro Minute (Richtwert)“ – eine Sekunde je Bewegungsrichtung.
+   - Seit 18.11.2026 kein eigenes Metronom mehr: der Zähler trägt den Takt („Takt an (60/min)“,
+     siehe MT-46).
    - **Nicht ungewöhnlich:** Triceps-Dips und Pull-Ups haben kein Metronom – ihr Text nennt kein
      Tempo, nur „kontrolliert“.
 
@@ -156,3 +157,34 @@ oder die Datei; eine Person, die über eine Linie läuft (oder eine Hand, die du
 7. Auf einem iPhone wiederholen (Safari und vom Home-Bildschirm).
    - Bitte je Handy melden: Erscheint das Kamerabild? Fall „Mit Zeit“ oder „Ohne Zeit“ (Schritt 3)?
      Sind die Bilder flüssig genug?
+
+## MT-46: Curl-Up mit „Ende“ und Übernahme, Push-Ups mit Takt im Zähler
+
+Seit 18.11.2026 (Tobias: „Ja, bauen, Zwischenton alle 10 … Für die Push-Ups … der Zähler bekommt
+eine Metronom-Funktion“). **Vorbedingungen:** wie MT-38, Ton an.
+
+1. Rad: „Abnahme“ › „Erfassen“, „Crunches/Curl-Up-Test/Bauchpresse (6.2.6.2)“, beim Metronom
+   „Start“.
+   - Der Knopf heißt nun „Ende“. „Wiederholungen“ zählt erst, wenn nach „runter“ das nächste „hoch“
+     kommt (nach dem 2. Schlag steht 0, nach dem 3. Schlag 1).
+2. Bis über 10 Wiederholungen laufen lassen (bei 40/min etwa 30 s).
+   - Auf dem Schlag, der die 10. Wiederholung abschließt, klingt ein tiefer, langer Ton statt des
+     hohen; ebenso bei 20, 30 …
+3. „Ende“ tippen.
+   - Das Metronom hält an. „Ende: n Wiederholungen“ mit „−1 (letzte nicht sauber)“ und „+1“; die
+     Wiederholung, die beim Drücken lief, zählt nicht.
+4. „−1“ tippen, dann beim Kind „Metronom (n−1)“.
+   - Die Zahl steht im Feld des Kindes; „Speichern“ speichert sie.
+5. „Push-Ups/Liegestützen (6.2.6.1)“ wählen.
+   - Das Feld des Kindes ist leer (der Wert von eben bleibt nicht stehen). Kein eigenes Metronom;
+     unter der Zählfläche „Takt an (60/min)“.
+6. „Takt an“, dann bei jeder ganzen Wiederholung (alle ~2 s, auf dem hohen Ton) die Zählfläche
+   antippen.
+   - Unter dem Takt-Knopf z. B. „Letzte Zählung 0,1 s später als der Takt.“ – der Takt bleibt, wie
+     er ist.
+7. Einmal deutlich (mehr als eine halbe Sekunde) zu spät oder zu früh tippen.
+   - „… – Takt neu ausgerichtet.“: der hohe Ton kommt sofort und von da an im selben Tempo; die
+     nächste Zählung im Takt steht wieder bei „genau im Takt“ bzw. wenigen Zehnteln.
+   - **Nicht ungewöhnlich:** Das Tempo ändert sich nie – es ist der Richtwert. Ein Sportler, der
+     dauerhaft langsamer ist, bekommt öfter „neu ausgerichtet“.
+8. Beim Kind „Zähler (n)“ antippen und speichern.

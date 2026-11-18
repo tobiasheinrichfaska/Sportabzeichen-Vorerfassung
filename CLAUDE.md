@@ -173,6 +173,33 @@ per child and exercise inside a fold full of values and setup, no overview of th
 - Checked in Chromium at iPhone size, light and dark, with the example group and the local package
   (stations, gaps, „Erfassen“ counts, remembered view, no horizontal scroll). MT-44.
 
+### Curl-Up counted by the metronome, Push-Ups with the beat in the counter (2026-11-18)
+
+Tobias: „Für welche Übung wird das Metronom verwendet? Sollte das Metronom gestartet werden können,
+und dann Zwischenzählungen und Ende?“ – „Ja, bauen, Zwischenton alle 10. Dazu eine Zahl zum
+Übernehmen. Für die Push-Ups machen wir das anders herum, der Zähler bekommt eine Metronom-Funktion,
+wobei wir prüfen müssen, ob wir bei jeder Zählung das Metronom neu ausrichten, oder besser nur, wenn
+die Zählung stark genug abweicht“.
+
+- **Curl-Up (station 'metronome'):** a milestone tone (520 Hz, long) on the beat that completes
+  repetition 10, 20, … (`isMilestone`); „Ende“ stops and shows the whole repetitions with −1/+1;
+  „Metronom (n)“ per child takes it (`Metronome` `onResult`). **Fixed:** `completedRepetitions` ran
+  half a cycle early (2 beats = 1) — a repetition is done when the next cycle begins.
+- **Push-Ups (station 'counter'):** no metronome of its own; `Counter` `beat` („Takt an (60/min)“).
+  A count far from a cycle start moves the cycle there (`alignToTap`, phase only, never the tempo),
+  beyond `REALIGN_THRESHOLD_S` 0.5 s. **Checked by simulation** (tap scatter 0.12 s, 400 runs of 30):
+  realigning on every count made the beat jump audibly on about every second repetition even for an
+  athlete at exactly 2 s; with 0.5 s only about 5 %. A different tempo is not followed (the tempo is
+  the guide); the counter says „Letzte Zählung 0,3 s später als der Takt“.
+- Shared audio: `src/ui/useBeat.ts` (look-ahead scheduling as before, realign, press time → audio
+  clock).
+- **Fixed on the way:** a value typed for one exercise stayed in the child's field when another
+  exercise was chosen (a Curl-Up count could be saved as Push-Ups) — „Erfassen“ now starts afresh
+  per exercise (`key`).
+- Checked in Chromium (fake audio, oscillators recorded): 240/min for 23 beats → 11 repetitions,
+  milestone exactly on beat index 20, „−1“ then „Metronom (10)“ → 10; Push-Ups: 0.1/0.2 s left the
+  beat, 0.7 s realigned, the next count „genau im Takt“. MT-46.
+
 ### Schwimmnachweis (2026-11-18)
 
 Tobias: „Kann die App schon den Schwimmnachweis? Entweder separat oder als Automatik aus den anderen

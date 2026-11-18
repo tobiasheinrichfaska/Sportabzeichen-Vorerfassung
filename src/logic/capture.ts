@@ -141,8 +141,8 @@ const TOOL_OF_MEASURE: Readonly<Partial<Record<MeasureKindId, StationTool>>> = {
 /** The tools shown right at the exercise on „Erfassen“, plus the metronome where a beat is set. */
 export function stationTools(exercise: Pick<Exercise, 'id' | 'measure'>): StationTool[] {
   const tool = TOOL_OF_MEASURE[exercise.measure];
-  return [
-    ...(tool ? [tool] : []),
-    ...(metronomePresetFor(exercise.id) ? (['metronome'] as const) : []),
-  ];
+  const beat = metronomePresetFor(exercise.id);
+  // a beat carried by the counter (Push-Ups) is no tool of its own
+  if (beat?.station === 'counter' && tool === 'counter') return ['counter'];
+  return [...(tool ? [tool] : []), ...(beat ? (['metronome'] as const) : [])];
 }
