@@ -70,7 +70,7 @@ const namen = (k: Knoten) => (k.kinder ?? []).map((s) => s.name);
 describe('Seitenbaum (Tobias 2026-11-10: „So bauen“)', () => {
   it('six areas of three pages in the agreed order', () => {
     expect(BAUM.kinder?.map((b) => [b.name, namen(b)])).toEqual([
-      ['Vorbereiten', ['Gruppen', 'Kinder', 'Möglich']],
+      ['Vorbereiten', ['Gruppen', 'Kinder', 'Planen']],
       ['Übungen', ['Aufbau', 'Möglich', 'Klassen']],
       ['Abnahme', ['Stoppuhr', 'Erfassen', 'Zähler']],
       ['Werkzeuge', ['Zähler', 'Stoppuhr', 'Metronom']],

@@ -40,6 +40,7 @@ import { GroupsPage } from './pages/GroupsPage';
 import type { BookProps } from './pages/GroupSwitch';
 import { PlannedPage } from './pages/PlannedPage';
 import { PossiblePage } from './pages/PossiblePage';
+import { PlanPage } from './pages/PlanPage';
 import { ChildResultPage, GroupResultPage } from './pages/ResultPages';
 import { SetupPage } from './pages/SetupPage';
 import { Stopwatch } from './Stopwatch';
@@ -203,6 +204,7 @@ export function App() {
   const pages: Partial<Record<SeitenId, () => ReactNode>> = {
     gruppen: () => <GroupsPage {...book} />,
     kinder: () => <ChildrenPage {...book} />,
+    planen: () => <PlanPage {...book} />,
     moeglich: () => <PossiblePage {...book} />,
     aufbau: () => <SetupPage {...book} />,
     erfassen: () => (

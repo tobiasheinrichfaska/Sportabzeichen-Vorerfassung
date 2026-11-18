@@ -453,6 +453,12 @@ td.level-cell {
   font-variant-numeric: tabular-nums;
 }
 
+/* page „Planen“: a child still without a plan in this Disziplingruppe */
+.chip.plan.gap {
+  border-color: var(--error-fg);
+  border-width: 2px;
+}
+
 .offer-child {
   padding: 6px 0;
   border-bottom: 1px dashed var(--line);

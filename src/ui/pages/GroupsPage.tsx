@@ -160,8 +160,8 @@ export function GroupsPage({ workbook, dispatch, group, chooseGroup }: BookProps
         </p>
       )}
       <p className="muted">
-        Die gezeigte Gruppe gilt für „Kinder“, „Möglich“, „Erfassen“, „Je Kind“ und „Gruppe“. Ein
-        Tipp auf eine Gruppe zeigt sie.
+        Die gezeigte Gruppe gilt für „Kinder“, „Planen“, „Möglich“, „Erfassen“, „Je Kind“ und
+        „Gruppe“. Ein Tipp auf eine Gruppe zeigt sie.
       </p>
     </section>
   );

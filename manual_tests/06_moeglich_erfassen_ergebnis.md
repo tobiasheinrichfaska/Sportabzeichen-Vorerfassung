@@ -1,4 +1,4 @@
-# 06 – Möglich, Erfassen, Ergebnis, Aufbau
+# 06 – Möglich, Planen, Erfassen, Ergebnis, Aufbau
 
 **Vorbedingungen für alle Fälle:** die gehostete App (sie enthält die Grenzwerte), eine Gruppe
 „3b“ mit `Lena` (2017, Mädchen) und `Ben` (2016, Junge) – siehe MT-22/MT-23. Die Datei-Fassung aus
@@ -6,7 +6,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-28: Welche Abnahmen sind möglich – je Übung
 
-1. Rad: „Vorbereiten“ › „Möglich“ öffnen.
+1. Rad: „Übungen“ › „Möglich“ öffnen.
    - Überschrift „Möglich – 3b“, darunter „je Übung“ (markiert) und „je Kind“, dann Ausdauer,
      Kraft, Schnelligkeit, Koordination.
 2. Unter „Ausdauer“ „Laufen“ antippen.
@@ -89,7 +89,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 
 ## MT-35: Übung antippen – Aufbau, erwartete Werte, einplanen
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Übung“, eine Übung antippen (z. B. „Laufen“).
+1. Rad: „Übungen“ › „Möglich“, „je Übung“, eine Übung antippen (z. B. „Laufen“).
    - Je Kind die Variante mit den erwarteten Werten als farbige Felder „B … · S … · G …“, darunter
      „Macht diese Übung“; ganz unten „Aufbau“.
    - **Nicht ungewöhnlich:** Wo die Tabelle kein Bronze hat (Klimmzüge ab 85), steht „B –“; bei
@@ -98,7 +98,34 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
    - Der Knopf wird grün mit „✓“; in der Zeile der Übung steht „· 1 geplant“.
 3. „je Kind“ antippen, beim selben Kind die Übung aufklappen.
    - Vor dem Namen steht „✓“; die erwarteten Werte, der Knopf und „Aufbau“ sind da.
-4. Den Knopf noch einmal antippen.
+
+## MT-44: Planen – wer macht was, Stationen und Lücken
+
+Seit 18.11.2026 endet „Vorbereiten“ mit „Planen“; „Möglich“ (mit Werten, Aufbau, Ausführung) steht
+weiter unter „Übungen“. Vorbedingung: „Gruppen“ › „Beispielgruppe mit 4 erfundenen Kindern“.
+
+1. Rad: „Vorbereiten“ › „Planen“ öffnen.
+   - Überschrift „Planen – Beispiel“, darunter „Stationen am Tag (0)“, „Noch nichts geplant.“ und
+     rot „Noch nichts geplant in:“ mit Mia, Paul, Emma, Jonas – je alle vier Disziplingruppen.
+2. Unter „Ausdauer“ „Laufen“ antippen, dann „Alle, die können (4)“.
+   - Alle vier Namen werden grün mit „✓“, die Zeile sagt „4 geplant · 4 von 4 können“, der Knopf
+     heißt nun „Keins“. Oben: „Stationen am Tag (1)“ mit „Laufen (Ausdauer) · 4 Kinder“; bei
+     jedem Kind fehlt „Ausdauer“ in der roten Liste.
+3. „Keins“ antippen, dann nur „Mia“ antippen.
+   - Nur Mia ist grün. „Dauer-/Geländelauf“ aufklappen: Mia ohne Rand, Paul, Emma und Jonas rot
+     umrandet (sie haben in Ausdauer noch nichts).
+4. In jeder Disziplingruppe eine Übung für alle einplanen, die können.
+   - Kinder, die in einer Gruppe noch nichts haben, stehen weiter rot oben. Sind alle versorgt:
+     „Jedes Kind hat in jeder Disziplingruppe eine Übung geplant.“
+5. Rad: „Abnahme“ › „Erfassen“.
+   - Die geplanten Übungen tragen die Zahl der Kinder, z. B. „Laufen (4)“.
+6. In „Kinder“ Mia ändern: „MmB“ wählen, keine Klasse, speichern; zurück zu „Planen“.
+   - Rot „Geplant, aber nicht mehr möglich …“ mit Mias Übungen und je „Plan entfernen“; darüber
+     „Kann noch nichts: Mia (Behinderungsklasse noch offen)“. „Plan entfernen“ nimmt die Zeile weg.
+   - Danach Mia wieder auf regulär stellen.
+7. Rad: „Übungen“ › „Möglich“, „je Kind“ antippen, die Seite wechseln und zurückkommen.
+   - „je Kind“ ist noch markiert (die Ansicht wird gemerkt).
+8. Den Knopf noch einmal antippen.
    - Der Plan ist zurückgenommen.
 
 ## MT-36: Geplante Kinder beim Erfassen
@@ -120,7 +147,7 @@ dem Repository zeigt stattdessen „Diese Datei wurde ohne Grenzwerte gebaut …
 **Vorbedingungen:** gehostete App bzw. eine Datei, die mit dem lokalen Paket gebaut ist (ohne Paket
 gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gruppen“).
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, bei Mia (9) „Koordinationsleiter“ aufklappen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, bei Mia (9) „Koordinationsleiter“ aufklappen.
    - Unter „Aufbau“ steht „Ausführung: Doppelschritt“.
 2. „Ausführung: Doppelschritt“ antippen.
    - Die Altersklassen, für die diese Schrittfolge gilt, eine Unterzeile zur Schrittart, das Bild
@@ -148,7 +175,7 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 
 **Vorbedingungen:** wie MT-37; dazu ein Kind mit Jahrgang 2019 (7 Jahre) in der Gruppe.
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, beim Kind mit Jahrgang 2019 auf Kraft schauen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, beim Kind mit Jahrgang 2019 auf Kraft schauen.
    - „Gerätturnen: Kopfstand“ (nicht „Schulterstand“).
 2. Bei Schnelligkeit und Koordination schauen.
    - „Gerätturnen: Sprungaufhocken als Stützsprung“ und „Gerätturnen: Gehen auf dem Schwebebalken“.
@@ -186,7 +213,7 @@ gibt es keine Ausführung); Beispielgruppe mit 4 erfundenen Kindern (Seite „Gr
 **Vorbedingungen:** wie MT-29; in der Gruppe ein MmB-Kind mit Jahrgang 2013 und Klasse H 3, eines
 mit Jahrgang 2013 und Klasse G 2 und eine erwachsene Person (Jahrgang 1990).
 
-1. Rad: „Vorbereiten“ › „Möglich“, „je Kind“, beim H-3-Kind auf Koordination schauen.
+1. Rad: „Übungen“ › „Möglich“, „je Kind“, beim H-3-Kind auf Koordination schauen.
    - „Zielwurf (3 m Abstand)“ (nicht 5 m) und „Rollstuhlparcours“ (nicht „Rollstuhl-Parcour“).
    - **Nicht ungewöhnlich:** Für H III nennt die Prüfkarte des DBS kürzere Abstände als für die
      anderen Klassen (Kinder 2 m bis 11 Jahre, 3 m ab 12; Erwachsene bis 44 Jahre 5 m).

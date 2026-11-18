@@ -40,6 +40,7 @@ Unchecked items are planned but not built yet (status 2026-11-10).
 
 - [x] **Enter a group of children** — first name, birth year, w/m (MmB with possible classes and consent); same name + year asked twice; group delete takes only its own children (MT-22…MT-27, `children.test.ts`)
 - [x] **„Möglich“: which Abnahmen the children of a group can do** — by exercise or by child, with variants (`overview.test.ts`)
+- [x] **„Planen“: who does what, quick to tap** — „Alle, die können“ / „Keins“ per exercise, a chip per child, the stations of the day, children still without a plan in a Disziplingruppe, plans no longer possible (MT-44, `planOverview`, `setPlans` in `overview.test.ts`)
 - [x] **MmB athlete with several possible classes** — "Klasse ausschlaggebend" shown where requirements differ
 - [ ] **Einstufung:** classes A–J with subgroups and criteria shown, several selectable, single classes deactivatable
 - [x] **Enter a measurement in card notation** („Erfassen“, `capture.test.ts`) — level Bronze/Silber/Gold shown immediately

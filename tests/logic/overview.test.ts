@@ -8,6 +8,7 @@ import {
   offerText,
   offersByChild,
   offersByExercise,
+  planOverview,
 } from '../../src/logic/overview';
 import { combine } from '../../src/logic/combinations';
 import { exerciseById, exerciseDetails, variantName } from '../../src/logic/catalog';
@@ -201,6 +202,93 @@ describe('plans (Tobias 2026-11-10: „auswählen, dass die Übung von dem Kind 
       { type: 'togglePlan', athleteId: 'p1', exerciseId: 'sprint' },
     );
     expect(twice.plans).toEqual([]);
+  });
+});
+
+describe('setPlans (page „Planen“: „Alle, die können“ / „Keins“)', () => {
+  const set = (state: typeof book, athleteIds: string[], planned: boolean) =>
+    workbookReducer(state, { type: 'setPlans', athleteIds, exerciseId: 'run-endurance', planned });
+
+  it('plans several children at once, never twice, unknown children skipped', () => {
+    const one = workbookReducer(book, {
+      type: 'togglePlan',
+      athleteId: 'p2',
+      exerciseId: 'run-endurance',
+    });
+    const all = set(one, ['p1', 'p2', 'zz'], true);
+    expect(all.plans).toEqual([
+      { athleteId: 'p2', exerciseId: 'run-endurance' },
+      { athleteId: 'p1', exerciseId: 'run-endurance' },
+    ]);
+    expect(set(all, ['p1', 'p2'], true)).toBe(all);
+  });
+
+  it('takes the plans of exactly these children for exactly this exercise back', () => {
+    let state = set(book, ['p1', 'p2'], true);
+    state = workbookReducer(state, { type: 'togglePlan', athleteId: 'p1', exerciseId: 'sprint' });
+    state = set(state, ['p1'], false);
+    expect(state.plans).toEqual([
+      { athleteId: 'p2', exerciseId: 'run-endurance' },
+      { athleteId: 'p1', exerciseId: 'sprint' },
+    ]);
+    expect(set(state, ['p1'], false)).toBe(state);
+  });
+});
+
+describe('planOverview', () => {
+  const plan = (state: typeof book, athleteId: string, exerciseId: string) =>
+    workbookReducer(state, { type: 'togglePlan', athleteId, exerciseId });
+
+  it('without plans: no stations, every child lacks every Disziplingruppe it can do', () => {
+    const overview = planOverview(book, TEST_CATALOG, 'g1', book.athletes);
+    expect(overview.stations).toEqual([]);
+    expect(overview.gaps.map((g) => [g.athleteId, g.groups])).toEqual([
+      ['p1', ['endurance', 'strength', 'speed', 'coordination']],
+      ['p2', ['endurance', 'strength', 'speed', 'coordination']],
+    ]);
+    expect(overview.stale).toEqual([]);
+  });
+
+  it('stations in Disziplingruppe order with who; a planned group is no gap any more', () => {
+    let state = plan(book, 'p1', 'sprint');
+    state = plan(state, 'p1', 'run-endurance');
+    state = plan(state, 'p2', 'run-endurance');
+    const overview = planOverview(state, TEST_CATALOG, 'g1', state.athletes);
+    expect(overview.stations.map((s) => [s.exercise.id, s.athleteIds])).toEqual([
+      ['run-endurance', ['p1', 'p2']],
+      ['sprint', ['p1']],
+    ]);
+    expect(overview.gaps.map((g) => [g.athleteId, g.groups])).toEqual([
+      ['p1', ['strength', 'coordination']],
+      ['p2', ['strength', 'speed', 'coordination']],
+    ]);
+  });
+
+  it('a plan the child can no longer do is named, not counted (here: now too young)', () => {
+    let state = plan(book, 'p1', 'sprint');
+    state = workbookReducer(state, {
+      type: 'updateAthlete',
+      athlete: athlete({ id: 'p1', birthYear: YEAR - 5 }),
+    });
+    const overview = planOverview(state, TEST_CATALOG, 'g1', state.athletes);
+    expect(overview.stations).toEqual([]);
+    expect(overview.stale).toEqual([{ athleteId: 'p1', exerciseId: 'sprint' }]);
+    // a child who can do nothing has no gaps — the reason is shown instead
+    expect(overview.gaps.map((g) => g.athleteId)).toEqual(['p2']);
+    const open = workbookReducer(plan(book, 'p1', 'sprint'), {
+      type: 'updateAthlete',
+      athlete: athlete({ id: 'p1', track: 'mmb', classIds: [] }),
+    });
+    expect(planOverview(open, TEST_CATALOG, 'g1', open.athletes).stale).toEqual([
+      { athleteId: 'p1', exerciseId: 'sprint' },
+    ]);
+  });
+
+  it('only the shown group counts', () => {
+    const state = plan(book, 'p1', 'sprint');
+    const p2 = state.athletes.filter((a) => a.id === 'p2');
+    expect(planOverview(state, TEST_CATALOG, 'g1', p2).stations).toEqual([]);
+    expect(planOverview(state, TEST_CATALOG, 'g1', p2).stale).toEqual([]);
   });
 });
 

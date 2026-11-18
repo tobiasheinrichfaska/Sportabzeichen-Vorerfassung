@@ -16,12 +16,18 @@ import type { Athlete } from '../../logic/types';
 import { GroupSwitch, NoGroup, NoLimits, type BookProps } from './GroupSwitch';
 import { ExerciseDetails, ExpectedValues, PlanToggle } from './ExerciseBits';
 import { SetupText } from './SetupPage';
+import { readPossibleView, writePossibleView, type PossibleView } from '../../io/place';
 
 const groupLabel = (id: string) => GROUPS.find((group) => group.id === id)?.label ?? id;
 
 /** Page „Möglich“: which Abnahmen the children of the shown group can do. */
 export function PossiblePage({ workbook, dispatch, catalog, group, chooseGroup }: BookProps) {
-  const [view, setView] = useState<'exercise' | 'child'>('exercise');
+  // remembered, so „Möglich“ opens again where the examiner looked last
+  const [view, setViewState] = useState<PossibleView>(readPossibleView);
+  const setView = (next: PossibleView) => {
+    setViewState(next);
+    writePossibleView(next);
+  };
   if (!group) return <NoGroup />;
   if (!catalog || catalog.requirements.length === 0) return <NoLimits />;
   const members = groupMembers(workbook, group.id);
