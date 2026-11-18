@@ -151,3 +151,44 @@ export function alignToTap(
     ? { start: tap, deviation, realigned: true }
     : { start, deviation, realigned: false };
 }
+
+/**
+ * Push-Ups in a group (Tobias 2026-11-18: „den Takt nur korrigieren, wenn alle Teilnehmer des
+ * Durchgangs zusammen ausreichend abweichen und nah genug beieinander liegen“): the counts of one
+ * round lie at most this far apart, else they are no common moment and the beat stays. Simulated
+ * 2026-11-18 (three athletes, one examiner tapping the fields one after another, 0.15 s apart, tap
+ * scatter 0.12 s): with 0.5 s a group slower together was „apart“ in 60 % of the rounds and hardly
+ * followed; with 0.8 s a group in time moved the beat in 2 % of the rounds, a group slower together
+ * was followed, athletes at different tempos never (99 % apart).
+ */
+export const GROUP_SPREAD_S = 0.8;
+
+export interface GroupAlignment extends TapAlignment {
+  /** Latest minus earliest count of the round, in seconds. */
+  spread: number;
+  /** 'apart': the counts lie too far apart to move the beat. */
+  apart: boolean;
+}
+
+/**
+ * One round of counts, one per person (with one person: every count). Moved only when the round
+ * lies together (spread ≤ `spread`) and its middle is off a cycle start by more than `threshold` —
+ * then the cycle starts at that middle. Phase only, never the tempo.
+ */
+export function alignToGroup(
+  start: number,
+  bpm: number,
+  pattern: readonly string[],
+  taps: readonly number[],
+  threshold: number = REALIGN_THRESHOLD_S,
+  spread: number = GROUP_SPREAD_S,
+): GroupAlignment {
+  if (taps.length === 0) return { start, deviation: 0, realigned: false, spread: 0, apart: false };
+  const width = Math.max(...taps) - Math.min(...taps);
+  const middle = taps.reduce((sum, tap) => sum + tap, 0) / taps.length;
+  const alignment = alignToTap(start, bpm, pattern, middle, threshold);
+  // a hair of float error must not turn „exactly at the limit“ into apart
+  if (width > spread + 1e-9)
+    return { start, deviation: alignment.deviation, realigned: false, spread: width, apart: true };
+  return { ...alignment, spread: width, apart: false };
+}

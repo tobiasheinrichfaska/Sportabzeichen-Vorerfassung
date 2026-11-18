@@ -6,7 +6,9 @@ import {
   beatLabel,
   beatsInWindow,
   clampBpm,
+  GROUP_SPREAD_S,
   REALIGN_THRESHOLD_S,
+  alignToGroup,
   alignToTap,
   completedRepetitions,
   isMilestone,
@@ -137,5 +139,41 @@ describe('repetitions, milestone tone and the beat in the counter (2026-11-18)',
     expect(off.deviation).toBeCloseTo(0.6, 6);
     // exactly at the threshold: left alone
     expect(alignToTap(0, 60, pattern, 2 + REALIGN_THRESHOLD_S).realigned).toBe(false);
+  });
+});
+
+describe('alignToGroup (Push-Ups in a group, Tobias 2026-11-18)', () => {
+  const pattern = ['hoch', 'runter'];
+
+  it('one person: the same as alignToTap', () => {
+    expect(alignToGroup(10, 60, pattern, [14.6])).toMatchObject({ start: 14.6, realigned: true });
+    expect(alignToGroup(10, 60, pattern, [14.3])).toMatchObject({ start: 10, realigned: false });
+  });
+
+  it('all together and far enough off: the cycle moves to the middle of the round', () => {
+    const round = alignToGroup(10, 60, pattern, [14.6, 14.8, 14.7]);
+    expect(round.realigned).toBe(true);
+    expect(round.start).toBeCloseTo(14.7, 6);
+    expect(round.spread).toBeCloseTo(0.2, 6);
+    expect(round.apart).toBe(false);
+  });
+
+  it('together but near the beat: the beat stays', () => {
+    expect(alignToGroup(10, 60, pattern, [14.1, 14.3, 14.2])).toMatchObject({
+      start: 10,
+      realigned: false,
+      apart: false,
+    });
+  });
+
+  it('too far apart: no common moment, the beat stays even when the middle is off', () => {
+    const round = alignToGroup(10, 60, pattern, [14.1, 15.1]);
+    expect(round.deviation).toBeCloseTo(0.6, 6);
+    expect(round).toMatchObject({ start: 10, realigned: false, apart: true });
+    expect(round.spread).toBeCloseTo(1, 6);
+  });
+
+  it('exactly at the spread limit still counts as together', () => {
+    expect(alignToGroup(0, 60, pattern, [2.4, 2.4 + GROUP_SPREAD_S]).apart).toBe(false);
   });
 });

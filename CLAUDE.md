@@ -195,7 +195,7 @@ andere Wiederholungen braucht es getrennte Zählfelder“.
   results are unsaved) and `AssignPage` (per result: person chips, Zielbilder with „Zeit dieses
   Bildes übernehmen“, class/variant chips via `checkAttempt`, „Speichern“ / „Alle zugeordneten
   speichern“ → `addMeasurement` with date). `HeatTools.tsx`: `CounterPads` (separate counters;
-  Push-Ups' beat realigns only while one person counts) and `HeatMetronome` (one beat, „Ende
+  Push-Ups' beat by rounds, see below) and `HeatMetronome` (one beat, „Ende
   <Name>“ per person, stops after the last). `Stopwatch` props `finishNames`/`onNamedFinish`
   (a big button per runner; the finish index counted at the press, so two presses in one frame
   never share it), `note`, `onReset`.
@@ -205,6 +205,16 @@ andere Wiederholungen braucht es getrennte Zählfelder“.
   afterwards and saved; 800 m with names as finish buttons; switching exercise refused while
   unsaved; Push-Ups 3 + 2 on separate counters; Curl-Up „Ende“ per person 1 and 2 repetitions; Zielbilder
   on „Zuordnen“ with a picture time taken. MT-47.
+
+- **Push-Ups in a group** (Tobias: „den Takt nur korrigieren, wenn alle Teilnehmer des Durchgangs
+  zusammen ausreichend abweichen und nah genug beieinander liegen“): counts are taken in rounds,
+  the latest per person; a full round moves the beat (phase only) to its middle only when it lies
+  within `GROUP_SPREAD_S` 0.8 s and the middle is off a cycle start by more than 0.5 s
+  (`alignToGroup`; one person = every count a round = `alignToTap`). **Simulated** (three athletes,
+  one examiner tapping the fields 0.15 s apart, scatter 0.12 s): 0.5 s called 60 % of the rounds of
+  a group slower together „apart“; 0.8 s moved a group in time in 2 % of the rounds, followed a
+  group slower together, never athletes at different tempos (99 % apart). Checked in Chromium:
+  +0.1/+0.25 left the beat, both 0.7 s late realigned, 1.1 s apart left it.
 
 ### Curl-Up counted by the metronome, Push-Ups with the beat in the counter (2026-11-18)
 

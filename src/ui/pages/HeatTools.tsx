@@ -2,17 +2,28 @@ import { useState } from 'react';
 import type { Heat, HeatAction } from '../../logic/heat';
 import {
   MILESTONE_EVERY,
-  alignToTap,
+  alignToGroup,
   beatLabel,
   completedRepetitions,
   type MetronomePreset,
-  type TapAlignment,
+  type GroupAlignment,
 } from '../../logic/metronome';
 import { fastPress } from '../fastPress';
 import { useBeat } from '../useBeat';
 
 const NO_PATTERN: readonly string[] = [];
 const seconds = (value: number) => value.toFixed(1).replace('.', ',');
+
+/** What the last round said about the beat, in words. */
+function roundText(last: GroupAlignment, people: number) {
+  const who = people === 1 ? 'Letzte Zählung' : `Letzte Runde (alle ${people})`;
+  if (last.apart) return `${who} ${seconds(last.spread)} s auseinander – Takt bleibt.`;
+  const off = Math.abs(last.deviation);
+  if (off < 0.05) return `${who} genau im Takt.`;
+  return `${who} ${seconds(off)} s ${last.deviation > 0 ? 'später' : 'früher'} als der Takt${
+    last.realigned ? ' – Takt neu ausgerichtet' : ''
+  }.`;
+}
 
 interface Person {
   id: string;
@@ -21,8 +32,10 @@ interface Person {
 
 /**
  * A separate count per person (Tobias 2026-11-18: „für Push-Ups oder andere Wiederholungen
- * braucht es getrennte Zählfelder“). With a beat (Push-Ups) one shared beat runs; it is realigned
- * to a count only while one person counts — with several, whose count would it follow?
+ * braucht es getrennte Zählfelder“). With a beat (Push-Ups) one shared beat runs. Counts are taken
+ * in rounds — one per person; a full round moves the beat only when it lies together and is off
+ * the beat as a whole (`alignToGroup`, Tobias: „nur, wenn alle Teilnehmer des Durchgangs zusammen
+ * ausreichend abweichen und nah genug beieinander liegen“). With one person every count is a round.
  */
 export function CounterPads({
   heat,
@@ -37,18 +50,27 @@ export function CounterPads({
 }) {
   const pattern = beat?.pattern ?? NO_PATTERN;
   const ticking = useBeat(pattern);
-  const [last, setLast] = useState<TapAlignment | null>(null);
-  const alone = people.length === 1;
+  const [last, setLast] = useState<GroupAlignment | null>(null);
+  // the counts of the round under way: the latest per person, on the audio clock
+  const [round, setRound] = useState<Readonly<Record<string, number>>>({});
 
   function count(athleteId: string, at: number) {
     dispatch({ type: 'count', athleteId, delta: 1 });
     const { run } = ticking;
     const tap = ticking.toAudioTime(at);
-    if (!run || tap === undefined || !alone) return;
-    const alignment = alignToTap(run.start, run.bpm, pattern, tap);
+    if (!run || tap === undefined) return;
+    const next = { ...round, [athleteId]: tap };
+    if (!people.every((person) => person.id in next)) {
+      setRound(next);
+      return;
+    }
+    const alignment = alignToGroup(run.start, run.bpm, pattern, Object.values(next));
     if (alignment.realigned) ticking.realign(alignment.start);
     setLast(alignment);
+    setRound({});
   }
+
+  const waiting = people.filter((person) => !(person.id in round)).length;
 
   return (
     <div className="heat-counter">
@@ -70,13 +92,13 @@ export function CounterPads({
             {ticking.running ? 'Takt aus' : `Takt an (${beat.bpm}/min)`}
           </button>
           <span className="muted">
-            {!alone
-              ? 'Der Takt läuft fest (mehrere zählen gleichzeitig).'
-              : last
-                ? `Letzte Zählung ${seconds(Math.abs(last.deviation))} s ${
-                    last.deviation > 0 ? 'später' : 'früher'
-                  } als der Takt${last.realigned ? ' – Takt neu ausgerichtet' : ''}.`
-                : 'Bei jeder ganzen Wiederholung zählen; der Takt ist ein Richtwert.'}
+            {last
+              ? roundText(last, people.length)
+              : 'Bei jeder ganzen Wiederholung zählen; der Takt ist ein Richtwert.'}
+            {ticking.running &&
+              people.length > 1 &&
+              waiting < people.length &&
+              ` Runde: noch ${waiting} von ${people.length}.`}
           </span>
           {ticking.error && (
             <p className="message error" role="alert">
